@@ -1,6 +1,6 @@
 <?php
 
-namespace Contributte\Middleware\Exception;
+namespace Contributte\Middlewares\Exception;
 
 use RuntimeException;
 

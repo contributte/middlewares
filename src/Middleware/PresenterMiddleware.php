@@ -2,7 +2,7 @@
 
 namespace Contributte\Middlewares\Middleware;
 
-use Contributte\Middleware\Exception\InvalidStateException;
+use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Psr7\Psr7Request;
 use Contributte\Psr7\Psr7Response;
 use Exception;

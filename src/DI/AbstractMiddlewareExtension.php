@@ -2,8 +2,8 @@
 
 namespace Contributte\Middlewares\DI;
 
-use Contributte\Middleware\Exception\InvalidStateException;
 use Contributte\Middlewares\ChainBuilder;
+use Contributte\Middlewares\Exception\InvalidStateException;
 use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
 
