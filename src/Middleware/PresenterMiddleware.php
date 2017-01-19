@@ -75,6 +75,22 @@ class PresenterMiddleware
 	}
 
 	/**
+	 * @return IPresenter
+	 */
+	public function getPresenter()
+	{
+		return $this->presenter;
+	}
+
+	/**
+	 * @return ApplicationRequest[]
+	 */
+	public function getRequests()
+	{
+		return $this->requests;
+	}
+
+	/**
 	 * Dispatch a HTTP request to a front controller.
 	 *
 	 * @param Psr7Request $psr7Request
