@@ -1,0 +1,101 @@
+{
+  "name": "contributte/middlewares",
+  "description": "Middleware / Relay / PSR-7 support to Nette Framework",
+  "keywords": [
+    "middleware",
+    "relay",
+    "nette"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/contributte/middlewares",
+  "authors": [
+    {
+      "name": "Milan Felix Sulc",
+      "homepage": "https://jfx.cz"
+    }
+  ],
+  "require": {
+    "php": ">= 5.6",
+    "contributte/http": "^0.1.0",
+    "contributte/utils": "^0.1.0",
+    "contributte/psr-7": "^0.1.0"
+  },
+  "require-dev": {
+    "ninjify/qa": "^0.3.3",
+    "ninjify/nunjuck": "^0.1.4",
+    "tracy/tracy": "^2.4.5"
+  },
+  "suggest": {
+    "tracy/tracy": "to use TracyMiddleware",
+    "nette/application": "to use PresenterMiddleware"
+  },
+  "autoload": {
+    "psr-4": {
+      "Contributte\\Middlewares\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+    }
+  },
+  "scripts": {
+    "qa": [
+      "@qa-linter",
+      "@qa-codesniffer"
+    ],
+    "ci": [
+      "@qa-linter",
+      "@qa-codesniffer",
+      "@qa-tester-info",
+      "@qa-tester"
+    ],
+    "qa-codesniffer": [
+      "Ninjify\\Composer\\Script\\CodeSniffer::execute"
+    ],
+    "qa-codefixer": [
+      "Ninjify\\Composer\\Script\\CodeFixer::execute"
+    ],
+    "qa-linter": [
+      "Ninjify\\Composer\\Script\\Linter::execute"
+    ],
+    "qa-tester": [
+      "tester --setup vendor/bin/nunjuck-setup -j 40 --colors 1 tests/cases -s -p php -c tests/php-unix.ini"
+    ],
+    "qa-tester-info": [
+      "tester --setup vendor/bin/nunjuck-setup -j 40 --colors tests/cases -s -p php -c tests/php-unix.ini -i"
+    ],
+    "qa-tester-coverage": [
+      "tester --setup vendor/bin/nunjuck-setup -j 40 --colors tests/cases -s -p php -c tests/php-unix.ini -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src"
+    ],
+    "qa-tester-coverage-info": [
+      "tester --setup vendor/bin/nunjuck-setup -j 40 --colors tests/cases -s -p php -c tests/php-unix.ini -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src -i"
+    ]
+  },
+  "extra": {
+    "ninjify": {
+      "qa": {
+        "codesniffer": {
+          "ruleset": "nette",
+          "folders": [
+            "src",
+            "tests"
+          ]
+        },
+        "codefixer": {
+          "ruleset": "nette",
+          "folders": [
+            "src",
+            "tests"
+          ]
+        },
+        "linter": {
+          "folders": [
+            "src",
+            "tests"
+          ]
+        }
+      }
+    }
+  }
+}
