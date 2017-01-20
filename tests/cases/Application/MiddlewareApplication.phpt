@@ -5,16 +5,17 @@
  */
 
 use Contributte\Middlewares\Application\MiddlewareApplication;
-use Contributte\Psr7\Psr7Request;
-use Contributte\Psr7\Psr7Response;
 use Ninjify\Nunjuck\Notes;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
 test(function () {
-	$callback = function (Psr7Request $request, Psr7Response $response) {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
 		Notes::add('touched');
+
 		return $response;
 	};
 
