@@ -5,6 +5,7 @@ namespace Contributte\Middlewares\Middleware;
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Psr7\Psr7Request;
 use Contributte\Psr7\Psr7Response;
+use Contributte\Psr7\Psr7ServerRequest;
 use Exception;
 use Nette\Application\AbortException;
 use Nette\Application\ApplicationException;
@@ -17,12 +18,14 @@ use Nette\Application\IRouter;
 use Nette\Application\Request as ApplicationRequest;
 use Nette\Application\Responses\ForwardResponse;
 use Nette\Application\UI\Presenter;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
-class PresenterMiddleware
+class PresenterMiddleware extends BaseMiddleware
 {
 
 	/** @var int */
@@ -93,13 +96,21 @@ class PresenterMiddleware
 	/**
 	 * Dispatch a HTTP request to a front controller.
 	 *
-	 * @param Psr7Request $psr7Request
+	 * @param Psr7ServerRequest $psr7Request
 	 * @param Psr7Response $psr7Response
 	 * @param callable $next
 	 * @return Psr7Response
 	 */
-	public function __invoke(Psr7Request $psr7Request, Psr7Response $psr7Response, callable $next)
+	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
 	{
+		if (!($psr7Request instanceof Psr7ServerRequest)) {
+			throw new InvalidStateException(sprintf('Invalid request object given. Required %s type.', Psr7ServerRequest::class));
+		}
+
+		if (!($psr7Response instanceof Psr7Response)) {
+			throw new InvalidStateException(sprintf('Invalid response object given. Required %s type.', Psr7Response::class));
+		}
+
 		$applicationResponse = NULL;
 
 		try {
@@ -146,10 +157,10 @@ class PresenterMiddleware
 	}
 
 	/**
-	 * @param Psr7Request $psr7Request
+	 * @param Psr7ServerRequest|Psr7Request $psr7Request
 	 * @return ApplicationRequest
 	 */
-	protected function createInitialRequest(Psr7Request $psr7Request)
+	protected function createInitialRequest($psr7Request)
 	{
 		$request = $this->router->match($psr7Request->getHttpRequest());
 

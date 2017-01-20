@@ -2,17 +2,16 @@
 
 namespace Contributte\Middlewares\Middleware;
 
-use Contributte\Psr7\Psr7Response;
 use Exception;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Tracy\Debugger;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
-class TracyMiddleware
+class TracyMiddleware extends BaseMiddleware
 {
 
 	/** @var bool */
@@ -85,12 +84,12 @@ class TracyMiddleware
 	/**
 	 * Catch all exceptions
 	 *
-	 * @param RequestInterface $psr7Request
+	 * @param ServerRequestInterface $psr7Request
 	 * @param ResponseInterface $psr7Response
 	 * @param callable $next
-	 * @return Psr7Response
+	 * @return ResponseInterface
 	 */
-	public function __invoke(RequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
+	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
 	{
 		if ($this->enable === TRUE) {
 			Debugger::enable($this->mode, $this->logDir, $this->email);

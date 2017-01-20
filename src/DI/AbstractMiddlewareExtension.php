@@ -4,7 +4,6 @@ namespace Contributte\Middlewares\DI;
 
 use Contributte\Middlewares\ChainBuilder;
 use Contributte\Middlewares\Exception\InvalidStateException;
-use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
 
 abstract class AbstractMiddlewareExtension extends CompilerExtension
@@ -25,17 +24,27 @@ abstract class AbstractMiddlewareExtension extends CompilerExtension
 		}
 
 		// Register middleware chain builder
-		$chain = $builder->addDefinition($this->prefix('chain'))
+		$builder->addDefinition($this->prefix('chain'))
 			->setClass(ChainBuilder::class);
+	}
 
-		// Register middlewares as services
-		$counter = 1;
+	/**
+	 * Decorate services
+	 *
+	 * @return void
+	 */
+	public function beforeCompile()
+	{
+		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
+
+		// Obtain middleware chain builder
+		$chain = $builder->getDefinition($this->prefix('chain'));
+
+		// Add middleware services to chain
 		foreach ($config as $service) {
-			// Register single middleware as a service
-			$def = $builder->addDefinition($this->prefix('middleware' . $counter++));
-			Compiler::loadDefinition($def, $service);
 			// Append to chain of middlewares
-			$chain->addSetup('add', [$def]);
+			$chain->addSetup('add', [$service]);
 		}
 	}
 

@@ -2,6 +2,8 @@
 
 namespace Contributte\Middlewares;
 
+use Contributte\Middlewares\Exception\InvalidStateException;
+use Contributte\Middlewares\Utils\Lambda;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -28,14 +30,16 @@ class ChainBuilder
 	 */
 	public function create()
 	{
-		$next = function (RequestInterface $request, ResponseInterface $response) {
-			return $response;
-		};
+		if (!$this->middlewares) {
+			throw new InvalidStateException('Please add at least one middleware');
+		}
+
+		$next = Lambda::leaf();
 
 		$middlewares = $this->middlewares;
 		while ($middleware = array_pop($middlewares)) {
 			$next = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next) {
-				// Middleware should return ALWAYS reponse!
+				// Middleware should return ALWAYS response!
 				return $middleware($request, $response, $next);
 			};
 		}

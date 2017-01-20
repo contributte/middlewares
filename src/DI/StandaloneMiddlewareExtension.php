@@ -3,10 +3,9 @@
 namespace Contributte\Middlewares\DI;
 
 use Contributte\Middlewares\Application\MiddlewareApplication;
-use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
 
-class StandaloneMiddlewareExtension extends CompilerExtension
+class StandaloneMiddlewareExtension extends AbstractMiddlewareExtension
 {
 
 	/**
