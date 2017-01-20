@@ -17,8 +17,7 @@
   ],
   "require": {
     "php": ">= 5.6",
-    "contributte/http": "^0.1.0",
-    "contributte/utils": "^0.1.0",
+    "nette/http": "^2.4.4",
     "contributte/psr-7": "^0.1.0"
   },
   "require-dev": {
