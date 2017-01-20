@@ -2,10 +2,11 @@
 
 namespace Contributte\Middlewares\Application;
 
-use Contributte\Psr7\Psr7RequestFactory;
 use Contributte\Psr7\Psr7ResponseFactory;
+use Contributte\Psr7\Psr7ServerRequestFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
@@ -14,11 +15,11 @@ class MiddlewareApplication extends AbstractApplication
 {
 
 	/**
-	 * @return RequestInterface
+	 * @return ServerRequestInterface
 	 */
 	protected function createInitialRequest()
 	{
-		return Psr7RequestFactory::fromGlobal();
+		return Psr7ServerRequestFactory::fromGlobal();
 	}
 
 	/**
@@ -30,11 +31,11 @@ class MiddlewareApplication extends AbstractApplication
 	}
 
 	/**
-	 * @param RequestInterface $request
+	 * @param ServerRequestInterface $request
 	 * @param ResponseInterface $response
 	 * @return ResponseInterface
 	 */
-	protected function finalize(RequestInterface $request, ResponseInterface $response)
+	protected function finalize(ServerRequestInterface $request, ResponseInterface $response)
 	{
 		$this->sendStatus($response);
 		$this->sendHeaders($response);

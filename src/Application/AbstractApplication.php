@@ -4,7 +4,7 @@ namespace Contributte\Middlewares\Application;
 
 use Contributte\Middlewares\IMiddleware;
 use Exception;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
@@ -60,7 +60,7 @@ abstract class AbstractApplication implements IApplication
 				$this->chain,
 				$request,
 				$response,
-				function (RequestInterface $request, ResponseInterface $response) {
+				function (ServerRequestInterface $request, ResponseInterface $response) {
 					return $response;
 				}
 			);
@@ -85,7 +85,7 @@ abstract class AbstractApplication implements IApplication
 	}
 
 	/**
-	 * @return RequestInterface
+	 * @return ServerRequestInterface
 	 */
 	abstract protected function createInitialRequest();
 
@@ -95,11 +95,11 @@ abstract class AbstractApplication implements IApplication
 	abstract protected function createInitialResponse();
 
 	/**
-	 * @param RequestInterface $request
+	 * @param ServerRequestInterface $request
 	 * @param ResponseInterface $response
 	 * @return ResponseInterface
 	 */
-	abstract protected function finalize(RequestInterface $request, ResponseInterface $response);
+	abstract protected function finalize(ServerRequestInterface $request, ResponseInterface $response);
 
 	/**
 	 * EVENTS ******************************************************************

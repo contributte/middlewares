@@ -2,13 +2,13 @@
 
 namespace Contributte\Middlewares\Application;
 
-use Contributte\Psr7\Psr7RequestFactory;
 use Contributte\Psr7\Psr7Response;
 use Contributte\Psr7\Psr7ResponseFactory;
+use Contributte\Psr7\Psr7ServerRequestFactory;
 use Nette\Http\IRequest;
 use Nette\Http\IResponse;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
@@ -41,11 +41,11 @@ class NetteMiddlewareApplication extends MiddlewareApplication
 	}
 
 	/**
-	 * @return RequestInterface
+	 * @return ServerRequestInterface
 	 */
 	protected function createInitialRequest()
 	{
-		return Psr7RequestFactory::fromNette($this->httpRequest);
+		return Psr7ServerRequestFactory::fromNette($this->httpRequest);
 	}
 
 	/**
@@ -57,11 +57,11 @@ class NetteMiddlewareApplication extends MiddlewareApplication
 	}
 
 	/**
-	 * @param RequestInterface $request
+	 * @param ServerRequestInterface $request
 	 * @param ResponseInterface $response
 	 * @return ResponseInterface
 	 */
-	protected function finalize(RequestInterface $request, ResponseInterface $response)
+	protected function finalize(ServerRequestInterface $request, ResponseInterface $response)
 	{
 		// Act only if it's our Psr7Response
 		if ($response instanceof Psr7Response) {
