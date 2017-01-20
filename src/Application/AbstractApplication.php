@@ -4,8 +4,8 @@ namespace Contributte\Middlewares\Application;
 
 use Contributte\Middlewares\IMiddleware;
 use Exception;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 /**
