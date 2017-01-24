@@ -34,10 +34,9 @@ class AutoBasePathMiddleware extends BaseMiddleware
 		$script = isset($_SERVER['SCRIPT_NAME']) ? strtolower($_SERVER['SCRIPT_NAME']) : '';
 		if ($lpath !== $script) {
 			$max = min(strlen($lpath), strlen($script));
-			for ($i = 0; $i < $max && $lpath[$i] === $script[$i]; $i++) {
-				// Find basePath replacing parsing scriptPath
-				$basePath = $i ? substr($basePath, 0, strrpos($basePath, '/', $i - strlen($basePath) - 1) + 1) : '/';
-			}
+			for ($i = 0; $i < $max && $lpath[$i] === $script[$i]; $i++) ;
+			// Find basePath replacing and parsing scriptPath
+			$basePath = $i ? substr($basePath, 0, strrpos($basePath, '/', $i - strlen($basePath) - 1) + 1) : '/';
 		}
 
 		// Try replace path or just use slash (/)
@@ -46,7 +45,7 @@ class AutoBasePathMiddleware extends BaseMiddleware
 			// Cut base path by last slash (/)
 			$basePath = substr($basePath, 0, $pos + 1);
 			// Drop part of path (basePath)
-			$newPath = str_replace($basePath, NULL, $uri->getPath());
+			$newPath = substr($uri->getPath(), strlen($basePath));
 		} else {
 			$newPath = '/';
 		}
