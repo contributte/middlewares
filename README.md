@@ -45,9 +45,10 @@ We have a many solutions and prepared libraries in PHP world.
 
 ## Overview
 
-- [Extension - how to register](https://github.com/contributte/middlewares/tree/master/.docs#psr7request)
-- [Application - nette/standalone mode](https://github.com/contributte/middlewares/tree/master/.docs#psr7response)
-- [Middlewares - implementations](https://github.com/contributte/middlewares/tree/master/.docs#middleware)
+- [Installation - how to register an extension](https://github.com/contributte/middlewares/tree/master/.docs#installation)
+- Usage
+    - [Modes - nette/standalone mode](https://github.com/contributte/middlewares/tree/master/.docs#modes)
+    - [Middlewares - implementations](https://github.com/contributte/middlewares/tree/master/.docs#middlewares)
 
 ## Design
 
