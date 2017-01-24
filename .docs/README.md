@@ -1,4 +1,4 @@
-## Middlewares
+## Middlewares / Relay
 
 The middlewares / relay conception is a strong pattern with many benefits.
 
@@ -51,27 +51,69 @@ $container->getByType(Contributte\Middlewares\Application\IApplication::class)->
 Build your own middleware chain cannot be easier. Just place your middleware (services) under `middleware` section. 
 It is pretty same as register new service in `NEON` file.
 
+You can register list of middlewares like this:
+
 ```yaml
 middleware:
+  middlewares:
     # Catch all exceptions
     - Contributte\Middlewares\Middleware\TracyMiddleware
     
-    # Your middlewares
-    - Custom\Middleware1
-    - Custom\Middleware2
-    - Custom\Middleware3
+    # Your custom middlewares
+    - TrainlingSlashMiddleware
+    - UuidMiddleware
+    - CspMiddleware
     
     # Compatibility with Nette applications
     - Contributte\Middlewares\Middleware\PresenterMiddleware
 ```
 
+Or just register `RootMiddleware`, the very first entrypoint.
+
+```yaml
+middleware:
+  root: App\Model\AppMiddleware
+```
+
 At this time we have prepared a few middlewares:
 
-### `TracyMiddleware`
+### `AbstractRootMiddleware`
 
-This middleware catch all exceptions and shows tracy dump.
+@todo
+
+### `AutoBasePathMiddleware`
+
+@todo
+
+### `BaseMiddleware`
+
+@todo
+
+### `BasePathMiddleware`
+
+@todo
+
+### `ExcludeConditionMiddleware`
+
+@todo
+
+### `GroupBuilderMiddleware`
+
+@todo
+
+### `GroupMiddleware`
+
+@todo
 
 ### `PresenterMiddleware`
 
 This middleware simulates original nette application behaviours. It converts Psr7Request to `Nette\Application\Request`
 and process returned `Nette\Application\Response`.
+
+### `RouterMiddleware`
+
+@todo
+
+### `TracyMiddleware`
+
+This middleware catch all exceptions and shows tracy dump.
