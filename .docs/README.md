@@ -9,8 +9,16 @@ The middlewares / relay conception is a strong pattern with many benefits.
 - [Extension - how to register](#extension)
 - [Application - nette/standalone mode](#application)
 - [Middlewares](#middlewares)
-    - [TracyMiddleware](#tracymiddleware)
+    - [AbstractRootMiddleware](#)
+    - [AutoBasePathMiddleware](#)
+    - [BaseMiddleware](#)
+    - [BasePathMiddleware](#)
+    - [ExcludeConditionMiddleware](#)
+    - [GroupBuilderMiddleware](#)
+    - [GroupMiddleware](#)
     - [PresenterMiddleware](#presentermiddleware)
+    - [RouterMiddleware](#)
+    - [TracyMiddleware](#tracymiddleware)
 
 ## Extension
 

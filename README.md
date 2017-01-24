@@ -28,7 +28,7 @@ composer require contributte/middlewares
 
 | State       | Version | Branch   | PHP      |
 |-------------|---------|----------|----------|
-| development | `^0.1`  | `master` | `>= 5.6` |
+| development | `^0.2`  | `master` | `>= 5.6` |
 
 ## Prolog
 
@@ -45,8 +45,9 @@ We have a many solutions and prepared libraries in PHP world.
 
 ## Overview
 
-- [Extension - how to register](https://github.com/contributte/middlewares/blob/master/.docs/README.md#psr7request)
-- [Application - nette/standalone mode](https://github.com/contributte/middlewares/blob/master/.docs/README.md#psr7response)
+- [Extension - how to register](https://github.com/contributte/middlewares/tree/master/.docs#psr7request)
+- [Application - nette/standalone mode](https://github.com/contributte/middlewares/tree/master/.docs#psr7response)
+- [Middlewares - implementations](https://github.com/contributte/middlewares/tree/master/.docs#middleware)
 
 ## Design
 
