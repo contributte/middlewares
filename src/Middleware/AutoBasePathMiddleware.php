@@ -34,8 +34,13 @@ class AutoBasePathMiddleware extends BaseMiddleware
 		$script = isset($_SERVER['SCRIPT_NAME']) ? strtolower($_SERVER['SCRIPT_NAME']) : '';
 		if ($lpath !== $script) {
 			$max = min(strlen($lpath), strlen($script));
-			for ($i = 0; $i < $max && $lpath[$i] === $script[$i]; $i++) ;
-			// Find basePath replacing and parsing scriptPath
+			$i = 0;
+			while ($i < $max && $lpath[$i] === $script[$i]) {
+				$i++;
+			}
+			// Cut basePath from URL
+			// /foo/bar/test => /test
+			// (empty) -> /
 			$basePath = $i ? substr($basePath, 0, strrpos($basePath, '/', $i - strlen($basePath) - 1) + 1) : '/';
 		}
 
