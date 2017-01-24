@@ -18,9 +18,16 @@ class StandaloneMiddlewareExtension extends AbstractMiddlewareExtension
 		parent::loadConfiguration();
 
 		$builder = $this->getContainerBuilder();
-		$builder->addDefinition($this->prefix('application'))
-			->setClass(MiddlewareApplication::class)
-			->setArguments([new Statement('@' . $this->prefix('chain') . '::create')]);
+		$config = $this->validateConfig($this->defaults);
+
+		$application = $builder->addDefinition($this->prefix('application'))
+			->setClass(MiddlewareApplication::class);
+
+		if ($config['root'] !== NULL) {
+			$application->setArguments([new Statement($config['root'])]);
+		} else {
+			$application->setArguments([new Statement('@' . $this->prefix('chain') . '::create')]);
+		}
 	}
 
 }

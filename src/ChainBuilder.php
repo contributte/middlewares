@@ -17,11 +17,15 @@ class ChainBuilder
 	private $middlewares = [];
 
 	/**
-	 * @param object $middleware
+	 * @param callable $middleware
 	 * @return void
 	 */
 	public function add($middleware)
 	{
+		if (!is_callable($middleware)) {
+			throw new InvalidStateException('Middleware is not callable');
+		}
+
 		$this->middlewares[] = $middleware;
 	}
 

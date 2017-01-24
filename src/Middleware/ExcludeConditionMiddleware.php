@@ -2,7 +2,7 @@
 
 namespace Contributte\Middlewares\Middleware;
 
-use Contributte\Middlewares\IMiddleware;
+use Contributte\Middlewares\Middleware\Filter\IFilter;
 use Contributte\Middlewares\Utils\Lambda;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -10,23 +10,23 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
-class ConditionMiddleware extends BaseMiddleware
+class ExcludeConditionMiddleware extends BaseMiddleware
 {
 
-	/** @var callable|IMiddleware */
+	/** @var IFilter */
 	private $filter;
 
-	/** @var callable|GroupBuilderMiddleware */
-	private $group;
+	/** @var callable */
+	private $middleware;
 
 	/**
-	 * @param callable|IMiddleware $filter
-	 * @param callable|IMiddleware $group
+	 * @param IFilter $filter
+	 * @param callable $middleware
 	 */
-	public function __construct($filter, $group)
+	public function __construct(IFilter $filter, $middleware)
 	{
 		$this->filter = $filter;
-		$this->group = $group;
+		$this->middleware = $middleware;
 	}
 
 	/**
@@ -38,17 +38,17 @@ class ConditionMiddleware extends BaseMiddleware
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
 	{
 		// Pass to filter middleware
-		$retval = call_user_func_array($this->filter, [$psr7Request, $psr7Response, Lambda::blank()]);
+		$retval = $this->filter->filter($psr7Request, $psr7Response, Lambda::blank());
 
-		if ($retval === FALSE) {
+		if ($retval === NULL) {
 			// Condition is not applied, pass to next middleware immediately.
 			return $next($psr7Request, $psr7Response);
 		}
 
 		// Process inner chain of middlewares
-		$psr7Response = call_user_func_array($this->group, [$psr7Request, $psr7Response, Lambda::leaf()]);
+		$psr7Response = call_user_func_array($this->middleware, [$psr7Request, $psr7Response, Lambda::leaf()]);
 
-		// Return response, don't pass to next middleware
+		// This is exclude condition, if it's matched, do not pass to next middleware
 		return $psr7Response;
 	}
 
