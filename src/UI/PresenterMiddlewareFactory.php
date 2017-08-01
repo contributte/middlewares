@@ -1,8 +1,8 @@
 <?php
 
-namespace Contributte\Middlewares\Factory;
+namespace Contributte\Middlewares\UI;
 
-use Contributte\Middlewares\Middleware\PresenterMiddleware;
+use Contributte\Middlewares\PresenterMiddleware;
 use Nette\Application\IPresenterFactory;
 use Nette\Application\IRouter;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Contributte\Middlewares\Middleware\Security;
+namespace Contributte\Middlewares\Security;
 
 use Psr\Http\Message\ServerRequestInterface;
 

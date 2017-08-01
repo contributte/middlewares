@@ -1,6 +1,6 @@
 <?php
 
-namespace Contributte\Middlewares\Middleware;
+namespace Contributte\Middlewares;
 
 use Contributte\Middlewares\Utils\Lambda;
 use Psr\Http\Message\ResponseInterface;

@@ -1,8 +1,6 @@
 <?php
 
-namespace Contributte\Middlewares\Middleware;
-
-use Contributte\Middlewares\IMiddleware;
+namespace Contributte\Middlewares;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>

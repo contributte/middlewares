@@ -1,15 +1,15 @@
 <?php
 
-namespace Contributte\Middlewares\Middleware;
+namespace Contributte\Middlewares;
 
-use Contributte\Middlewares\Middleware\Security\IAuthenticator;
+use Contributte\Middlewares\Security\IAuthenticator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
-class AuthMiddleware extends BaseMiddleware
+class SecurityMiddleware extends BaseMiddleware
 {
 
 	// Attributes in ServerRequestInterface

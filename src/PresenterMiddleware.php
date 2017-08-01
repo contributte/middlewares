@@ -1,6 +1,6 @@
 <?php
 
-namespace Contributte\Middlewares\Middleware;
+namespace Contributte\Middlewares;
 
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Psr7\Psr7Request;

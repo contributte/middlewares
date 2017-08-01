@@ -1,6 +1,6 @@
 <?php
 
-namespace Contributte\Middlewares\Middleware\Security;
+namespace Contributte\Middlewares\Security;
 
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -15,6 +15,7 @@ class CompositeAuthenticator implements IAuthenticator
 
 	/**
 	 * @param IAuthenticator $authenticator
+	 * @return void
 	 */
 	public function setAuthenticators(IAuthenticator $authenticator)
 	{

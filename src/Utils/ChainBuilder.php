@@ -1,9 +1,8 @@
 <?php
 
-namespace Contributte\Middlewares;
+namespace Contributte\Middlewares\Utils;
 
 use Contributte\Middlewares\Exception\InvalidStateException;
-use Contributte\Middlewares\Utils\Lambda;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -17,7 +16,7 @@ class ChainBuilder
 	private $middlewares = [];
 
 	/**
-	 * @param callable $middleware
+	 * @param mixed $middleware
 	 * @return void
 	 */
 	public function add($middleware)
