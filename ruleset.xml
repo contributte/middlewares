@@ -7,7 +7,16 @@
     <rule ref="Squiz.Classes.ClassFileName">
         <exclude name="Squiz.Classes.ClassFileName.NoMatch"/>
     </rule>
-    
+
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array" value="
+                src=>Contributte\Middlewares,
+                tests=>Tests
+            "/>
+        </properties>
+    </rule>
+
     <!-- Exclude folders -->
     <exclude-pattern>/tests/tmp</exclude-pattern>
 </ruleset>
