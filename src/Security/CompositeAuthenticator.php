@@ -11,13 +11,13 @@ class CompositeAuthenticator implements IAuthenticator
 {
 
 	/** @var IAuthenticator[] */
-	private $authenticators;
+	private $authenticators = [];
 
 	/**
 	 * @param IAuthenticator $authenticator
 	 * @return void
 	 */
-	public function setAuthenticators(IAuthenticator $authenticator)
+	public function addAuthenticator(IAuthenticator $authenticator)
 	{
 		$this->authenticators[] = $authenticator;
 	}
