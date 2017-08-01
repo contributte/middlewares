@@ -40,6 +40,7 @@ final class AutoBasePathMiddlewareTest extends TestCase
 				Assert::equal($requestUri, $req->getAttribute(AutoBasePathMiddleware::ATTR_ORIG_PATH));
 				Assert::equal($basePath, $req->getAttribute(AutoBasePathMiddleware::ATTR_BASE_PATH));
 				Assert::equal($coolUrl, $req->getAttribute(AutoBasePathMiddleware::ATTR_PATH));
+				Assert::equal($coolUrl, $req->getUri()->getPath());
 			}
 		);
 	}
