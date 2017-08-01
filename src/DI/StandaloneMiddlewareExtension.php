@@ -21,7 +21,8 @@ class StandaloneMiddlewareExtension extends AbstractMiddlewareExtension
 		$config = $this->validateConfig($this->defaults);
 
 		$application = $builder->addDefinition($this->prefix('application'))
-			->setClass(MiddlewareApplication::class);
+			->setClass(MiddlewareApplication::class)
+			->setArguments([$this->prefix('chain')]);
 
 		if ($config['root'] !== NULL) {
 			$application->setArguments([new Statement($config['root'])]);

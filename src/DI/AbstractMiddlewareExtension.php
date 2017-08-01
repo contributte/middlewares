@@ -2,8 +2,8 @@
 
 namespace Contributte\Middlewares\DI;
 
-use Contributte\Middlewares\ChainBuilder;
 use Contributte\Middlewares\Exception\InvalidStateException;
+use Contributte\Middlewares\Utils\ChainBuilder;
 use Nette\DI\CompilerExtension;
 use Nette\Utils\Validators;
 
@@ -44,7 +44,8 @@ abstract class AbstractMiddlewareExtension extends CompilerExtension
 
 		// Register middleware chain builder
 		$builder->addDefinition($this->prefix('chain'))
-			->setClass(ChainBuilder::class);
+			->setClass(ChainBuilder::class)
+			->setAutowired(FALSE);
 	}
 
 	/**
