@@ -7,19 +7,16 @@ The middlewares / relay conception is a strong pattern with many benefits.
 ## Content
 
 - [Installation - how to register an extension](#installation)
-- Usage
-    - [Modes - nette/standalone mode](#application)
-    - [Middlewares](#middlewares)
-        - [AbstractRootMiddleware](#)
-        - [AutoBasePathMiddleware](#)
-        - [BaseMiddleware](#)
-        - [BasePathMiddleware](#)
-        - [ExcludeConditionMiddleware](#)
-        - [GroupBuilderMiddleware](#)
-        - [GroupMiddleware](#)
-        - [PresenterMiddleware](#presentermiddleware)
-        - [RouterMiddleware](#)
-        - [TracyMiddleware](#tracymiddleware)
+- [Modes - nette/standalone mode](#application)
+- [Middlewares](#middlewares)
+    - [AbstractRootMiddleware](#abstractrootmiddleware)
+    - [AutoBasePathMiddleware](#autobasepathmiddleware)
+    - [BaseMiddleware](#basemiddleware)
+    - [BasePathMiddleware](#basepathmiddleware)
+    - [BuilderMiddleware](#buildermiddleware)
+    - [PresenterMiddleware](#presentermiddleware)
+    - [SecurityMiddleware](#securitymiddleware)
+    - [TracyMiddleware](#tracymiddleware)
 
 ## Installation
 
@@ -39,9 +36,7 @@ extensions:
     middleware: Contributte\Middlewares\DI\StandaloneMiddlewareExtension
 ```
 
-## Usage
-
-### Modes
+## Modes
 
 Main difference to `nette/sandbox` application is in `index.php`. You have to `run` the middleware native `IApplication::run()`. 
 
@@ -73,14 +68,14 @@ middleware:
     - Contributte\Middlewares\Middleware\PresenterMiddleware
 ```
 
-Or just register `RootMiddleware` as the very first entrypoint.
+Or just register **root** middleware as the very first entrypoint.
 
 ```yaml
 middleware:
   root: App\Model\AppMiddleware
 ```
 
-#### Ready-to-use middlewares
+### Ready-to-use middlewares
 
 At this time we have prepared a few middlewares:
 
@@ -100,15 +95,7 @@ At this time we have prepared a few middlewares:
 
 @todo
 
-#### `ExcludeConditionMiddleware`
-
-@todo
-
-#### `GroupBuilderMiddleware`
-
-@todo
-
-#### `GroupMiddleware`
+#### `BuilderMiddleware`
 
 @todo
 
@@ -116,10 +103,6 @@ At this time we have prepared a few middlewares:
 
 This middleware simulates original nette application behaviours. It converts Psr7Request to `Nette\Application\Request`
 and process returned `Nette\Application\Response`.
-
-#### `RouterMiddleware`
-
-@todo
 
 #### `TracyMiddleware`
 

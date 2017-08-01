@@ -6,13 +6,11 @@
 
 [![Build Status](https://img.shields.io/travis/contributte/middlewares.svg?style=flat-square)](https://travis-ci.org/contributte/middlewares)
 [![Code coverage](https://img.shields.io/coveralls/contributte/middlewares.svg?style=flat-square)](https://coveralls.io/r/contributte/middlewares)
-[![HHVM Status](https://img.shields.io/hhvm/contributte/middlewares.svg?style=flat-square)](http://hhvm.h4cc.de/package/contributte/middlewares)
 [![Licence](https://img.shields.io/packagist/l/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 [![Downloads total](https://img.shields.io/packagist/dt/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 [![Latest stable](https://img.shields.io/packagist/v/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
-[![Latest unstable](https://img.shields.io/packagist/vpre/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 
 ## Discussion / Help
 
@@ -46,13 +44,28 @@ We have a many solutions and prepared libraries in PHP world.
 ## Overview
 
 - [Installation - how to register an extension](https://github.com/contributte/middlewares/tree/master/.docs#installation)
-- Usage
-    - [Modes - nette/standalone mode](https://github.com/contributte/middlewares/tree/master/.docs#modes)
-    - [Middlewares - implementations](https://github.com/contributte/middlewares/tree/master/.docs#middlewares)
+- [Modes - nette/standalone mode](https://github.com/contributte/middlewares/tree/master/.docs#modes)
+- [Middlewares - implementations](https://github.com/contributte/middlewares/tree/master/.docs#middlewares)
 
 ## Design
 
 ![Cycle](https://raw.githubusercontent.com/contributte/middlewares/master/.docs/assets/cycle.png)
+
+## Maintainers
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/f3l1x">
+            <img width="150" height="150" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=150">
+        </a>
+        </br>
+        <a href="https://github.com/f3l1x">Milan Felix Šulc</a>
+      </td>
+    </tr>
+  <tbody>
+</table>
 
 -----
 
