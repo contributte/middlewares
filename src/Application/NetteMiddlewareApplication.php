@@ -45,7 +45,11 @@ class NetteMiddlewareApplication extends MiddlewareApplication
 	 */
 	protected function createInitialRequest()
 	{
-		return Psr7ServerRequestFactory::fromNette($this->httpRequest);
+		if ($this->httpRequest) {
+			return Psr7ServerRequestFactory::fromNette($this->httpRequest);
+		} else {
+			return Psr7ServerRequestFactory::fromGlobal();
+		}
 	}
 
 	/**
@@ -53,7 +57,11 @@ class NetteMiddlewareApplication extends MiddlewareApplication
 	 */
 	protected function createInitialResponse()
 	{
-		return Psr7ResponseFactory::fromNette($this->httpResponse);
+		if ($this->httpResponse) {
+			return Psr7ResponseFactory::fromNette($this->httpResponse);
+		} else {
+			return Psr7ResponseFactory::fromGlobal();
+		}
 	}
 
 	/**
