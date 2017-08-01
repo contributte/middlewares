@@ -31,7 +31,9 @@ class AutoBasePathMiddleware extends BaseMiddleware
 
 		// Base-path auto detection (inspired in @nette/routing)
 		$lpath = strtolower($uri->getPath());
-		$script = isset($_SERVER['SCRIPT_NAME']) ? strtolower($_SERVER['SCRIPT_NAME']) : '';
+		$serverParams = $psr7Request->getServerParams();
+
+		$script = isset($serverParams['SCRIPT_NAME']) ? strtolower($serverParams['SCRIPT_NAME']) : '';
 		if ($lpath !== $script) {
 			$max = min(strlen($lpath), strlen($script));
 			$i = 0;
