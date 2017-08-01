@@ -11,9 +11,9 @@
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
             <property name="rootNamespaces" type="array" value="
-                src=>Contributte\Middlewares,
-                tests=>Tests
+                src=>Contributte\Middlewares
             "/>
+            <property name="ignoredNamespaces" type="array" value="Tests"/>
         </properties>
     </rule>
 
