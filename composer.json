@@ -35,6 +35,11 @@
       "Contributte\\Middlewares\\": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Fixtures\\": "tests/fixtures"
+    }
+  },
   "scripts": {
     "qa": [
       "linter src tests",
