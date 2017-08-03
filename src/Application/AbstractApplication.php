@@ -4,27 +4,35 @@ namespace Contributte\Middlewares\Application;
 
 use Contributte\Middlewares\IMiddleware;
 use Exception;
+use Nette\SmartObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
+ *
+ * @method void onStartup(AbstractApplication $self)
+ * @method void onRequest(AbstractApplication $self, ServerRequestInterface $req, ResponseInterface $res)
+ * @method void onError(AbstractApplication $self, Exception $e, ServerRequestInterface $req, ResponseInterface $res)
+ * @method ResponseInterface onResponse(AbstractApplication $self, ServerRequestInterface $req, ResponseInterface $res)
  */
 abstract class AbstractApplication implements IApplication
 {
 
-	/** @var callable[] */
-	protected $onStartup = [];
+	use SmartObject;
 
 	/** @var callable[] */
-	protected $onRequest = [];
+	public $onStartup = [];
 
 	/** @var callable[] */
-	protected $onError = [];
+	public $onRequest = [];
 
 	/** @var callable[] */
-	protected $onResponse = [];
+	public $onError = [];
+
+	/** @var callable[] */
+	public $onResponse = [];
 
 	/** @var callable|IMiddleware */
 	private $chain;
@@ -45,7 +53,7 @@ abstract class AbstractApplication implements IApplication
 	public function run()
 	{
 		// Trigger event!
-		$this->dispatch($this->onStartup, [$this]);
+		$this->onStartup($this);
 
 		// Create initial request & response (PSR7!)
 		$request = $this->createInitialRequest();
@@ -53,7 +61,7 @@ abstract class AbstractApplication implements IApplication
 
 		try {
 			// Trigger event!
-			$this->dispatch($this->onRequest, [$this, $request, $response]);
+			$this->onRequest($this, $request, $response);
 
 			// Right to the cycle
 			$response = call_user_func(
@@ -66,7 +74,7 @@ abstract class AbstractApplication implements IApplication
 			);
 		} catch (Exception $e) {
 			// Trigger event!
-			$this->dispatch($this->onError, [$this, $request, $response, $e]);
+			$this->onError($this, $e, $request, $response);
 		}
 
 		// Response validation check
@@ -75,7 +83,7 @@ abstract class AbstractApplication implements IApplication
 		}
 
 		// Trigger event!
-		$finalize = $this->dispatch($this->onResponse, [$this, $request, $response]);
+		$finalize = $this->onResponse($this, $request, $response);
 
 		// In case of manual finalizing, TRUE breaks next progress..
 		if ($finalize === TRUE) return $response;
@@ -100,65 +108,5 @@ abstract class AbstractApplication implements IApplication
 	 * @return ResponseInterface
 	 */
 	abstract protected function finalize(ServerRequestInterface $request, ResponseInterface $response);
-
-	/**
-	 * EVENTS ******************************************************************
-	 */
-
-	/**
-	 * @param callable $callback
-	 * @return void
-	 */
-	public function onStartup(callable $callback)
-	{
-		$this->onStartup[] = $callback;
-	}
-
-	/**
-	 * @param callable $callback
-	 * @return void
-	 */
-	public function onRequest(callable $callback)
-	{
-		$this->onRequest[] = $callback;
-	}
-
-	/**
-	 * @param callable $callback
-	 * @return void
-	 */
-	public function onError(callable $callback)
-	{
-		$this->onError[] = $callback;
-	}
-
-	/**
-	 * @param callable $callback
-	 * @return void
-	 */
-	public function onResponse(callable $callback)
-	{
-		$this->onResponse[] = $callback;
-	}
-
-	/**
-	 * @param array $handlers
-	 * @param array $arguments
-	 * @return mixed
-	 */
-	protected function dispatch(array $handlers, array $arguments)
-	{
-		// Default return value
-		$ret = NULL;
-
-		// Iterate over all events
-		foreach ($handlers as $handler) {
-			// Take all arguments with last return value
-			// and pass to callback handler
-			$ret = call_user_func_array($handlers, $arguments + [$ret]);
-		}
-
-		return $ret;
-	}
 
 }
