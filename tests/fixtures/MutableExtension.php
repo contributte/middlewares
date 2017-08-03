@@ -22,6 +22,7 @@ final class MutableExtension extends CompilerExtension
 
 	/**
 	 * Register services
+	 *
 	 * @return void
 	 */
 	public function loadConfiguration()
@@ -31,6 +32,7 @@ final class MutableExtension extends CompilerExtension
 
 	/**
 	 * Decorate services
+	 *
 	 * @return void
 	 */
 	public function beforeCompile()
