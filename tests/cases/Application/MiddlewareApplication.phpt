@@ -51,3 +51,28 @@ test(function () {
 		$app->run();
 	}, RuntimeException::class);
 });
+
+// Finalize
+test(function () {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+		return $response->withStatus(300);
+	};
+
+	$app = new MiddlewareApplication($callback);
+	$response = $app->run();
+
+	Assert::type(ResponseInterface::class, $response);
+	Assert::equal(300, $response->getStatusCode());
+});
+
+// Send headers
+test(function () {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+		return $response->withHeader('X-Foo', 'bar');
+	};
+
+	$app = new MiddlewareApplication($callback);
+	$response = $app->run();
+	$headers = $response->getHeaders();
+	Assert::equal(['X-Foo' => ['bar']], $headers);
+});
