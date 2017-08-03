@@ -64,7 +64,7 @@ abstract class AbstractMiddlewareExtension extends CompilerExtension
 		foreach ($config['middlewares'] as $service) {
 
 			// Create middleware as service
-			if (strncmp($service, '@', 1) !== 0) {
+			if (is_array($service) || strncmp($service, '@', 1) !== 0) {
 				$def = $builder->addDefinition($this->prefix('middleware' . ($counter++)));
 				Compiler::loadDefinition($def, $service);
 			} else {
