@@ -38,7 +38,30 @@ test(function () {
 			services:
 				middleware: Tests\Fixtures\PassMiddleware
 		', 'neon'));
-	}, 1);
+	}, '1a');
+
+	/** @var Container $container */
+	$container = new $class;
+
+	Assert::count(2, $container->findByType(IMiddleware::class));
+});
+
+// Definition of middlewares
+test(function () {
+	$loader = new ContainerLoader(TEMP_DIR, TRUE);
+	$class = $loader->load(function (Compiler $compiler) {
+		$compiler->addExtension('http', new HttpExtension());
+		$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+		$compiler->loadConfig(FileMock::create('
+			middleware:
+				middlewares:
+					a: 
+						class: Tests\Fixtures\PassMiddleware
+					b: @middleware
+			services:
+				middleware: Tests\Fixtures\PassMiddleware
+		', 'neon'));
+	}, '1b');
 
 	/** @var Container $container */
 	$container = new $class;
@@ -139,7 +162,6 @@ test(function () {
 				middleware:
 					root: Tests\Fixtures\SimpleRootMiddleware
 			', 'neon'));
-
 		}, 6);
 
 		/** @var Container $container */
