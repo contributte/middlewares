@@ -32,8 +32,7 @@ class NetteMiddlewareExtension extends AbstractMiddlewareExtension
 		}
 
 		$application = $builder->addDefinition($this->prefix('application'))
-			->setClass(NetteMiddlewareApplication::class)
-			->setArguments([$this->prefix('chain')]);
+			->setClass(NetteMiddlewareApplication::class);
 
 		$application->addSetup('setHttpRequest', [new Statement('@' . $builder->getByType(Request::class))])
 			->addSetup('setHttpResponse', [new Statement('@' . $builder->getByType(Response::class))]);

@@ -10,11 +10,17 @@ use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\IMiddleware;
 use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
+use Nette\DI\CompilerExtension;
 use Nette\DI\Container;
+use Nette\DI\ContainerBuilder;
 use Nette\DI\ContainerLoader;
+use Nette\DI\ServiceCreationException;
+use Nette\Http\Request;
+use Nette\Http\RequestFactory;
 use Psr\Http\Message\ResponseInterface;
 use Tester\Assert;
 use Tester\FileMock;
+use Tests\Fixtures\MutableExtension;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
@@ -96,4 +102,47 @@ test(function () {
 	$res = $app->run();
 
 	Assert::type(ResponseInterface::class, $res);
+});
+
+// Misssing nette/http request
+test(function () {
+	Assert::throws(function () {
+		$loader = new ContainerLoader(TEMP_DIR, TRUE);
+		$class = $loader->load(function (Compiler $compiler) {
+			$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+			$compiler->loadConfig(FileMock::create('
+				middleware:
+					root: Tests\Fixtures\SimpleRootMiddleware
+			', 'neon'));
+		}, 5);
+
+		/** @var Container $container */
+		$container = new $class;
+	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Request. Do you have nette/http in composer file?');
+});
+
+// Misssing nette/http response
+test(function () {
+	Assert::throws(function () {
+		$loader = new ContainerLoader(TEMP_DIR, TRUE);
+		$class = $loader->load(function (Compiler $compiler) {
+			$mutable = new MutableExtension();
+			$mutable->onLoad[] = function (CompilerExtension $ext, ContainerBuilder $builder) {
+				$builder->addDefinition($ext->prefix('request'))
+					->setClass(Request::class)
+					->setFactory(RequestFactory::class . '::createHttpRequest');
+			};
+
+			$compiler->addExtension('x', $mutable);
+			$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+			$compiler->loadConfig(FileMock::create('
+				middleware:
+					root: Tests\Fixtures\SimpleRootMiddleware
+			', 'neon'));
+
+		}, 6);
+
+		/** @var Container $container */
+		$container = new $class;
+	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Response. Do you have nette/http in composer file?');
 });
