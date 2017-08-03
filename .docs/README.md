@@ -60,7 +60,7 @@ middleware:
     - Contributte\Middlewares\Middleware\TracyMiddleware
     
     # Your custom middlewares
-    - TrainlingSlashMiddleware
+    - TrailingSlashMiddleware
     - UuidMiddleware
     - CspMiddleware
     
@@ -117,7 +117,7 @@ middleware:
     - Contributte\Middlewares\Middleware\AutoBasePathMiddleware
     
     # Your custom middlewares
-    - TrainlingSlashMiddleware
+    - TrailingSlashMiddleware
     - UuidMiddleware
     - CspMiddleware
 ```
@@ -161,7 +161,7 @@ middleware:
     - Contributte\Middlewares\Middleware\BasePathMiddleware(project/www)
     
     # Your custom middlewares
-    - TrainlingSlashMiddleware
+    - TrailingSlashMiddleware
     - UuidMiddleware
     - CspMiddleware
 ```
@@ -181,7 +181,7 @@ services:
     builders: 
       class: Contributte\Middlewares\Middleware\BuilderMiddleware
       setup:
-        - add(TrainlingSlashMiddleware())
+        - add(TrailingSlashMiddleware())
         - add(UuidMiddleware())
         - add(CspMiddleware())
 ```
