@@ -34,7 +34,7 @@ class ChainBuilder
 	public function create()
 	{
 		if (!$this->middlewares) {
-			throw new InvalidStateException('Please add at least one middleware');
+			throw new InvalidStateException('At least one middleware is needed');
 		}
 
 		$next = Lambda::leaf();

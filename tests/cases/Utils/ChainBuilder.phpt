@@ -4,6 +4,7 @@
  * Test: Utils\ChainBuilder
  */
 
+use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\Utils\ChainBuilder;
 use Contributte\Psr7\Psr7ResponseFactory;
 use Contributte\Psr7\Psr7ServerRequestFactory;
@@ -51,4 +52,17 @@ test(function () {
 		'B',
 		'A',
 	], Notes::fetch());
+});
+
+// Chain exceptions
+test(function () {
+	$builder = new ChainBuilder();
+
+	Assert::throws(function () use ($builder) {
+		$builder->add('foobar');
+	}, InvalidStateException::class, 'Middleware is not callable');
+
+	Assert::throws(function () use ($builder) {
+		$builder->create();
+	}, InvalidStateException::class, 'At least one middleware is needed');
 });
