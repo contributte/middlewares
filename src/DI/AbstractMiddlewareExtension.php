@@ -4,6 +4,7 @@ namespace Contributte\Middlewares\DI;
 
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\Utils\ChainBuilder;
+use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
 use Nette\Utils\Validators;
 
@@ -33,12 +34,6 @@ abstract class AbstractMiddlewareExtension extends CompilerExtension
 			throw new InvalidStateException('There must be at least one middleware registered or root middleware configured.');
 		}
 
-		if ($config['root'] !== NULL) {
-			if (strncmp($config['root'], '@', 1) !== 0) {
-				throw new InvalidStateException('Pass root middleware as a service with @ at the beginning');
-			}
-		}
-
 		// Skip next registration, if root middleware is specified
 		if ($config['root'] !== NULL) return;
 
@@ -65,9 +60,21 @@ abstract class AbstractMiddlewareExtension extends CompilerExtension
 		$chain = $builder->getDefinition($this->prefix('chain'));
 
 		// Add middleware services to chain
+		$counter = 0;
 		foreach ($config['middlewares'] as $service) {
+
+			// Create middleware as service
+			if (strncmp($service, '@', 1) !== 0) {
+				$def = $builder->addDefinition($this->prefix('middleware' . ($counter++)));
+				Compiler::loadDefinition($def, $service);
+			} else {
+				$def = $builder->getDefinition(ltrim($service, '@'));
+			}
+
+			$def->addTag('middleware');
+
 			// Append to chain of middlewares
-			$chain->addSetup('add', [$service]);
+			$chain->addSetup('add', [$def]);
 		}
 	}
 
