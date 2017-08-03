@@ -67,7 +67,9 @@ test(function () {
 
 // Send headers
 test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+		$response = $next($request, $response);
+
 		return $response->withHeader('X-Foo', 'bar');
 	};
 
