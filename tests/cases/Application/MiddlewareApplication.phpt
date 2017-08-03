@@ -40,7 +40,7 @@ test(function () {
 	Assert::equal('OK', ob_get_contents());
 });
 
-// Throws exception
+// Return invalid response
 test(function () {
 	Assert::throws(function () {
 		$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -75,4 +75,19 @@ test(function () {
 	$response = $app->run();
 	$headers = $response->getHeaders();
 	Assert::equal(['X-Foo' => ['bar']], $headers);
+});
+
+// Throws exception
+test(function () {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+		throw new RuntimeException('Oh mama');
+	};
+
+	$app = new MiddlewareApplication($callback);
+	$app->onError[] = function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+		Notes::add('CALLED');
+	};
+
+	$response = $app->run();
+	Assert::equal(['CALLED'], Notes::fetch());
 });
