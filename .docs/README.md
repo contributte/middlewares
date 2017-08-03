@@ -81,29 +81,141 @@ At this time we have prepared a few middlewares:
 
 #### `AbstractRootMiddleware`
 
-@todo
+Use should use this middleware if you prefer PHP scripts before NEON declarations.
+
+```php
+namespace App;
+
+use Contributte\Middleares\AbstractRootMiddleware;
+use Contributte\Middleares\TracyMiddleware;
+use Contributte\Middleares\Utils\ChainBuilder;
+
+final class MyAppMiddleware extension AbstractRootMiddleware 
+{
+
+    public function create()
+    {
+        $chain = new ChainBuilder();
+        $chain->add(new TracyMiddleware());
+        $chain->add(new MyCustomMiddleware());
+        
+        return $chain->build();
+    }
+
+}
+```
 
 #### `AutoBasePathMiddleware`
 
-@todo
+It strips basePath from URL address and pass new URL (without basePath) to next middleware.
+
+```yaml
+middleware:
+  middlewares:
+    # Catch all exceptions
+    - Contributte\Middlewares\Middleware\TracyMiddleware
+    - Contributte\Middlewares\Middleware\AutoBasePathMiddleware
+    
+    # Your custom middlewares
+    - TrainlingSlashMiddleware
+    - UuidMiddleware
+    - CspMiddleware
+```
 
 #### `BaseMiddleware`
 
-@todo
+This is just abstract class for your middlewares.
+
+```php
+namespace App;
+
+use Contributte\Middleares\BaseMiddleware;
+
+final class MyCustomMiddleware extension BaseMiddleware 
+{
+
+
+    /**
+     * @param ServerRequestInterface $psr7Request
+     * @param ResponseInterface $psr7Response
+     * @param callable $next
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        // Let's play
+    }
+
+}
+```
 
 #### `BasePathMiddleware`
 
-@todo
+It's quite similar with `AutoBasePathMiddleware`, but you could define the basePath.
+
+```yaml
+middleware:
+  middlewares:
+    # Catch all exceptions
+    - Contributte\Middlewares\Middleware\TracyMiddleware
+    - Contributte\Middlewares\Middleware\BasePathMiddleware(project/www)
+    
+    # Your custom middlewares
+    - TrainlingSlashMiddleware
+    - UuidMiddleware
+    - CspMiddleware
+```
 
 #### `BuilderMiddleware`
 
-@todo
+Over this middleware you can build your own chain of middlewares.
+
+```yaml
+middleware:
+  middlewares:
+    # Catch all exceptions
+    - Contributte\Middlewares\Middleware\TracyMiddleware
+    - @builder
+
+services:
+    builders: 
+      class: Contributte\Middlewares\Middleware\BuilderMiddleware
+      setup:
+        - add(TrainlingSlashMiddleware())
+        - add(UuidMiddleware())
+        - add(CspMiddleware())
+```
 
 #### `PresenterMiddleware`
 
 This middleware simulates original nette application behaviours. It converts Psr7Request to `Nette\Application\Request`
 and process returned `Nette\Application\Response`.
 
+```yaml
+middleware:
+  middlewares:
+    # Catch all exceptions
+    - Contributte\Middlewares\Middleware\TracyMiddleware
+    - Contributte\Middlewares\Middleware\PresenterMiddleware
+```
+
 #### `TracyMiddleware`
 
-This middleware catch all exceptions and shows tracy dump.
+This middleware catch all exceptions and shows tracy dump. It can be instanced normally or via factory `TracyMiddleware::factory($debugMode)`.
+
+```yaml
+middleware:
+  middlewares:
+    tracy1:
+      class: Contributte\Middlewares\Middleware\TracyMiddleware
+      setup: 
+        - enable()
+        - setMode(Tracy\Debugger::PRODUCTION)
+        - setEmail(cool@contributte.org)
+
+    tracy2:
+      class: Contributte\Middlewares\Middleware\TracyMiddleware::factory(%debugMode%)
+      setup: 
+        - setMode(Tracy\Debugger::PRODUCTION)
+        - setEmail(cool@contributte.org)
+```
