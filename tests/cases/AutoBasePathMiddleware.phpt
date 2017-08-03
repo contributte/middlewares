@@ -58,6 +58,8 @@ final class AutoBasePathMiddlewareTest extends TestCase
 			['/foo/bar/cool-url//', '/foo/bar/index.php', '/foo/bar/', '/cool-url//'],
 			['/foo/bar/123456', '/foo/bar/index.php', '/foo/bar/', '/123456'],
 			['/foo/bar/invalid', '/bar/bar/index.php', '/', '/foo/bar/invalid'],
+			['/', '/', '/', '/'],
+			['', '', '', '/'],
 		];
 	}
 
