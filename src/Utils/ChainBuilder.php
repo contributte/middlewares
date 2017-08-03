@@ -29,6 +29,17 @@ class ChainBuilder
 	}
 
 	/**
+	 * @param array $middlewares
+	 * @return void
+	 */
+	public function addAll(array $middlewares)
+	{
+		foreach ($middlewares as $middleware) {
+			$this->add($middleware);
+		}
+	}
+
+	/**
 	 * @return callable
 	 */
 	public function create()
@@ -48,6 +59,18 @@ class ChainBuilder
 		}
 
 		return $next;
+	}
+
+	/**
+	 * @param array $middlewares
+	 * @return callable
+	 */
+	public static function factory(array $middlewares)
+	{
+		$chain = new ChainBuilder();
+		$chain->addAll($middlewares);
+
+		return $chain->create();
 	}
 
 }
