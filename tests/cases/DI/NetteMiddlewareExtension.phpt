@@ -58,6 +58,11 @@ test(function () {
 					a: 
 						class: Tests\Fixtures\PassMiddleware
 					b: @middleware
+					c: Tests\Fixtures\CompositeMiddleware([
+						Tests\Fixtures\PassMiddleware(),
+						Tests\Fixtures\PassMiddleware(),
+						Tests\Fixtures\PassMiddleware()
+					])
 			services:
 				middleware: Tests\Fixtures\PassMiddleware
 		', 'neon'));
@@ -66,7 +71,7 @@ test(function () {
 	/** @var Container $container */
 	$container = new $class;
 
-	Assert::count(2, $container->findByType(IMiddleware::class));
+	Assert::count(3, $container->findByType(IMiddleware::class));
 });
 
 // Exception - no configuration
