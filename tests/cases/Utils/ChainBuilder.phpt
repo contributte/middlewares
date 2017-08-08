@@ -66,3 +66,17 @@ test(function () {
 		$builder->create();
 	}, InvalidStateException::class, 'At least one middleware is needed');
 });
+
+// Factory
+test(function () {
+	$middleware = ChainBuilder::factory([function ($req, $res, callable $next) {
+		Notes::add('A');
+		$res = $next($req, $res);
+		Notes::add('A');
+
+		return $res;
+	}]);
+
+	$response = $middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal());
+	Assert::equal(['A', 'A'], Notes::fetch());
+});
