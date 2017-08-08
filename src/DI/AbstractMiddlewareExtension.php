@@ -6,6 +6,7 @@ use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\Utils\ChainBuilder;
 use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Statement;
 use Nette\Utils\Validators;
 
 abstract class AbstractMiddlewareExtension extends CompilerExtension
@@ -64,7 +65,11 @@ abstract class AbstractMiddlewareExtension extends CompilerExtension
 		foreach ($config['middlewares'] as $service) {
 
 			// Create middleware as service
-			if (is_array($service) || strncmp($service, '@', 1) !== 0) {
+			if (
+				is_array($service)
+				|| $service instanceof Statement
+				|| (is_string($service) && strncmp($service, '@', 1) !== 0)
+			) {
 				$def = $builder->addDefinition($this->prefix('middleware' . ($counter++)));
 				Compiler::loadDefinition($def, $service);
 			} else {
