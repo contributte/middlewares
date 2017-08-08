@@ -46,6 +46,7 @@ We have a many solutions and prepared libraries in PHP world.
 - [Installation - how to register an extension](https://github.com/contributte/middlewares/tree/master/.docs#installation)
 - [Modes - nette/standalone mode](https://github.com/contributte/middlewares/tree/master/.docs#modes)
 - [Middlewares - implementations](https://github.com/contributte/middlewares/tree/master/.docs#middlewares)
+- [Utils - useful classes](https://github.com/contributte/middlewares/tree/master/.docs#utils)
 
 ## Design
 

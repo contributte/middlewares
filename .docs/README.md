@@ -17,6 +17,9 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [PresenterMiddleware](#presentermiddleware)
     - [SecurityMiddleware](#securitymiddleware)
     - [TracyMiddleware](#tracymiddleware)
+- [Utils](#utils)
+    - [ChainBuilder](#chainbuilder)
+    - [Lambda](#lambda)
 
 ## Installation
 
@@ -218,4 +221,38 @@ middleware:
       setup: 
         - setMode(Tracy\Debugger::PRODUCTION)
         - setEmail(cool@contributte.org)
+```
+
+## Utils
+
+### ChainBuilder
+
+```php
+$builder = new ChainBuilder();
+$builder->add(function ($req, $res, callable $next) {
+    return $next($req, $res);
+});
+$builder->add(function ($req, $res, callable $next) {
+    return $next($req, $res);
+});
+$middleware = $builder->create();
+```
+
+### Lambda
+
+Lambda utils class creates anonymous functions.
+
+```php
+Lambda::leaf()
+// ===
+return function (RequestInterface $request, ResponseInterface $response) {
+    return $response;
+};
+```
+
+```php
+Lambda::blank()
+// ===
+return function () {
+};
 ```
