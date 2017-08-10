@@ -2,7 +2,6 @@
 
 namespace Contributte\Middlewares;
 
-use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tracy\Debugger;
@@ -25,21 +24,16 @@ class TracyMiddleware extends BaseMiddleware
 	/** @var string */
 	protected $email;
 
-	/** @var bool */
-	protected $autoExit = TRUE;
-
 	/**
 	 * @param mixed $mode
 	 * @param string $logDir
 	 * @param string $email
-	 * @param bool $autoExit
 	 */
-	public function __construct($mode = Debugger::DEVELOPMENT, $logDir = NULL, $email = NULL, $autoExit = TRUE)
+	public function __construct($mode = Debugger::DEVELOPMENT, $logDir = NULL, $email = NULL)
 	{
 		$this->mode = $mode;
 		$this->logDir = $logDir;
 		$this->email = $email;
-		$this->autoExit = $autoExit;
 	}
 
 	/**
@@ -86,15 +80,6 @@ class TracyMiddleware extends BaseMiddleware
 	}
 
 	/**
-	 * @param bool $autoExit
-	 * @return void
-	 */
-	public function setAutoExit($autoExit)
-	{
-		$this->autoExit = $autoExit;
-	}
-
-	/**
 	 * Catch all exceptions
 	 *
 	 * @param ServerRequestInterface $psr7Request
@@ -108,19 +93,7 @@ class TracyMiddleware extends BaseMiddleware
 			Debugger::enable($this->mode, $this->logDir, $this->email);
 		}
 
-		try {
-			// Pass to next middleware
-			$psr7Response = $next($psr7Request, $psr7Response);
-		} catch (Exception $e) {
-			// Handle is followed
-			// @todo catch Throwable
-		}
-
-		if (isset($e)) {
-			Debugger::exceptionHandler($e, $this->autoExit);
-		}
-
-		return $psr7Response;
+		return $next($psr7Request, $psr7Response);
 	}
 
 	/**
