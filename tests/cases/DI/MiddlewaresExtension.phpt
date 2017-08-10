@@ -1,11 +1,12 @@
 <?php
 
 /**
- * Test: DI\NetteMiddlewareExtension
+ * Test: DI\NetteMiddlewareExtension + DI\StandaloneMiddlewareExtension
  */
 
 use Contributte\Middlewares\Application\MiddlewareApplication;
 use Contributte\Middlewares\DI\NetteMiddlewareExtension;
+use Contributte\Middlewares\DI\StandaloneMiddlewareExtension;
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\IMiddleware;
 use Nette\Bridges\HttpDI\HttpExtension;
@@ -51,7 +52,7 @@ test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+		$compiler->addExtension('middleware', new StandaloneMiddlewareExtension());
 		$compiler->loadConfig(FileMock::create('
 			middleware:
 				middlewares:
@@ -97,7 +98,25 @@ test(function () {
 			middleware:
 				root: Tests\Fixtures\SimpleRootMiddleware
 		', 'neon'));
-	}, 3);
+	}, '3a');
+
+	/** @var Container $container */
+	$container = new $class;
+
+	Assert::count(0, $container->findByType(IMiddleware::class));
+});
+
+// Root middleware - defined as string
+test(function () {
+	$loader = new ContainerLoader(TEMP_DIR, TRUE);
+	$class = $loader->load(function (Compiler $compiler) {
+		$compiler->addExtension('http', new HttpExtension());
+		$compiler->addExtension('middleware', new StandaloneMiddlewareExtension());
+		$compiler->loadConfig(FileMock::create('
+			middleware:
+				root: Tests\Fixtures\SimpleRootMiddleware
+		', 'neon'));
+	}, '3b');
 
 	/** @var Container $container */
 	$container = new $class;
