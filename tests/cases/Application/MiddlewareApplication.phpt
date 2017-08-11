@@ -90,6 +90,94 @@ test(function () {
 		Notes::add('CALLED');
 	};
 
-	$response = $app->run();
+	Assert::throws(function () use ($app) {
+		$app->run();
+	}, RuntimeException::class, 'Oh mama');
 	Assert::equal(['CALLED'], Notes::fetch());
+});
+
+// Throws exception and catch
+test(function () {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+		throw new RuntimeException('Oh mama');
+	};
+
+	$app = new MiddlewareApplication($callback);
+	$app->setCatchExceptions(TRUE);
+	$app->onError[] = function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+		Notes::add('CALLED');
+	};
+
+	$app->run();
+	Assert::equal(['CALLED'], Notes::fetch());
+});
+
+// Throws exception and handle in onError
+test(function () {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+		throw new RuntimeException('Oh mama');
+	};
+
+	$app = new MiddlewareApplication($callback);
+	$app->onError[] = function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+		Notes::add('CALLED');
+
+		return 'OK';
+	};
+
+	Assert::equal('OK', $app->run());
+	Assert::equal(['CALLED'], Notes::fetch());
+});
+
+// Dispatching events
+test(function () {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+		$response->getBody()->write('OK');
+
+		return $response;
+	};
+
+	$app = new MiddlewareApplication($callback);
+	$app->onStartup[] = function (MiddlewareApplication $app) {
+		Notes::add('STARTUP');
+	};
+	$app->onRequest[] = function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
+		Notes::add('REQUEST');
+	};
+	$app->onResponse[] = function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
+		Notes::add('RESPONSE');
+	};
+
+	Assert::equal('OK', (string) $app->run()->getBody());
+	Assert::equal(['STARTUP', 'REQUEST', 'RESPONSE'], Notes::fetch());
+});
+
+
+// Dispatching events with return value as parameter
+test(function () {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+		$response->getBody()->write('OK');
+
+		return $response;
+	};
+
+	$app = new MiddlewareApplication($callback);
+	$app->onStartup[] = function (MiddlewareApplication $app) {
+		Notes::add('STARTUP1');
+
+		return '1';
+	};
+	$app->onStartup[] = function (MiddlewareApplication $app, $prev) {
+		Notes::add('STARTUP2');
+		Notes::add($prev);
+
+		return '2';
+	};
+	$app->onStartup[] = function (MiddlewareApplication $app, $prev) {
+		Notes::add('STARTUP3');
+		Notes::add($prev);
+	};
+
+	Assert::equal('OK', (string) $app->run()->getBody());
+	Assert::equal(['STARTUP1', 'STARTUP2', '1', 'STARTUP3', '2'], Notes::fetch());
 });

@@ -11,11 +11,6 @@ use RuntimeException;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
- *
- * @method void onStartup(AbstractApplication $self)
- * @method void onRequest(AbstractApplication $self, ServerRequestInterface $req, ResponseInterface $res)
- * @method mixed onError(AbstractApplication $self, Exception $e, ServerRequestInterface $req, ResponseInterface $res)
- * @method mixed onResponse(AbstractApplication $self, ServerRequestInterface $req, ResponseInterface $res)
  */
 abstract class AbstractApplication implements IApplication
 {
@@ -65,7 +60,7 @@ abstract class AbstractApplication implements IApplication
 	public function run()
 	{
 		// Trigger event!
-		$this->onStartup($this);
+		$this->dispatch($this->onStartup, [$this]);
 
 		// Create initial request & response (PSR7!)
 		$request = $this->createInitialRequest();
@@ -73,7 +68,7 @@ abstract class AbstractApplication implements IApplication
 
 		try {
 			// Trigger event!
-			$this->onRequest($this, $request, $response);
+			$this->dispatch($this->onRequest, [$this, $request, $response]);
 
 			// Right to the cycle
 			$response = call_user_func(
@@ -91,7 +86,7 @@ abstract class AbstractApplication implements IApplication
 			}
 		} catch (Exception $e) {
 			// Trigger event! In case of manual handling error, returned object is passed.
-			$res = $this->onError($this, $e, $request, $response);
+			$res = $this->dispatch($this->onError, [$this, $e, $request, $response]);
 			if ($res !== NULL && $res !== FALSE) return $res;
 
 			// Throw exception again if it's not caught
@@ -99,7 +94,7 @@ abstract class AbstractApplication implements IApplication
 		}
 
 		// Trigger event! In case of manual finalizing, returned object is passed.
-		$res = $this->onResponse($this, $request, $response);
+		$res = $this->dispatch($this->onResponse, [$this, $request, $response]);
 		if ($res !== NULL && $res !== FALSE) return $res;
 
 		// Send to finalizer (simple send response)
@@ -122,5 +117,29 @@ abstract class AbstractApplication implements IApplication
 	 * @return ResponseInterface
 	 */
 	abstract protected function finalize(ServerRequestInterface $request, ResponseInterface $response);
+
+	/**
+	 * HELPERS *****************************************************************
+	 */
+
+	/**
+	 * @param array $handlers
+	 * @param array $arguments
+	 * @return mixed
+	 */
+	protected function dispatch(array $handlers, array $arguments)
+	{
+		// Default return value
+		$ret = NULL;
+
+		// Iterate over all events
+		foreach ($handlers as $handler) {
+			// Take all arguments with last return value
+			// and pass to callback handler
+			$ret = call_user_func_array($handler, array_merge($arguments, (array) $ret));
+		}
+
+		return $ret;
+	}
 
 }
