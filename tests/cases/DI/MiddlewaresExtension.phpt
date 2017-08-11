@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: DI\NetteMiddlewareExtension + DI\StandaloneMiddlewareExtension
+ * Test: DI\NetteMiddlewareExtension + DI\MiddlewareExtension
  */
 
 use Contributte\Middlewares\Application\MiddlewareApplication;
-use Contributte\Middlewares\DI\NetteMiddlewareExtension;
-use Contributte\Middlewares\DI\StandaloneMiddlewareExtension;
+use Contributte\Middlewares\DI\MiddlewaresExtension;
+use Contributte\Middlewares\DI\NetteMiddlewaresExtension;
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\IMiddleware;
 use Nette\Bridges\HttpDI\HttpExtension;
@@ -30,7 +30,7 @@ test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
 			middleware:
 				middlewares:
@@ -52,7 +52,7 @@ test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new StandaloneMiddlewareExtension());
+		$compiler->addExtension('middleware', new MiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
 			middleware:
 				middlewares:
@@ -80,7 +80,7 @@ test(function () {
 	ASsert::throws(function () {
 		$loader = new ContainerLoader(TEMP_DIR, TRUE);
 		$class = $loader->load(function (Compiler $compiler) {
-			$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		}, 2);
 
 		/** @var Container $container */
@@ -93,7 +93,7 @@ test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
 			middleware:
 				root: Tests\Fixtures\SimpleRootMiddleware
@@ -111,7 +111,7 @@ test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new StandaloneMiddlewareExtension());
+		$compiler->addExtension('middleware', new MiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
 			middleware:
 				root: Tests\Fixtures\SimpleRootMiddleware
@@ -129,7 +129,7 @@ test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
 			middleware:
 				root: @root
@@ -156,7 +156,7 @@ test(function () {
 	Assert::throws(function () {
 		$loader = new ContainerLoader(TEMP_DIR, TRUE);
 		$class = $loader->load(function (Compiler $compiler) {
-			$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 			$compiler->loadConfig(FileMock::create('
 				middleware:
 					root: Tests\Fixtures\SimpleRootMiddleware
@@ -181,7 +181,7 @@ test(function () {
 			};
 
 			$compiler->addExtension('x', $mutable);
-			$compiler->addExtension('middleware', new NetteMiddlewareExtension());
+			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 			$compiler->loadConfig(FileMock::create('
 				middleware:
 					root: Tests\Fixtures\SimpleRootMiddleware

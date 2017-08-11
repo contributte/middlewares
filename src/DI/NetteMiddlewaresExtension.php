@@ -8,7 +8,7 @@ use Nette\DI\Statement;
 use Nette\Http\Request;
 use Nette\Http\Response;
 
-class NetteMiddlewareExtension extends AbstractMiddlewareExtension
+class NetteMiddlewaresExtension extends AbstractMiddlewaresExtension
 {
 
 	/**

@@ -9,7 +9,7 @@ use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
 use Nette\Utils\Validators;
 
-abstract class AbstractMiddlewareExtension extends CompilerExtension
+abstract class AbstractMiddlewaresExtension extends CompilerExtension
 {
 
 	/** @var array */

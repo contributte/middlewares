@@ -5,7 +5,7 @@ namespace Contributte\Middlewares\DI;
 use Contributte\Middlewares\Application\MiddlewareApplication;
 use Nette\DI\Statement;
 
-class StandaloneMiddlewareExtension extends AbstractMiddlewareExtension
+class MiddlewaresExtension extends AbstractMiddlewaresExtension
 {
 
 	/**
