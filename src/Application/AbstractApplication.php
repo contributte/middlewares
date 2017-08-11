@@ -14,8 +14,8 @@ use RuntimeException;
  *
  * @method void onStartup(AbstractApplication $self)
  * @method void onRequest(AbstractApplication $self, ServerRequestInterface $req, ResponseInterface $res)
- * @method void onError(AbstractApplication $self, Exception $e, ServerRequestInterface $req, ResponseInterface $res)
- * @method ResponseInterface onResponse(AbstractApplication $self, ServerRequestInterface $req, ResponseInterface $res)
+ * @method mixed onError(AbstractApplication $self, Exception $e, ServerRequestInterface $req, ResponseInterface $res)
+ * @method mixed onResponse(AbstractApplication $self, ServerRequestInterface $req, ResponseInterface $res)
  */
 abstract class AbstractApplication implements IApplication
 {
@@ -37,12 +37,24 @@ abstract class AbstractApplication implements IApplication
 	/** @var callable|IMiddleware */
 	private $chain;
 
+	/** @var bool */
+	private $catchExceptions = FALSE;
+
 	/**
 	 * @param callable|IMiddleware $chain
 	 */
 	public function __construct($chain)
 	{
 		$this->chain = $chain;
+	}
+
+	/**
+	 * @param bool $catch
+	 * @return void
+	 */
+	public function setCatchExceptions($catch = TRUE)
+	{
+		$this->catchExceptions = $catch;
 	}
 
 	/**
@@ -72,21 +84,23 @@ abstract class AbstractApplication implements IApplication
 					return $response;
 				}
 			);
+
+			// Response validation check
+			if (!isset($response) || $response == NULL) {
+				throw new RuntimeException('Final response cannot be NULL or unset');
+			}
 		} catch (Exception $e) {
-			// Trigger event!
-			$this->onError($this, $e, $request, $response);
+			// Trigger event! In case of manual handling error, returned object is passed.
+			$res = $this->onError($this, $e, $request, $response);
+			if ($res !== NULL && $res !== FALSE) return $res;
+
+			// Throw exception again if it's not caught
+			if ($this->catchExceptions !== TRUE) throw $e;
 		}
 
-		// Response validation check
-		if (!isset($response) || $response == NULL) {
-			throw new RuntimeException('Final response cannot be NULL or unset');
-		}
-
-		// Trigger event!
-		$finalize = $this->onResponse($this, $request, $response);
-
-		// In case of manual finalizing, TRUE breaks next progress..
-		if ($finalize === TRUE) return $response;
+		// Trigger event! In case of manual finalizing, returned object is passed.
+		$res = $this->onResponse($this, $request, $response);
+		if ($res !== NULL && $res !== FALSE) return $res;
 
 		// Send to finalizer (simple send response)
 		return $this->finalize($request, $response);
