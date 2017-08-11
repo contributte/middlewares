@@ -6,6 +6,7 @@
  * @exitCode 255
  * @httpCode 500
  * @outputMatch %A?%OK!
+ * @phpVersion >= 7.0
  */
 
 use Contributte\Middlewares\TracyMiddleware;
