@@ -93,7 +93,7 @@ use Contributte\Middleares\AbstractRootMiddleware;
 use Contributte\Middleares\TracyMiddleware;
 use Contributte\Middleares\Utils\ChainBuilder;
 
-final class MyAppMiddleware extension AbstractRootMiddleware 
+final class MyAppMiddleware extends AbstractRootMiddleware 
 {
 
     public function create()
@@ -134,7 +134,7 @@ namespace App;
 
 use Contributte\Middleares\BaseMiddleware;
 
-final class MyCustomMiddleware extension BaseMiddleware 
+final class MyCustomMiddleware extends BaseMiddleware 
 {
 
 
@@ -201,6 +201,8 @@ middleware:
     - Contributte\Middlewares\Middleware\TracyMiddleware
     - Contributte\Middlewares\Middleware\PresenterMiddleware
 ```
+
+PresenterMiddleware requires to run middlewares in Nette mode. Take a look at running [modes#application].
 
 #### `TracyMiddleware`
 
