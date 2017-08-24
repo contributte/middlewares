@@ -15,8 +15,6 @@ use RuntimeException;
 abstract class AbstractApplication implements IApplication
 {
 
-	use SmartObject;
-
 	/** @var callable[] */
 	public $onStartup = [];
 
