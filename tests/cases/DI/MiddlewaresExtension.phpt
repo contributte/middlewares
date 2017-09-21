@@ -7,7 +7,6 @@
 use Contributte\Middlewares\Application\MiddlewareApplication;
 use Contributte\Middlewares\DI\MiddlewaresExtension;
 use Contributte\Middlewares\DI\NetteMiddlewaresExtension;
-use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\IMiddleware;
 use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
@@ -73,19 +72,6 @@ test(function () {
 	$container = new $class;
 
 	Assert::count(3, $container->findByType(IMiddleware::class));
-});
-
-// Exception - no configuration
-test(function () {
-	ASsert::throws(function () {
-		$loader = new ContainerLoader(TEMP_DIR, TRUE);
-		$class = $loader->load(function (Compiler $compiler) {
-			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
-		}, 2);
-
-		/** @var Container $container */
-		$container = new $class;
-	}, InvalidStateException::class, 'There must be at least one middleware registered or root middleware configured.');
 });
 
 // Root middleware - defined as string
@@ -191,4 +177,31 @@ test(function () {
 		/** @var Container $container */
 		$container = new $class;
 	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Response. Do you have nette/http in composer file?');
+});
+
+// Priority middlewares
+test(function () {
+	$loader = new ContainerLoader(TEMP_DIR, TRUE);
+	$class = $loader->load(function (Compiler $compiler) {
+		$compiler->addExtension('http', new HttpExtension());
+		$compiler->addExtension('middleware', new MiddlewaresExtension());
+		$compiler->loadConfig(FileMock::create('
+			services:
+				foo1: {class: Tests\Fixtures\PassMiddleware, tags: {middleware: {priority: 100}}}
+				foo2: {class: Tests\Fixtures\PassMiddleware, tags: {middleware: {priority: 200}}}
+				foo3: {class: Tests\Fixtures\PassMiddleware, tags: {middleware: {priority: 300}}}
+		', 'neon'));
+	}, '4');
+
+	/** @var Container $container */
+	$container = new $class;
+
+	Assert::count(3, $container->findByType(IMiddleware::class));
+	Assert::count(3, $container->findByTag(MiddlewaresExtension::MIDDLEWARE_TAG));
+
+	$search = $container->findByTag(MiddlewaresExtension::MIDDLEWARE_TAG);
+
+	Assert::equal(['priority' => 100], $search['foo1']);
+	Assert::equal(['priority' => 200], $search['foo2']);
+	Assert::equal(['priority' => 300], $search['foo3']);
 });

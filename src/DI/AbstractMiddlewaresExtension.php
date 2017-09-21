@@ -12,6 +12,8 @@ use Nette\Utils\Validators;
 abstract class AbstractMiddlewaresExtension extends CompilerExtension
 {
 
+	const MIDDLEWARE_TAG = 'middleware';
+
 	/** @var array */
 	protected $defaults = [
 		'middlewares' => [],
@@ -31,10 +33,6 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		Validators::assertField($config, 'middlewares', 'array');
 		Validators::assertField($config, 'root', 'string|null');
 
-		if (empty($config['middlewares']) && $config['root'] === NULL) {
-			throw new InvalidStateException('There must be at least one middleware registered or root middleware configured.');
-		}
-
 		// Skip next registration, if root middleware is specified
 		if ($config['root'] !== NULL) return;
 
@@ -52,10 +50,37 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
+		$config = $this->getConfig();
 
 		// Skip next registration, if root middleware is specified
-		if ($config['root'] !== NULL) return;
+		if ($config['root'] !== NULL) {
+			return;
+		}
+
+		// Compile defined middlewares
+		if (!empty($config['middlewares'])) {
+			$this->compileDefinedMiddlewares();
+
+			return;
+		}
+
+		// Compile tagged middlewares
+		if ($builder->findByTag(self::MIDDLEWARE_TAG)) {
+			$this->compileTaggedMiddlewares();
+
+			return;
+		}
+
+		throw new InvalidStateException('There must be at least one middleware registered, tag middleware added or root middleware configured.');
+	}
+
+	/**
+	 * @return void
+	 */
+	private function compileDefinedMiddlewares()
+	{
+		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
 
 		// Obtain middleware chain builder
 		$chain = $builder->getDefinition($this->prefix('chain'));
@@ -76,10 +101,45 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 				$def = $builder->getDefinition(ltrim($service, '@'));
 			}
 
-			$def->addTag('middleware');
-
 			// Append to chain of middlewares
 			$chain->addSetup('add', [$def]);
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	private function compileTaggedMiddlewares()
+	{
+		$builder = $this->getContainerBuilder();
+
+		// Find all definitions by tag
+		$definitions = $builder->findByTag(self::MIDDLEWARE_TAG);
+
+		// Ensure we have at least 1 service
+		if (!$definitions) {
+			throw new InvalidStateException(sprintf('No services with tag "%s"', self::MIDDLEWARE_TAG));
+		}
+
+		// Sort by priority
+		uasort($definitions, function ($a, $b) {
+			$p1 = isset($a['priority']) ? $a['priority'] : 10;
+			$p2 = isset($b['priority']) ? $b['priority'] : 10;
+
+			if ($p1 == $p2) {
+				return 0;
+			}
+
+			return ($p1 < $p2) ? -1 : 1;
+		});
+
+		// Obtain middleware chain builder
+		$chain = $builder->getDefinition($this->prefix('chain'));
+
+		// Add middleware services to chain
+		foreach ($definitions as $name => $tag) {
+			// Append to chain of middlewares
+			$chain->addSetup('add', [$builder->getDefinition($name)]);
 		}
 	}
 
