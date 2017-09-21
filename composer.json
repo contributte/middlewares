@@ -13,7 +13,7 @@
   ],
   "require": {
     "php": ">= 5.6",
-    "contributte/psr7-http-message": "^0.2.0"
+    "contributte/psr7-http-message": "~0.3.0"
   },
   "require-dev": {
     "ninjify/qa": "^0.4.0",
@@ -51,6 +51,8 @@
       "tester -s -p php --colors 1 -c tests/php-unix.ini -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src tests/cases"
     ]
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "extra": {
     "branch-alias": {
       "dev-master": "0.4.x-dev"
