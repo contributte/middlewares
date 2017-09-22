@@ -37,7 +37,7 @@ final class AutoBasePathMiddlewareTest extends TestCase
 			Psr7ServerRequestFactory::fromSuperGlobal(),
 			Psr7ResponseFactory::fromGlobal(),
 			function (ServerRequestInterface $req, ResponseInterface $res) use ($requestUri, $basePath, $coolUrl) {
-				Assert::equal($requestUri, $req->getAttribute(AutoBasePathMiddleware::ATTR_ORIG_PATH));
+				Assert::equal($requestUri, $req->getAttribute(AutoBasePathMiddleware::ATTR_ORIGINAL_PATH));
 				Assert::equal($basePath, $req->getAttribute(AutoBasePathMiddleware::ATTR_BASE_PATH));
 				Assert::equal($coolUrl, $req->getAttribute(AutoBasePathMiddleware::ATTR_PATH));
 				Assert::equal($coolUrl, $req->getUri()->getPath());
