@@ -14,9 +14,9 @@ class AutoBasePathMiddleware extends BaseMiddleware
 {
 
 	// Attributes in ServerRequestInterface
-	const ATTR_ORIG_PATH = 'C-Orig-Path';
-	const ATTR_BASE_PATH = 'C-Base-Path';
-	const ATTR_PATH = 'C-Path';
+	const ATTR_ORIGINAL_PATH = 'contributte.original.path';
+	const ATTR_BASE_PATH = 'contributte.base.path';
+	const ATTR_PATH = 'contributte.path';
 
 	/**
 	 * @param ServerRequestInterface $psr7Request
@@ -62,7 +62,7 @@ class AutoBasePathMiddleware extends BaseMiddleware
 
 		// Update request with new path (fake path) and also provide new attributes
 		$psr7Request = $psr7Request
-			->withAttribute(self::ATTR_ORIG_PATH, $uri->getPath())
+			->withAttribute(self::ATTR_ORIGINAL_PATH, $uri->getPath())
 			->withAttribute(self::ATTR_BASE_PATH, $basePath)
 			->withAttribute(self::ATTR_PATH, $newPath)
 			->withUri($uri->withPath($newPath));

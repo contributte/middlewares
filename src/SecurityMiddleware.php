@@ -13,7 +13,7 @@ class SecurityMiddleware extends BaseMiddleware
 {
 
 	// Attributes in ServerRequestInterface
-	const ATTR_IDENTITY = 'C-Identity';
+	const ATTR_IDENTITY = 'contributte.identity';
 
 	/** @var IAuthenticator */
 	private $authenticator;
