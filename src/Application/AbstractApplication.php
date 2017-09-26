@@ -4,7 +4,6 @@ namespace Contributte\Middlewares\Application;
 
 use Contributte\Middlewares\IMiddleware;
 use Exception;
-use Nette\SmartObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
