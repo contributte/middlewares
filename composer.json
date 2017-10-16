@@ -26,7 +26,7 @@
   "suggest": {
     "tracy/tracy": "to use TracyMiddleware",
     "nette/di": "to use CompilerExtension(NetteMiddlewareExtension | StandaloneMiddlewareExtension)",
-    "nette/htt": "to use NetteMiddlewareExtension & NetteMiddlewareApplication",
+    "nette/http": "to use NetteMiddlewareExtension & NetteMiddlewareApplication",
     "nette/application": "to use PresenterMiddleware"
   },
   "autoload": {
