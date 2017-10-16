@@ -27,7 +27,7 @@ class SecurityMiddleware extends BaseMiddleware
 	}
 
 	/**
-	 * Drop base path from URL
+	 * Authenticate user from given request
 	 *
 	 * @param ServerRequestInterface $psr7Request
 	 * @param ResponseInterface $psr7Response
@@ -40,13 +40,31 @@ class SecurityMiddleware extends BaseMiddleware
 
 		// If we have a identity, then go to next middlewares,
 		// otherwise stop and return current response
-		if (!$identity) return $psr7Response;
+		if (!$identity) return $this->denied($psr7Request, $psr7Response);
 
 		// Add info about current identity
 		$psr7Request = $psr7Request->withAttribute(self::ATTR_IDENTITY, $identity);
 
 		// Pass to next middleware
 		return $next($psr7Request, $psr7Response);
+	}
+
+	/**
+	 * @param ServerRequestInterface $psr7Request
+	 * @param ResponseInterface $psr7Response
+	 * @return ResponseInterface
+	 */
+	protected function denied(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response)
+	{
+		$psr7Response->getBody()->write(json_encode([
+			'status' => 'error',
+			'message' => 'Client authentication failed',
+			'code' => 401,
+		]));
+
+		return $psr7Response
+			->withHeader('Content-Type', 'application/json')
+			->withStatus(401);
 	}
 
 }
