@@ -24,9 +24,10 @@ composer require contributte/middlewares
 
 ## Versions
 
-| State       | Version | Branch   | PHP      |
-|-------------|---------|----------|----------|
-| development | `^0.2`  | `master` | `>= 5.6` |
+| State       | Version | Branch   | PHP        |
+|-------------|---------|----------|------------|
+| development | `~0.5.0`  | `master` | `>= 5.6` |
+| stable      | `~0.4.0`  | `master` | `>= 5.6` |
 
 ## Prolog
 
