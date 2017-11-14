@@ -49,10 +49,12 @@ $container->getByType(Contributte\Middlewares\Application\IApplication::class)->
 
 That's all. The main purpose of this is to start via our application, not the default one `Nette\Application\Application`.
 
-### Middlewares
+## Middlewares
 
 Build your own middleware chain cannot be easier. Just place your middleware (services) under `middleware` section. 
 It is pretty same as register new service in `NEON` file.
+
+### List
 
 You can register list of middlewares like this:
 
@@ -71,12 +73,40 @@ middleware:
     - Contributte\Middlewares\Middleware\PresenterMiddleware
 ```
 
+### RootMiddleware
+
 Or just register **root** middleware as the very first entrypoint.
 
 ```yaml
 middleware:
   root: App\Model\AppMiddleware
 ```
+
+### Tags
+
+Or you can use tags at services.
+
+```yaml
+services:
+  m1: 
+    factory: App\Model\AppMiddleware1
+    tags: [middleware: [priority: 5]]
+
+  m2: 
+    factory: App\Model\AppMiddleware2
+    tags: [middleware]
+    # default priority = 10
+
+  m3: 
+    factory: App\Model\AppMiddleware3
+    tags: [middleware: [priority: 15]]
+```
+
+The final middleware list is:
+
+- `AppMiddleware1`
+- `AppMiddleware2`
+- `AppMiddleware3`
 
 ### Ready-to-use middlewares
 
