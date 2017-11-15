@@ -86,9 +86,9 @@ test(function () {
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->onError[] = function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
 		Notes::add('CALLED');
-	};
+	});
 
 	Assert::throws(function () use ($app) {
 		$app->run();
@@ -104,9 +104,9 @@ test(function () {
 
 	$app = new MiddlewareApplication($callback);
 	$app->setCatchExceptions(TRUE);
-	$app->onError[] = function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
 		Notes::add('CALLED');
-	};
+	});
 
 	$app->run();
 	Assert::equal(['CALLED'], Notes::fetch());
@@ -119,11 +119,11 @@ test(function () {
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->onError[] = function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
 		Notes::add('CALLED');
 
 		return 'OK';
-	};
+	});
 
 	Assert::equal('OK', $app->run());
 	Assert::equal(['CALLED'], Notes::fetch());
@@ -138,15 +138,15 @@ test(function () {
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->onStartup[] = function (MiddlewareApplication $app) {
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app) {
 		Notes::add('STARTUP');
-	};
-	$app->onRequest[] = function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
+	});
+	$app->addListener($app::LISTENER_REQUEST, function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
 		Notes::add('REQUEST');
-	};
-	$app->onResponse[] = function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
+	});
+	$app->addListener($app::LISTENER_RESPONSE, function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
 		Notes::add('RESPONSE');
-	};
+	});
 
 	Assert::equal('OK', (string) $app->run()->getBody());
 	Assert::equal(['STARTUP', 'REQUEST', 'RESPONSE'], Notes::fetch());
@@ -162,21 +162,21 @@ test(function () {
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->onStartup[] = function (MiddlewareApplication $app) {
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app) {
 		Notes::add('STARTUP1');
 
 		return '1';
-	};
-	$app->onStartup[] = function (MiddlewareApplication $app, $prev) {
+	});
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app, $prev) {
 		Notes::add('STARTUP2');
 		Notes::add($prev);
 
 		return '2';
-	};
-	$app->onStartup[] = function (MiddlewareApplication $app, $prev) {
+	});
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app, $prev) {
 		Notes::add('STARTUP3');
 		Notes::add($prev);
-	};
+	});
 
 	Assert::equal('OK', (string) $app->run()->getBody());
 	Assert::equal(['STARTUP1', 'STARTUP2', '1', 'STARTUP3', '2'], Notes::fetch());

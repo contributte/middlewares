@@ -7,7 +7,8 @@ The middlewares / relay conception is a strong pattern with many benefits.
 ## Content
 
 - [Installation - how to register an extension](#installation)
-- [Modes - nette/standalone mode](#application)
+- [Modes - nette/standalone mode](#modes)
+- [Application - life cycle](#application)
 - [Middlewares](#middlewares)
     - [AbstractRootMiddleware](#abstractrootmiddleware)
     - [AutoBasePathMiddleware](#autobasepathmiddleware)
@@ -48,6 +49,27 @@ $container->getByType(Contributte\Middlewares\Application\IApplication::class)->
 ```
 
 That's all. The main purpose of this is to start via our application, not the default one `Nette\Application\Application`.
+
+## Application
+
+`AbstractApplication` adds a life cycle events you can interact with. There are 4 events:
+
+- `startup` - triggered when `$app->run()` is called
+- `startup` - triggered before the chain is called
+- `error` - triggered when exceptions is ocurred
+- `response` - triggered after the chain is called
+
+You attach listener calling the method `$app->addListener(type, callback)`.
+
+```yaml
+services:
+    middleware.application:
+      setup:
+        - addListener(startup, [@logger, 'logStartup'])
+        - addListener(request, [@logger, 'logRequest'])
+        - addListener(error, [@logger, 'logError'])
+        - addListener(response, [@logger, 'logResponse'])
+```
 
 ## Middlewares
 

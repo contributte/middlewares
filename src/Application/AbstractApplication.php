@@ -2,6 +2,7 @@
 
 namespace Contributte\Middlewares\Application;
 
+use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\IMiddleware;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
@@ -14,23 +15,24 @@ use RuntimeException;
 abstract class AbstractApplication implements IApplication
 {
 
-	/** @var callable[] */
-	public $onStartup = [];
-
-	/** @var callable[] */
-	public $onRequest = [];
-
-	/** @var callable[] */
-	public $onError = [];
-
-	/** @var callable[] */
-	public $onResponse = [];
+	const LISTENER_STARTUP = 'startup';
+	const LISTENER_REQUEST = 'request';
+	const LISTENER_ERROR = 'error';
+	const LISTENER_RESPONSE = 'response';
 
 	/** @var callable|IMiddleware */
 	private $chain;
 
 	/** @var bool */
 	private $catchExceptions = FALSE;
+
+	/** @var [callable[]] */
+	private $listeners = [
+		self::LISTENER_STARTUP => [],
+		self::LISTENER_REQUEST => [],
+		self::LISTENER_ERROR => [],
+		self::LISTENER_RESPONSE => [],
+	];
 
 	/**
 	 * @param callable|IMiddleware $chain
@@ -57,7 +59,7 @@ abstract class AbstractApplication implements IApplication
 	public function run()
 	{
 		// Trigger event!
-		$this->dispatch($this->onStartup, [$this]);
+		$this->dispatch($this->listeners[self::LISTENER_STARTUP], [$this]);
 
 		// Create initial request & response (PSR7!)
 		$request = $this->createInitialRequest();
@@ -65,7 +67,7 @@ abstract class AbstractApplication implements IApplication
 
 		try {
 			// Trigger event!
-			$this->dispatch($this->onRequest, [$this, $request, $response]);
+			$this->dispatch($this->listeners[self::LISTENER_REQUEST], [$this, $request, $response]);
 
 			// Right to the cycle
 			$response = call_user_func(
@@ -83,7 +85,7 @@ abstract class AbstractApplication implements IApplication
 			}
 		} catch (Exception $e) {
 			// Trigger event! In case of manual handling error, returned object is passed.
-			$res = $this->dispatch($this->onError, [$this, $e, $request, $response]);
+			$res = $this->dispatch($this->listeners[self::LISTENER_ERROR], [$this, $e, $request, $response]);
 			if ($res !== NULL && $res !== FALSE) return $res;
 
 			// Throw exception again if it's not caught
@@ -91,7 +93,7 @@ abstract class AbstractApplication implements IApplication
 		}
 
 		// Trigger event! In case of manual finalizing, returned object is passed.
-		$res = $this->dispatch($this->onResponse, [$this, $request, $response]);
+		$res = $this->dispatch($this->listeners[self::LISTENER_RESPONSE], [$this, $request, $response]);
 		if ($res !== NULL && $res !== FALSE) return $res;
 
 		// Send to finalizer (simple send response)
@@ -114,6 +116,29 @@ abstract class AbstractApplication implements IApplication
 	 * @return ResponseInterface
 	 */
 	abstract protected function finalize(ServerRequestInterface $request, ResponseInterface $response);
+
+	/**
+	 * LISTENERS ***************************************************************
+	 */
+
+	/**
+	 * @param string $type
+	 * @param callable $listener
+	 * @return void
+	 */
+	public function addListener($type, $listener)
+	{
+		if (!in_array($type, [
+			self::LISTENER_STARTUP,
+			self::LISTENER_REQUEST,
+			self::LISTENER_ERROR,
+			self::LISTENER_RESPONSE,
+		])) {
+			throw new InvalidStateException(sprintf('Given type "%s" is not supported'));
+		}
+
+		$this->listeners[$type][] = $listener;
+	}
 
 	/**
 	 * HELPERS *****************************************************************
