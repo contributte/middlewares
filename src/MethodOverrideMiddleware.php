@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class MethodOverrideMiddleware extends BaseMiddleware
 {
+
 	const OVERRIDE_HEADER = 'X-HTTP-Method-Override';
 
 	/**
@@ -23,4 +24,5 @@ class MethodOverrideMiddleware extends BaseMiddleware
 
 		return $next($request, $response);
 	}
+
 }
