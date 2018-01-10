@@ -279,7 +279,7 @@ middleware:
 
 #### `MethodOverrideMiddleware`
 
-This middleware is used to enable overriding HTTP method using `X-HTTP-Method-Override` header. A typical use case would be when your API is behind some proxy/VPN which only allows only some HTTP methods, for example only GET and POST. Sending header `X-HTTP-Method-Override: PUT` will change request method to `PUT`
+This middleware overrides HTTP method using `X-HTTP-Method-Override` header. A typical use case would be when your API is behind some proxy/VPN which only allows some HTTP methods, for example only `GET` and `POST`. Sending header `X-HTTP-Method-Override: PUT` will change the request method to `PUT`
 
 ```yaml
 middleware:
