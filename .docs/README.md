@@ -284,9 +284,7 @@ This middleware is used to enable overriding HTTP method using `X-HTTP-Method-Ov
 ```yaml
 middleware:
   middlewares:
-    # Catch all exceptions
-    - Contributte\Middlewares\Middleware\TracyMiddleware
-    - Contributte\Middlewares\Middleware\PresenterMiddleware
+    - Contributte\Middlewares\Middleware\MethodOverrideMiddleware
 ```
 
 ## Utils
