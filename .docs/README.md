@@ -277,6 +277,18 @@ middleware:
         - setEmail(cool@contributte.org)
 ```
 
+#### `MethodOverrideMiddleware`
+
+This middleware is used to enable overriding HTTP method using `X-HTTP-Method-Override` header. A typical use case would be when your API is behind some proxy/VPN which only allows only some HTTP methods, for example only GET and POST. Sending header `X-HTTP-Method-Override: PUT` will change request method to `PUT`
+
+```yaml
+middleware:
+  middlewares:
+    # Catch all exceptions
+    - Contributte\Middlewares\Middleware\TracyMiddleware
+    - Contributte\Middlewares\Middleware\PresenterMiddleware
+```
+
 ## Utils
 
 ### ChainBuilder
