@@ -34,10 +34,10 @@ There are basically 2 single modes.
 ```yaml
 extensions: 
     # standalone mode
-    middleware: Contributte\Middlewares\DI\MiddlewareExtension
+    middleware: Contributte\Middlewares\DI\MiddlewaresExtension
 
     # nette application mode
-    middleware: Contributte\Middlewares\DI\NetteMiddlewareExtension
+    middleware: Contributte\Middlewares\DI\NetteMiddlewaresExtension
 ```
 
 ## Modes
@@ -84,7 +84,7 @@ You can register list of middlewares like this:
 middleware:
   middlewares:
     # Catch all exceptions
-    - Contributte\Middlewares\Middleware\TracyMiddleware
+    - Contributte\Middlewares\TracyMiddleware
     
     # Your custom middlewares
     - TrailingSlashMiddleware
@@ -92,7 +92,7 @@ middleware:
     - CspMiddleware
     
     # Compatibility with Nette applications
-    - Contributte\Middlewares\Middleware\PresenterMiddleware
+    - Contributte\Middlewares\PresenterMiddleware
 ```
 
 ### RootMiddleware
@@ -168,8 +168,8 @@ It strips basePath from URL address and pass new URL (without basePath) to next 
 middleware:
   middlewares:
     # Catch all exceptions
-    - Contributte\Middlewares\Middleware\TracyMiddleware
-    - Contributte\Middlewares\Middleware\AutoBasePathMiddleware
+    - Contributte\Middlewares\TracyMiddleware
+    - Contributte\Middlewares\AutoBasePathMiddleware
     
     # Your custom middlewares
     - TrailingSlashMiddleware
@@ -212,8 +212,8 @@ It's quite similar with `AutoBasePathMiddleware`, but you could define the baseP
 middleware:
   middlewares:
     # Catch all exceptions
-    - Contributte\Middlewares\Middleware\TracyMiddleware
-    - Contributte\Middlewares\Middleware\BasePathMiddleware(project/www)
+    - Contributte\Middlewares\TracyMiddleware
+    - Contributte\Middlewares\BasePathMiddleware(project/www)
     
     # Your custom middlewares
     - TrailingSlashMiddleware
@@ -229,12 +229,12 @@ Over this middleware you can build your own chain of middlewares.
 middleware:
   middlewares:
     # Catch all exceptions
-    - Contributte\Middlewares\Middleware\TracyMiddleware
+    - Contributte\Middlewares\TracyMiddleware
     - @builder
 
 services:
     builders: 
-      class: Contributte\Middlewares\Middleware\BuilderMiddleware
+      class: Contributte\Middlewares\BuilderMiddleware
       setup:
         - add(TrailingSlashMiddleware())
         - add(UuidMiddleware())
@@ -250,8 +250,8 @@ and process returned `Nette\Application\Response`.
 middleware:
   middlewares:
     # Catch all exceptions
-    - Contributte\Middlewares\Middleware\TracyMiddleware
-    - Contributte\Middlewares\Middleware\PresenterMiddleware
+    - Contributte\Middlewares\TracyMiddleware
+    - Contributte\Middlewares\PresenterMiddleware
 ```
 
 PresenterMiddleware requires to run middlewares in Nette mode. Take a look at running [modes#application].
@@ -264,14 +264,14 @@ This middleware catch all exceptions and shows tracy dump. It can be instanced n
 middleware:
   middlewares:
     tracy1:
-      class: Contributte\Middlewares\Middleware\TracyMiddleware
+      class: Contributte\Middlewares\TracyMiddleware
       setup: 
         - enable()
         - setMode(Tracy\Debugger::PRODUCTION)
         - setEmail(cool@contributte.org)
 
     tracy2:
-      class: Contributte\Middlewares\Middleware\TracyMiddleware::factory(%debugMode%)
+      class: Contributte\Middlewares\TracyMiddleware::factory(%debugMode%)
       setup: 
         - setMode(Tracy\Debugger::PRODUCTION)
         - setEmail(cool@contributte.org)
@@ -284,7 +284,7 @@ This middleware overrides HTTP method using `X-HTTP-Method-Override` header. A t
 ```yaml
 middleware:
   middlewares:
-    - Contributte\Middlewares\Middleware\MethodOverrideMiddleware
+    - Contributte\Middlewares\MethodOverrideMiddleware
 ```
 
 ## Utils
