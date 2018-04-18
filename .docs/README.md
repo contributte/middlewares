@@ -55,7 +55,7 @@ That's all. The main purpose of this is to start via our application, not the de
 `AbstractApplication` adds a life cycle events you can interact with. There are 4 events:
 
 - `startup` - triggered when `$app->run()` is called
-- `startup` - triggered before the chain is called
+- `request` - triggered before the chain is called
 - `error` - triggered when exceptions is ocurred
 - `response` - triggered after the chain is called
 
