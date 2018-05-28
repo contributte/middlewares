@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Fixtures;
 
@@ -21,13 +21,7 @@ final class CompositeMiddleware implements IMiddleware
 		$this->inner = $inner;
 	}
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface $response
-	 * @param callable $next
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		foreach ($this->inner as $middleware) {
 			$response = $middleware($request, $response, Lambda::leaf());

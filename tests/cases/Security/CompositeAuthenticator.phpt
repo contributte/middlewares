@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Security\Authenticator
@@ -12,7 +12,7 @@ use Tester\Assert;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Possitive identity
-test(function () {
+test(function (): void {
 	$composite = new CompositeAuthenticator();
 	$composite->addAuthenticator(new DebugAuthenticator('FOOBAR'));
 
@@ -20,7 +20,7 @@ test(function () {
 });
 
 // Negative identity
-test(function () {
+test(function (): void {
 	$composite = new CompositeAuthenticator();
 
 	Assert::false($composite->authenticate(Psr7ServerRequest::fromGlobals()));

@@ -1,19 +1,16 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\Application;
 
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 interface IApplication
 {
 
 	/**
 	 * Dispatch application!
 	 *
-	 * @return ResponseInterface
+	 * @return string|int|null|bool|void|ResponseInterface
 	 */
 	public function run();
 

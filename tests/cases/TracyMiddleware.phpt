@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: TracyMiddleware
@@ -15,26 +15,34 @@ use Tracy\Debugger;
 require_once __DIR__ . '/../bootstrap.php';
 
 // Disabled
-test(function () {
-	Assert::exception(function () {
-		$middleware = TracyMiddleware::factory(TRUE);
+test(function (): void {
+	Assert::exception(function (): void {
+		$middleware = TracyMiddleware::factory(true);
 		$middleware->disable();
-		$middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal(), function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response) {
-			throw new RuntimeException('Foobar');
-		});
+		$middleware(
+			Psr7ServerRequestFactory::fromSuperGlobal(),
+			Psr7ResponseFactory::fromGlobal(),
+			function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): void {
+				throw new RuntimeException('Foobar');
+			}
+		);
 	}, RuntimeException::class, 'Foobar');
 });
 
 // Warnings
-test(function () {
-	$middleware = TracyMiddleware::factory(TRUE);
+test(function (): void {
+	$middleware = TracyMiddleware::factory(true);
 	$middleware->setMode(Debugger::PRODUCTION);
 	$middleware->setLogDir(TEMP_DIR);
 	$middleware->setEmail('dev@contributte.org');
+	$middleware(
+		Psr7ServerRequestFactory::fromSuperGlobal(),
+		Psr7ResponseFactory::fromGlobal(),
+		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface {
+			$a++;
 
-	$middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal(), function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response) {
-		$a++;
-	});
-
+			return $psr7Response;
+		}
+	);
 	Assert::match('%a%PHP Notice: Undefined variable: a in %a%', file_get_contents(TEMP_DIR . '/error.log'));
 });

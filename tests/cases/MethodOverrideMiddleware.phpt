@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests;
 
@@ -11,7 +11,7 @@ use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-test(function () {
+test(function (): void {
 	$middleware = new MethodOverrideMiddleware();
 
 	$request = Psr7ServerRequestFactory::fromGlobal()
@@ -21,12 +21,14 @@ test(function () {
 	$middleware(
 		$request,
 		Psr7ResponseFactory::fromGlobal(),
-		function (ServerRequestInterface $req, ResponseInterface $res) {
+		function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 			Assert::equal('PUT', $req->getMethod());
-		});
+			return $res;
+		}
+	);
 });
 
-test(function () {
+test(function (): void {
 	$middleware = new MethodOverrideMiddleware();
 
 	$request = Psr7ServerRequestFactory::fromGlobal()
@@ -36,12 +38,14 @@ test(function () {
 	$middleware(
 		$request,
 		Psr7ResponseFactory::fromGlobal(),
-		function (ServerRequestInterface $req, ResponseInterface $res) {
+		function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 			Assert::equal('POST', $req->getMethod());
-		});
+			return $res;
+		}
+	);
 });
 
-test(function () {
+test(function (): void {
 	$middleware = new MethodOverrideMiddleware();
 
 	$request = Psr7ServerRequestFactory::fromGlobal()
@@ -50,7 +54,9 @@ test(function () {
 	$middleware(
 		$request,
 		Psr7ResponseFactory::fromGlobal(),
-		function (ServerRequestInterface $req, ResponseInterface $res) {
+		function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 			Assert::equal('DELETE', $req->getMethod());
-		});
+			return $res;
+		}
+	);
 });

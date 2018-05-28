@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\UI;
 
@@ -7,9 +7,6 @@ use Contributte\Middlewares\PresenterMiddleware;
 interface IPresenterMiddlewareFactory
 {
 
-	/**
-	 * @return PresenterMiddleware
-	 */
-	public function create();
+	public function create(): PresenterMiddleware;
 
 }

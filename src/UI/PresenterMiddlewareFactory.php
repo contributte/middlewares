@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\UI;
 
@@ -15,20 +15,13 @@ class PresenterMiddlewareFactory implements IPresenterMiddlewareFactory
 	/** @var IRouter */
 	protected $router;
 
-	/**
-	 * @param IPresenterFactory $presenterFactory
-	 * @param IRouter $router
-	 */
 	public function __construct(IPresenterFactory $presenterFactory, IRouter $router)
 	{
 		$this->presenterFactory = $presenterFactory;
 		$this->router = $router;
 	}
 
-	/**
-	 * @return PresenterMiddleware
-	 */
-	public function create()
+	public function create(): PresenterMiddleware
 	{
 		return new PresenterMiddleware($this->presenterFactory, $this->router);
 	}

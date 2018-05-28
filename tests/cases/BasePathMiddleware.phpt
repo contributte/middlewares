@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: AutoBasePathMiddleware
@@ -23,30 +23,27 @@ final class BasePathMiddlewareTest extends TestCase
 {
 
 	/**
-	 * @dataProvider pathsData
-	 *
-	 * @param string $requestUri
-	 * @param string $basePath
-	 * @param string $coolUrl
-	 * @return void
+	 * @dataProvider  pathsData
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment
 	 */
-	public function testPaths($requestUri, $basePath, $coolUrl)
+	public function testPaths(string $requestUri, string $basePath, string $coolUrl): void
 	{
 		$middleware = new BasePathMiddleware($basePath);
 		$_SERVER['REQUEST_URI'] = $requestUri;
 		$middleware(
 			Psr7ServerRequestFactory::fromSuperGlobal(),
 			Psr7ResponseFactory::fromGlobal(),
-			function (ServerRequestInterface $req, ResponseInterface $res) use ($requestUri, $basePath, $coolUrl) {
+			function (ServerRequestInterface $req, ResponseInterface $res) use ($requestUri, $basePath, $coolUrl): ResponseInterface {
 				Assert::equal($coolUrl, $req->getUri()->getPath());
+				return $res;
 			}
 		);
 	}
 
 	/**
-	 * @return array
+	 * @return string[][]
 	 */
-	public function pathsData()
+	public function pathsData(): array
 	{
 		return [
 			['/foo/bar/cool-url', '/foo/bar/', '/cool-url'],

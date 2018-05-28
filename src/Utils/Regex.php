@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\Utils;
 
@@ -6,29 +6,23 @@ final class Regex
 {
 
 	/**
-	 * @param string $subject
-	 * @param string $pattern
-	 * @param int $flags
 	 * @return mixed
 	 */
-	public static function match($subject, $pattern, $flags = 0)
+	public static function match(string $subject, string $pattern, int $flags = 0)
 	{
 		$ret = preg_match($pattern, $subject, $m, $flags);
 
-		return $ret === 1 ? $m : NULL;
+		return $ret === 1 ? $m : null;
 	}
 
 	/**
-	 * @param string $subject
-	 * @param string $pattern
-	 * @param int $flags
 	 * @return mixed
 	 */
-	public static function matchAll($subject, $pattern, $flags = 0)
+	public static function matchAll(string $subject, string $pattern, int $flags = 0)
 	{
 		$ret = preg_match_all($pattern, $subject, $m, $flags);
 
-		return $ret !== FALSE ? $m : NULL;
+		return $ret !== false ? $m : null;
 	}
 
 }

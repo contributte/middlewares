@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: DI\NetteMiddlewareExtension + DI\MiddlewareExtension
@@ -25,9 +25,9 @@ use Tests\Fixtures\MutableExtension;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Definition of middlewares
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
@@ -41,15 +41,15 @@ test(function () {
 	}, '1a');
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	Assert::count(2, $container->findByType(IMiddleware::class));
 });
 
 // Definition of middlewares
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new MiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
@@ -69,15 +69,15 @@ test(function () {
 	}, '1b');
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	Assert::count(3, $container->findByType(IMiddleware::class));
 });
 
 // Root middleware - defined as string
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
@@ -87,15 +87,15 @@ test(function () {
 	}, '3a');
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	Assert::count(0, $container->findByType(IMiddleware::class));
 });
 
 // Root middleware - defined as string
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new MiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
@@ -105,15 +105,15 @@ test(function () {
 	}, '3b');
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	Assert::count(0, $container->findByType(IMiddleware::class));
 });
 
 // Root middleware - defined as service
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
@@ -126,7 +126,7 @@ test(function () {
 	}, 4);
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	Assert::count(1, $container->findByType(IMiddleware::class));
 
@@ -138,10 +138,10 @@ test(function () {
 });
 
 // Misssing nette/http request
-test(function () {
-	Assert::throws(function () {
-		$loader = new ContainerLoader(TEMP_DIR, TRUE);
-		$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	Assert::throws(function (): void {
+		$loader = new ContainerLoader(TEMP_DIR, true);
+		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 			$compiler->loadConfig(FileMock::create('
 				middleware:
@@ -150,17 +150,17 @@ test(function () {
 		}, 5);
 
 		/** @var Container $container */
-		$container = new $class;
+		$container = new $class();
 	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Request. Do you have nette/http in composer file?');
 });
 
 // Misssing nette/http response
-test(function () {
-	Assert::throws(function () {
-		$loader = new ContainerLoader(TEMP_DIR, TRUE);
-		$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	Assert::throws(function (): void {
+		$loader = new ContainerLoader(TEMP_DIR, true);
+		$class = $loader->load(function (Compiler $compiler): void {
 			$mutable = new MutableExtension();
-			$mutable->onLoad[] = function (CompilerExtension $ext, ContainerBuilder $builder) {
+			$mutable->onLoad[] = function (CompilerExtension $ext, ContainerBuilder $builder): void {
 				$builder->addDefinition($ext->prefix('request'))
 					->setClass(Request::class)
 					->setFactory(RequestFactory::class . '::createHttpRequest');
@@ -175,14 +175,14 @@ test(function () {
 		}, 6);
 
 		/** @var Container $container */
-		$container = new $class;
+		$container = new $class();
 	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Response. Do you have nette/http in composer file?');
 });
 
 // Priority middlewares
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new MiddlewaresExtension());
 		$compiler->loadConfig(FileMock::create('
@@ -194,7 +194,7 @@ test(function () {
 	}, '4');
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	Assert::count(3, $container->findByType(IMiddleware::class));
 	Assert::count(3, $container->findByTag(MiddlewaresExtension::MIDDLEWARE_TAG));

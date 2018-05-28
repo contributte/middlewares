@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Fixtures;
 
@@ -12,19 +12,13 @@ final class PassMiddleware implements IMiddleware
 
 	use SmartObject;
 
-	/** @var array */
+	/** @var callable[] */
 	public $onBefore = [];
 
-	/** @var array */
+	/** @var callable[] */
 	public $onAfter = [];
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface $response
-	 * @param callable $next
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		$this->onBefore($request, $response);
 		$response = $next($request, $response);

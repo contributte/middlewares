@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Application\MiddlewareApplication
@@ -13,7 +13,7 @@ use Tester\Assert;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Test invoking of callback
-test(function () {
+test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
 		Notes::add('touched');
 
@@ -27,7 +27,7 @@ test(function () {
 });
 
 // Response text
-test(function () {
+test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
 		$response->getBody()->write('OK');
 
@@ -41,10 +41,10 @@ test(function () {
 });
 
 // Return invalid response
-test(function () {
-	Assert::throws(function () {
+test(function (): void {
+	Assert::throws(function (): void {
 		$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
-			return NULL;
+			return null;
 		};
 
 		$app = new MiddlewareApplication($callback);
@@ -53,7 +53,7 @@ test(function () {
 });
 
 // Finalize
-test(function () {
+test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
 		return $response->withStatus(300);
 	};
@@ -66,7 +66,7 @@ test(function () {
 });
 
 // Send headers
-test(function () {
+test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
 		$response = $next($request, $response);
 
@@ -80,31 +80,31 @@ test(function () {
 });
 
 // Throws exception
-test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response): void {
 		throw new RuntimeException('Oh mama');
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Throwable $e, ServerRequestInterface $req, ResponseInterface $res): void {
 		Notes::add('CALLED');
 	});
 
-	Assert::throws(function () use ($app) {
+	Assert::throws(function () use ($app): void {
 		$app->run();
 	}, RuntimeException::class, 'Oh mama');
 	Assert::equal(['CALLED'], Notes::fetch());
 });
 
 // Throws exception and catch
-test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response): void {
 		throw new RuntimeException('Oh mama');
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->setCatchExceptions(TRUE);
-	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->setCatchExceptions(true);
+	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Throwable $e, ServerRequestInterface $req, ResponseInterface $res): void {
 		Notes::add('CALLED');
 	});
 
@@ -113,13 +113,13 @@ test(function () {
 });
 
 // Throws exception and handle in onError
-test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response): void {
 		throw new RuntimeException('Oh mama');
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Exception $e, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Throwable $e, ServerRequestInterface $req, ResponseInterface $res): string {
 		Notes::add('CALLED');
 
 		return 'OK';
@@ -130,21 +130,21 @@ test(function () {
 });
 
 // Dispatching events
-test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
 		$response->getBody()->write('OK');
 
 		return $response;
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app) {
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app): void {
 		Notes::add('STARTUP');
 	});
-	$app->addListener($app::LISTENER_REQUEST, function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->addListener($app::LISTENER_REQUEST, function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res): void {
 		Notes::add('REQUEST');
 	});
-	$app->addListener($app::LISTENER_RESPONSE, function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res) {
+	$app->addListener($app::LISTENER_RESPONSE, function (MiddlewareApplication $app, ServerRequestInterface $req, ResponseInterface $res): void {
 		Notes::add('RESPONSE');
 	});
 
@@ -152,28 +152,27 @@ test(function () {
 	Assert::equal(['STARTUP', 'REQUEST', 'RESPONSE'], Notes::fetch());
 });
 
-
 // Dispatching events with return value as parameter
-test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
 		$response->getBody()->write('OK');
 
 		return $response;
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app) {
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app): string {
 		Notes::add('STARTUP1');
 
 		return '1';
 	});
-	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app, $prev) {
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app, $prev): string {
 		Notes::add('STARTUP2');
 		Notes::add($prev);
 
 		return '2';
 	});
-	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app, $prev) {
+	$app->addListener($app::LISTENER_STARTUP, function (MiddlewareApplication $app, $prev): void {
 		Notes::add('STARTUP3');
 		Notes::add($prev);
 	});

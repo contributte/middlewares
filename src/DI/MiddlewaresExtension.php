@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\DI;
 
@@ -10,10 +10,8 @@ class MiddlewaresExtension extends AbstractMiddlewaresExtension
 
 	/**
 	 * Register middlewares in standalone mode
-	 *
-	 * @return void
 	 */
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		parent::loadConfiguration();
 
@@ -24,7 +22,7 @@ class MiddlewaresExtension extends AbstractMiddlewaresExtension
 			->setClass(MiddlewareApplication::class)
 			->setArguments([$this->prefix('chain')]);
 
-		if ($config['root'] !== NULL) {
+		if ($config['root'] !== null) {
 			$application->setArguments([new Statement($config['root'])]);
 		} else {
 			$application->setArguments([new Statement('@' . $this->prefix('chain') . '::create')]);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Utils\ChainBuilder
@@ -9,15 +9,17 @@ use Contributte\Middlewares\Utils\ChainBuilder;
 use Contributte\Psr7\Psr7ResponseFactory;
 use Contributte\Psr7\Psr7ServerRequestFactory;
 use Ninjify\Nunjuck\Notes;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Chain calling
-test(function () {
+test(function (): void {
 	$builder = new ChainBuilder();
 
-	$builder->add(function ($req, $res, callable $next) {
+	$builder->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('A');
 		$res = $next($req, $res);
 		Notes::add('A');
@@ -25,7 +27,7 @@ test(function () {
 		return $res;
 	});
 
-	$builder->add(function ($req, $res, callable $next) {
+	$builder->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('B');
 		$res = $next($req, $res);
 		Notes::add('B');
@@ -33,7 +35,7 @@ test(function () {
 		return $res;
 	});
 
-	$builder->add(function ($req, $res, callable $next) {
+	$builder->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('C');
 		$res = $next($req, $res);
 		Notes::add('C');
@@ -55,21 +57,21 @@ test(function () {
 });
 
 // Chain exceptions
-test(function () {
+test(function (): void {
 	$builder = new ChainBuilder();
 
-	Assert::throws(function () use ($builder) {
+	Assert::throws(function () use ($builder): void {
 		$builder->add('foobar');
 	}, InvalidStateException::class, 'Middleware is not callable');
 
-	Assert::throws(function () use ($builder) {
+	Assert::throws(function () use ($builder): void {
 		$builder->create();
 	}, InvalidStateException::class, 'At least one middleware is needed');
 });
 
 // Factory
-test(function () {
-	$middleware = ChainBuilder::factory([function ($req, $res, callable $next) {
+test(function (): void {
+	$middleware = ChainBuilder::factory([function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('A');
 		$res = $next($req, $res);
 		Notes::add('A');

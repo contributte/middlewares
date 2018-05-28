@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Fixtures;
 
@@ -11,40 +11,32 @@ final class MutableExtension extends CompilerExtension
 
 	use SmartObject;
 
-	/** @var array */
+	/** @var callable[] */
 	public $onLoad = [];
 
-	/** @var array */
+	/** @var callable[] */
 	public $onBefore = [];
 
-	/** @var array */
+	/** @var callable[] */
 	public $onAfter = [];
 
 	/**
 	 * Register services
-	 *
-	 * @return void
 	 */
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$this->onLoad($this, $this->getContainerBuilder(), $this->getConfig());
 	}
 
 	/**
 	 * Decorate services
-	 *
-	 * @return void
 	 */
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$this->onBefore($this, $this->getContainerBuilder(), $this->getConfig());
 	}
 
-	/**
-	 * @param ClassType $class
-	 * @return void
-	 */
-	public function afterCompile(ClassType $class)
+	public function afterCompile(ClassType $class): void
 	{
 		$this->onAfter($this, $class, $this->getConfig());
 	}

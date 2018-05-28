@@ -1,36 +1,25 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 class BasePathMiddleware extends BaseMiddleware
 {
 
 	/** @var string */
 	private $basePath;
 
-	/**
-	 * @param string $basePath
-	 */
-	public function __construct($basePath)
+	public function __construct(string $basePath)
 	{
 		$this->basePath = '/' . ltrim($basePath, '/');
 	}
 
 	/**
 	 * Drop base path from URL
-	 *
-	 * @param ServerRequestInterface $psr7Request
-	 * @param ResponseInterface $psr7Response
-	 * @param callable $next
-	 * @return ResponseInterface
 	 */
-	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
+	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
 		$uri = $psr7Request->getUri();
 

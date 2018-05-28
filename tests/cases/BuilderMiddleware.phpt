@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: BuilderMiddleware
@@ -15,23 +15,23 @@ use Tester\Assert;
 require_once __DIR__ . '/../bootstrap.php';
 
 // Build chain of middlewares
-test(function () {
+test(function (): void {
 	$middleware = new BuilderMiddleware();
-	$middleware->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next) {
+	$middleware->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('A');
 		$res = $next($req, $res);
 		Notes::add('A');
 
 		return $res;
 	});
-	$middleware->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next) {
+	$middleware->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('B');
 		$res = $next($req, $res);
 		Notes::add('B');
 
 		return $res;
 	});
-	$middleware->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next) {
+	$middleware->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('C');
 		$res = $next($req, $res);
 		Notes::add('C');
@@ -39,8 +39,9 @@ test(function () {
 		return $res;
 	});
 
-	$middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal(), function () {
+	$middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal(), function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 		Notes::add('END');
+		return $res;
 	});
 
 	Assert::equal([
