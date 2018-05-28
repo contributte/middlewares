@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares;
 
@@ -6,9 +6,6 @@ use Contributte\Middlewares\Utils\ChainBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 class BuilderMiddleware extends BaseMiddleware
 {
 
@@ -25,28 +22,18 @@ class BuilderMiddleware extends BaseMiddleware
 
 	/**
 	 * @param mixed $middleware
-	 * @return void
 	 */
-	public function add($middleware)
+	public function add($middleware): void
 	{
 		$this->builder->add($middleware);
 	}
 
-	/**
-	 * @return callable
-	 */
-	protected function create()
+	protected function create(): callable
 	{
 		return $this->builder->create();
 	}
 
-	/**
-	 * @param ServerRequestInterface $psr7Request
-	 * @param ResponseInterface $psr7Response
-	 * @param callable $next
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
+	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
 		// Create chain of middlewares
 		$chain = $this->create();

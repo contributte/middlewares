@@ -1,12 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\Security;
 
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 class DebugAuthenticator implements IAuthenticator
 {
 
@@ -22,7 +19,6 @@ class DebugAuthenticator implements IAuthenticator
 	}
 
 	/**
-	 * @param ServerRequestInterface $request
 	 * @return mixed
 	 */
 	public function authenticate(ServerRequestInterface $request)

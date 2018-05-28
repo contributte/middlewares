@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\Application;
 
@@ -7,34 +7,20 @@ use Contributte\Psr7\Psr7ServerRequestFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 class MiddlewareApplication extends AbstractApplication
 {
 
-	/**
-	 * @return ServerRequestInterface
-	 */
-	protected function createInitialRequest()
+	protected function createInitialRequest(): ServerRequestInterface
 	{
 		return Psr7ServerRequestFactory::fromGlobal();
 	}
 
-	/**
-	 * @return ResponseInterface
-	 */
-	protected function createInitialResponse()
+	protected function createInitialResponse(): ResponseInterface
 	{
 		return Psr7ResponseFactory::fromGlobal();
 	}
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface $response
-	 * @return ResponseInterface
-	 */
-	protected function finalize(ServerRequestInterface $request, ResponseInterface $response)
+	protected function finalize(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
 	{
 		$this->sendStatus($response);
 		$this->sendHeaders($response);
@@ -43,11 +29,7 @@ class MiddlewareApplication extends AbstractApplication
 		return $response;
 	}
 
-	/**
-	 * @param ResponseInterface $response
-	 * @return void
-	 */
-	protected function sendStatus(ResponseInterface $response)
+	protected function sendStatus(ResponseInterface $response): void
 	{
 		$version = $response->getProtocolVersion();
 		$status = $response->getStatusCode();
@@ -55,11 +37,7 @@ class MiddlewareApplication extends AbstractApplication
 		header(sprintf('HTTP/%s %s %s', $version, $status, $phrase));
 	}
 
-	/**
-	 * @param ResponseInterface $response
-	 * @return void
-	 */
-	protected function sendHeaders(ResponseInterface $response)
+	protected function sendHeaders(ResponseInterface $response): void
 	{
 		foreach ($response->getHeaders() as $name => $values) {
 			$this->sendHeader($name, $values);
@@ -67,25 +45,19 @@ class MiddlewareApplication extends AbstractApplication
 	}
 
 	/**
-	 * @param string $name
-	 * @param array $values
-	 * @return void
+	 * @param string[] $values
 	 */
-	protected function sendHeader($name, $values)
+	protected function sendHeader(string $name, array $values): void
 	{
 		$name = str_replace('-', ' ', $name);
 		$name = ucwords($name);
 		$name = str_replace(' ', '-', $name);
 		foreach ($values as $value) {
-			header(sprintf('%s: %s', $name, $value), FALSE);
+			header(sprintf('%s: %s', $name, $value), false);
 		}
 	}
 
-	/**
-	 * @param ResponseInterface $response
-	 * @return void
-	 */
-	protected function sendBody(ResponseInterface $response)
+	protected function sendBody(ResponseInterface $response): void
 	{
 		$stream = $response->getBody();
 		$stream->rewind();

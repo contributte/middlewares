@@ -1,10 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 abstract class BaseMiddleware implements IMiddleware
 {
 

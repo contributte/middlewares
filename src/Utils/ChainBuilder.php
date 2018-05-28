@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\Utils;
 
@@ -6,20 +6,16 @@ use Contributte\Middlewares\Exception\InvalidStateException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 class ChainBuilder
 {
 
-	/** @var array */
+	/** @var mixed[] */
 	private $middlewares = [];
 
 	/**
 	 * @param mixed $middleware
-	 * @return void
 	 */
-	public function add($middleware)
+	public function add($middleware): void
 	{
 		if (!is_callable($middleware)) {
 			throw new InvalidStateException('Middleware is not callable');
@@ -29,22 +25,18 @@ class ChainBuilder
 	}
 
 	/**
-	 * @param array $middlewares
-	 * @return void
+	 * @param mixed[] $middlewares
 	 */
-	public function addAll(array $middlewares)
+	public function addAll(array $middlewares): void
 	{
 		foreach ($middlewares as $middleware) {
 			$this->add($middleware);
 		}
 	}
 
-	/**
-	 * @return callable
-	 */
-	public function create()
+	public function create(): callable
 	{
-		if (!$this->middlewares) {
+		if ($this->middlewares === []) {
 			throw new InvalidStateException('At least one middleware is needed');
 		}
 
@@ -62,10 +54,9 @@ class ChainBuilder
 	}
 
 	/**
-	 * @param array $middlewares
-	 * @return callable
+	 * @param mixed[] $middlewares
 	 */
-	public static function factory(array $middlewares)
+	public static function factory(array $middlewares): callable
 	{
 		$chain = new ChainBuilder();
 		$chain->addAll($middlewares);

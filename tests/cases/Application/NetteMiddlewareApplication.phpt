@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Application\NetteMiddlewareApplication
@@ -17,8 +17,8 @@ use Tester\Assert;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Test invoking of callback
-test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
 		Notes::add('touched');
 
 		return $response;
@@ -31,8 +31,8 @@ test(function () {
 });
 
 // Response text
-test(function () {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
 		$response->getBody()->write('OK');
 
 		return $response;
@@ -45,8 +45,8 @@ test(function () {
 });
 
 // Response text with Nette
-test(function () {
-	$callback = function (ServerRequestInterface $request, Psr7Response $response) {
+test(function (): void {
+	$callback = function (ServerRequestInterface $request, Psr7Response $response): ResponseInterface {
 		$response = $response->withApplicationResponse(new TextResponse('NETTE'));
 		$response->getBody()->write('OK');
 
@@ -62,10 +62,10 @@ test(function () {
 });
 
 // Throws exception
-test(function () {
-	Assert::throws(function () {
+test(function (): void {
+	Assert::throws(function (): void {
 		$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
-			return NULL;
+			return null;
 		};
 
 		$app = new NetteMiddlewareApplication($callback);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\DI;
 
@@ -12,20 +12,18 @@ use Nette\Utils\Validators;
 abstract class AbstractMiddlewaresExtension extends CompilerExtension
 {
 
-	const MIDDLEWARE_TAG = 'middleware';
+	public const MIDDLEWARE_TAG = 'middleware';
 
-	/** @var array */
+	/** @var mixed[] */
 	protected $defaults = [
 		'middlewares' => [],
-		'root' => NULL,
+		'root' => null,
 	];
 
 	/**
 	 * Register services
-	 *
-	 * @return void
 	 */
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
@@ -34,26 +32,26 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		Validators::assertField($config, 'root', 'string|null');
 
 		// Skip next registration, if root middleware is specified
-		if ($config['root'] !== NULL) return;
+		if ($config['root'] !== null) {
+			return;
+		}
 
 		// Register middleware chain builder
 		$builder->addDefinition($this->prefix('chain'))
 			->setClass(ChainBuilder::class)
-			->setAutowired(FALSE);
+			->setAutowired(false);
 	}
 
 	/**
 	 * Decorate services
-	 *
-	 * @return void
 	 */
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
 		// Skip next registration, if root middleware is specified
-		if ($config['root'] !== NULL) {
+		if ($config['root'] !== null) {
 			return;
 		}
 
@@ -65,7 +63,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		}
 
 		// Compile tagged middlewares
-		if ($builder->findByTag(self::MIDDLEWARE_TAG)) {
+		if ($builder->findByTag(self::MIDDLEWARE_TAG) !== []) {
 			$this->compileTaggedMiddlewares();
 
 			return;
@@ -74,10 +72,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		throw new InvalidStateException('There must be at least one middleware registered, tag middleware added or root middleware configured.');
 	}
 
-	/**
-	 * @return void
-	 */
-	private function compileDefinedMiddlewares()
+	private function compileDefinedMiddlewares(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
@@ -106,10 +101,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		}
 	}
 
-	/**
-	 * @return void
-	 */
-	private function compileTaggedMiddlewares()
+	private function compileTaggedMiddlewares(): void
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -117,16 +109,16 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		$definitions = $builder->findByTag(self::MIDDLEWARE_TAG);
 
 		// Ensure we have at least 1 service
-		if (!$definitions) {
+		if ($definitions === []) {
 			throw new InvalidStateException(sprintf('No services with tag "%s"', self::MIDDLEWARE_TAG));
 		}
 
 		// Sort by priority
 		uasort($definitions, function ($a, $b) {
-			$p1 = isset($a['priority']) ? $a['priority'] : 10;
-			$p2 = isset($b['priority']) ? $b['priority'] : 10;
+			$p1 = $a['priority'] ?? 10;
+			$p2 = $b['priority'] ?? 10;
 
-			if ($p1 == $p2) {
+			if ($p1 === $p2) {
 				return 0;
 			}
 

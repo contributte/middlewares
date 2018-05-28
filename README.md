@@ -26,15 +26,16 @@ composer require contributte/middlewares
 
 | State       | Version | Branch   | PHP        |
 |-------------|---------|----------|------------|
-| development | `~0.5.0`  | `master` | `>= 5.6` |
-| stable      | `~0.4.0`  | `master` | `>= 5.6` |
+| development | `~0.7.0`  | `master` | `>= 7.1` |
+| stable      | `~0.6.0`  | `master` | `>= 7.1` |
+| stable      | `~0.5.0`  | `master` | `>= 5.6` |
 
 ## Prolog
 
-Middleware / Relay pattern is widely used for handling any HTTP requests, such as API request, streams, dynamic websites 
+Middleware / Relay pattern is widely used for handling any HTTP requests, such as API request, streams, dynamic websites
 or just any suitable requests.
 
-We have a many solutions and prepared libraries in PHP world. 
+We have a many solutions and prepared libraries in PHP world.
 
 3rd party middlewares:
 
@@ -64,6 +65,13 @@ We have a many solutions and prepared libraries in PHP world.
         </a>
         </br>
         <a href="https://github.com/f3l1x">Milan Felix Šulc</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/mabar">
+            <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/20974277?s=400&v=4">
+        </a>
+        </br>
+        <a href="https://github.com/mabar">Marek Bartoš</a>
       </td>
     </tr>
   <tbody>

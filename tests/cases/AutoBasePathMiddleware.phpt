@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: AutoBasePathMiddleware
@@ -16,19 +16,17 @@ use Tester\TestCase;
 
 require_once __DIR__ . '/../bootstrap.php';
 
+/**
+ * @testCase
+ */
 final class AutoBasePathMiddlewareTest extends TestCase
 {
 
 	/**
-	 * @dataProvider pathsData
-	 *
-	 * @param string $requestUri
-	 * @param string $scriptName
-	 * @param string $basePath
-	 * @param string $coolUrl
-	 * @return void
+	 * @dataProvider  pathsData
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment
 	 */
-	public function testPaths($requestUri, $scriptName, $basePath, $coolUrl)
+	public function testPaths(string $requestUri, string $scriptName, string $basePath, string $coolUrl): void
 	{
 		$middleware = new AutoBasePathMiddleware();
 		$_SERVER['REQUEST_URI'] = $requestUri;
@@ -36,19 +34,20 @@ final class AutoBasePathMiddlewareTest extends TestCase
 		$middleware(
 			Psr7ServerRequestFactory::fromSuperGlobal(),
 			Psr7ResponseFactory::fromGlobal(),
-			function (ServerRequestInterface $req, ResponseInterface $res) use ($requestUri, $basePath, $coolUrl) {
+			function (ServerRequestInterface $req, ResponseInterface $res) use ($requestUri, $basePath, $coolUrl): ResponseInterface {
 				Assert::equal($requestUri, $req->getAttribute(AutoBasePathMiddleware::ATTR_ORIGINAL_PATH));
 				Assert::equal($basePath, $req->getAttribute(AutoBasePathMiddleware::ATTR_BASE_PATH));
 				Assert::equal($coolUrl, $req->getAttribute(AutoBasePathMiddleware::ATTR_PATH));
 				Assert::equal($coolUrl, $req->getUri()->getPath());
+				return $res;
 			}
 		);
 	}
 
 	/**
-	 * @return array
+	 * @return string[][]
 	 */
-	public function pathsData()
+	public function pathsData(): array
 	{
 		return [
 			['/foo/bar/cool-url', '/foo/bar/index.php', '/foo/bar/', '/cool-url'],

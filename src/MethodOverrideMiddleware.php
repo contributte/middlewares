@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares;
 
@@ -8,15 +8,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class MethodOverrideMiddleware extends BaseMiddleware
 {
 
-	const OVERRIDE_HEADER = 'X-HTTP-Method-Override';
+	public const OVERRIDE_HEADER = 'X-HTTP-Method-Override';
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface $response
-	 * @param callable $next
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		if ($request->hasHeader(self::OVERRIDE_HEADER) && $request->getHeader(self::OVERRIDE_HEADER)[0] !== '') {
 			$request = $request->withMethod($request->getHeader(self::OVERRIDE_HEADER)[0]);

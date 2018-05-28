@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Fixtures;
 
@@ -8,10 +8,7 @@ use Contributte\Middlewares\Utils\Lambda;
 final class SimpleRootMiddleware extends AbstractRootMiddleware
 {
 
-	/**
-	 * @return callable
-	 */
-	protected function create()
+	protected function create(): callable
 	{
 		return Lambda::leaf();
 	}

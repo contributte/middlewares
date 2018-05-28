@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares\Utils;
 
@@ -8,20 +8,14 @@ use Psr\Http\Message\ResponseInterface;
 final class Lambda
 {
 
-	/**
-	 * @return callable
-	 */
-	public static function blank()
+	public static function blank(): callable
 	{
-		return function () {
+		return function (): void {
 			// Empty function
 		};
 	}
 
-	/**
-	 * @return callable
-	 */
-	public static function leaf()
+	public static function leaf(): callable
 	{
 		return function (RequestInterface $request, ResponseInterface $response) {
 			return $response;

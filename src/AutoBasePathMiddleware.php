@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares;
 
@@ -7,24 +7,17 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Drop base path from URL by auto-detection
- *
- * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
 class AutoBasePathMiddleware extends BaseMiddleware
 {
 
 	// Attributes in ServerRequestInterface
-	const ATTR_ORIGINAL_PATH = 'contributte.original.path';
-	const ATTR_BASE_PATH = 'contributte.base.path';
-	const ATTR_PATH = 'contributte.path';
+	public const
+		ATTR_ORIGINAL_PATH = 'contributte.original.path',
+		ATTR_BASE_PATH = 'contributte.base.path',
+		ATTR_PATH = 'contributte.path';
 
-	/**
-	 * @param ServerRequestInterface $psr7Request
-	 * @param ResponseInterface $psr7Response
-	 * @param callable $next
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
+	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
 		$uri = $psr7Request->getUri();
 		$basePath = $uri->getPath();
@@ -43,12 +36,12 @@ class AutoBasePathMiddleware extends BaseMiddleware
 			// Cut basePath from URL
 			// /foo/bar/test => /test
 			// (empty) -> /
-			$basePath = $i ? substr($basePath, 0, strrpos($basePath, '/', $i - strlen($basePath) - 1) + 1) : '/';
+			$basePath = $i !== 0 ? substr($basePath, 0, strrpos($basePath, '/', $i - strlen($basePath) - 1) + 1) : '/';
 		}
 
 		// Try replace path or just use slash (/)
 		$pos = strrpos($basePath, '/');
-		if ($pos !== FALSE) {
+		if ($pos !== false) {
 			// Cut base path by last slash (/)
 			$basePath = substr($basePath, 0, $pos + 1);
 			// Drop part of path (basePath)

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Middlewares;
 
@@ -6,19 +6,10 @@ use Contributte\Middlewares\Utils\Lambda;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 abstract class AbstractRootMiddleware extends BaseMiddleware
 {
 
-	/**
-	 * @param ServerRequestInterface $psr7Request
-	 * @param ResponseInterface $psr7Response
-	 * @param callable $next
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next)
+	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
 		// Create chain of middlewares
 		$chain = $this->create();
@@ -30,9 +21,6 @@ abstract class AbstractRootMiddleware extends BaseMiddleware
 		return $psr7Response;
 	}
 
-	/**
-	 * @return callable
-	 */
-	abstract protected function create();
+	abstract protected function create(): callable;
 
 }
