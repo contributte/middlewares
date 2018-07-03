@@ -42,7 +42,7 @@ class SecurityMiddleware extends BaseMiddleware
 
 	protected function denied(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface
 	{
-		$psr7Response->getBody()->write(json_encode([
+		$psr7Response->getBody()->write((string) json_encode([
 			'status' => 'error',
 			'message' => 'Client authentication failed',
 			'code' => 401,

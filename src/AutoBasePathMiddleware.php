@@ -36,7 +36,7 @@ class AutoBasePathMiddleware extends BaseMiddleware
 			// Cut basePath from URL
 			// /foo/bar/test => /test
 			// (empty) -> /
-			$basePath = $i !== 0 ? substr($basePath, 0, strrpos($basePath, '/', $i - strlen($basePath) - 1) + 1) : '/';
+			$basePath = $i !== 0 ? substr($basePath, 0, (int) strrpos($basePath, '/', $i - strlen($basePath) - 1) + 1) : '/';
 		}
 
 		// Try replace path or just use slash (/)

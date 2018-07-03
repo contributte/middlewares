@@ -79,8 +79,8 @@ class PresenterMiddleware extends BaseMiddleware
 	/**
 	 * Dispatch a HTTP request to a front controller.
 	 *
-	 * @param Psr7ServerRequest $psr7Request
-	 * @param Psr7Response      $psr7Response
+	 * @param Psr7ServerRequest|ServerRequestInterface $psr7Request
+	 * @param Psr7Response|ResponseInterface           $psr7Response
 	 */
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{

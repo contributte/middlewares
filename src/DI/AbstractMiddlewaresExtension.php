@@ -56,7 +56,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		}
 
 		// Compile defined middlewares
-		if (!empty($config['middlewares'])) {
+		if ($config['middlewares'] !== []) {
 			$this->compileDefinedMiddlewares();
 
 			return;
