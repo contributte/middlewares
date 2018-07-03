@@ -25,14 +25,14 @@ The middlewares / relay conception is a strong pattern with many benefits.
 ## Installation
 
 First of all you have to register one of the given extensions ([CompilerExtensions](https://api.nette.org/2.4/Nette.DI.CompilerExtension.html))) in your config file.
-There are basically 2 single modes. 
+There are basically 2 single modes.
 
 **Standalone mode** is best suitable for new projects with middleware architecture, works great with [apitte](https://github.com/apitte/core).
 
 **Nette mode** is for integration to already running Nette projects, it overrides `Nette\Application\Application`.
 
 ```yaml
-extensions: 
+extensions:
     # standalone mode
     middleware: Contributte\Middlewares\DI\MiddlewaresExtension
 
@@ -42,7 +42,7 @@ extensions:
 
 ## Modes
 
-Main difference to `nette/sandbox` application is in `index.php`. You have to `run` the middleware native `IApplication::run()`. 
+Main difference to `nette/sandbox` application is in `index.php`. You have to `run` the middleware native `IApplication::run()`.
 
 ```php
 $container->getByType(Contributte\Middlewares\Application\IApplication::class)->run();
@@ -73,7 +73,7 @@ services:
 
 ## Middlewares
 
-Build your own middleware chain cannot be easier. Just place your middleware (services) under `middleware` section. 
+Build your own middleware chain cannot be easier. Just place your middleware (services) under `middleware` section.
 It is pretty same as register new service in `NEON` file.
 
 ### List
@@ -85,12 +85,12 @@ middleware:
   middlewares:
     # Catch all exceptions
     - Contributte\Middlewares\TracyMiddleware
-    
+
     # Your custom middlewares
     - TrailingSlashMiddleware
     - UuidMiddleware
     - CspMiddleware
-    
+
     # Compatibility with Nette applications
     - Contributte\Middlewares\PresenterMiddleware
 ```
@@ -110,16 +110,16 @@ Or you can use tags at services.
 
 ```yaml
 services:
-  m1: 
+  m1:
     factory: App\Model\AppMiddleware1
     tags: [middleware: [priority: 5]]
 
-  m2: 
+  m2:
     factory: App\Model\AppMiddleware2
     tags: [middleware]
     # default priority = 10
 
-  m3: 
+  m3:
     factory: App\Model\AppMiddleware3
     tags: [middleware: [priority: 15]]
 ```
@@ -145,7 +145,7 @@ use Contributte\Middleares\AbstractRootMiddleware;
 use Contributte\Middleares\TracyMiddleware;
 use Contributte\Middleares\Utils\ChainBuilder;
 
-final class MyAppMiddleware extends AbstractRootMiddleware 
+final class MyAppMiddleware extends AbstractRootMiddleware
 {
 
     public function create()
@@ -153,7 +153,7 @@ final class MyAppMiddleware extends AbstractRootMiddleware
         $chain = new ChainBuilder();
         $chain->add(new TracyMiddleware());
         $chain->add(new MyCustomMiddleware());
-        
+
         return $chain->build();
     }
 
@@ -170,7 +170,7 @@ middleware:
     # Catch all exceptions
     - Contributte\Middlewares\TracyMiddleware
     - Contributte\Middlewares\AutoBasePathMiddleware
-    
+
     # Your custom middlewares
     - TrailingSlashMiddleware
     - UuidMiddleware
@@ -186,7 +186,7 @@ namespace App;
 
 use Contributte\Middleares\BaseMiddleware;
 
-final class MyCustomMiddleware extends BaseMiddleware 
+final class MyCustomMiddleware extends BaseMiddleware
 {
 
 
@@ -214,7 +214,7 @@ middleware:
     # Catch all exceptions
     - Contributte\Middlewares\TracyMiddleware
     - Contributte\Middlewares\BasePathMiddleware(project/www)
-    
+
     # Your custom middlewares
     - TrailingSlashMiddleware
     - UuidMiddleware
@@ -233,7 +233,7 @@ middleware:
     - @builder
 
 services:
-    builders: 
+    builders:
       class: Contributte\Middlewares\BuilderMiddleware
       setup:
         - add(TrailingSlashMiddleware())
@@ -251,7 +251,11 @@ middleware:
   middlewares:
     # Catch all exceptions
     - Contributte\Middlewares\TracyMiddleware
-    - Contributte\Middlewares\PresenterMiddleware
+    -
+        class: Contributte\Middlewares\PresenterMiddleware
+        setup:
+            - setErrorPresenter(Nette:Error)
+            - setCatchExceptions(%productionMode%)
 ```
 
 PresenterMiddleware requires to run middlewares in Nette mode. Take a look at running [modes#application].
@@ -265,14 +269,14 @@ middleware:
   middlewares:
     tracy1:
       class: Contributte\Middlewares\TracyMiddleware
-      setup: 
+      setup:
         - enable()
         - setMode(Tracy\Debugger::PRODUCTION)
         - setEmail(cool@contributte.org)
 
     tracy2:
       class: Contributte\Middlewares\TracyMiddleware::factory(%debugMode%)
-      setup: 
+      setup:
         - setMode(Tracy\Debugger::PRODUCTION)
         - setEmail(cool@contributte.org)
 ```
