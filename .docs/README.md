@@ -18,6 +18,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [PresenterMiddleware](#presentermiddleware)
     - [SecurityMiddleware](#securitymiddleware)
     - [TracyMiddleware](#tracymiddleware)
+    - [TryCatchMiddleware](#trycactchmiddleware)
 - [Utils](#utils)
     - [ChainBuilder](#chainbuilder)
     - [Lambda](#lambda)
@@ -279,6 +280,19 @@ middleware:
       setup:
         - setMode(Tracy\Debugger::PRODUCTION)
         - setEmail(cool@contributte.org)
+```
+
+#### `TryCatchMiddleware`
+
+This middlewares catches all exceptions thrown in application and outputs their message with status code 500. It should be registered first.
+
+```yaml
+middleware:
+    middlewares:
+        -
+            class: Contributte\Middlewares\TryCatchMiddleware
+            setup:
+                - setCatchExceptions(%productionMode%)
 ```
 
 #### `MethodOverrideMiddleware`
