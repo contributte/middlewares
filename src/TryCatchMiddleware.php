@@ -10,11 +10,11 @@ class TryCatchMiddleware extends BaseMiddleware
 {
 
 	/** @var bool */
-	private $enable = true;
+	private $catch = true;
 
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
-		if ($this->enable) {
+		if ($this->catch) {
 			try {
 				$response = $next($request, $response);
 				return $response;
@@ -28,14 +28,9 @@ class TryCatchMiddleware extends BaseMiddleware
 		return $next($request, $response);
 	}
 
-	public function enable(): void
+	public function setCatchExceptions(bool $catch): void
 	{
-		$this->enable = true;
-	}
-
-	public function disable(): void
-	{
-		$this->enable = false;
+		$this->catch = $catch;
 	}
 
 }
