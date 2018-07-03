@@ -17,7 +17,7 @@
   ],
   "require": {
     "php": ">= 7.1",
-    "contributte/psr7-http-message": "~0.4"
+    "contributte/psr7-http-message": "~0.5"
   },
   "require-dev": {
     "ninjify/qa": "~0.8.0",
