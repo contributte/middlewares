@@ -60,7 +60,7 @@ class PresenterMiddleware extends BaseMiddleware
 
 	public function setCatchExceptions(bool $catch): void
 	{
-		$this->catchExceptions = boolval($catch);
+		$this->catchExceptions = $catch;
 	}
 
 	public function getPresenter(): IPresenter
