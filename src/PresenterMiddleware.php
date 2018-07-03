@@ -197,7 +197,7 @@ class PresenterMiddleware extends BaseMiddleware
 
 		}
 
-		if (strcasecmp($request->getPresenterName(), $this->errorPresenter) === 0) {
+		if (strcasecmp($request->getPresenterName(), (string) $this->errorPresenter) === 0) {
 			throw new BadRequestException('Invalid request. Presenter is not achievable.');
 		}
 
