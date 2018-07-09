@@ -14,6 +14,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [AutoBasePathMiddleware](#autobasepathmiddleware)
     - [BaseMiddleware](#basemiddleware)
     - [BasePathMiddleware](#basepathmiddleware)
+    - [BasicAuthMiddleware](#basicauthmiddleware)
     - [BuilderMiddleware](#buildermiddleware)
     - [PresenterMiddleware](#presentermiddleware)
     - [SecurityMiddleware](#securitymiddleware)
@@ -220,6 +221,21 @@ middleware:
     - TrailingSlashMiddleware
     - UuidMiddleware
     - CspMiddleware
+```
+
+#### `BasicAuthMiddleware`
+
+Basic HTTP Authentication.
+
+```yaml
+middleware:
+    middlewares:
+        -
+            class: Contributte\Middlewares\BasicAuthMiddleware
+            setup:
+                - addUser('user1', 'password1', true) // third parameter sets that password is not hashed
+                - addUser('user2', '$2y$10$p.U5q.BuQp02srggig.VDOqj5m7pE1rCwKavVQ3S2TrqWlkqu3qlC')
+                - addUser('user3', '$2y$10$bgievYVQMzsRn5Ysup.NKOVUk66aitAniAmts2EJAa91eqkAhohvC')
 ```
 
 #### `BuilderMiddleware`
