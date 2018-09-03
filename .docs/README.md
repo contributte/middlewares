@@ -19,7 +19,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [PresenterMiddleware](#presentermiddleware)
     - [SecurityMiddleware](#securitymiddleware)
     - [TracyMiddleware](#tracymiddleware)
-    - [TryCatchMiddleware](#trycactchmiddleware)
+    - [TryCatchMiddleware](#trycatchmiddleware)
 - [Utils](#utils)
     - [ChainBuilder](#chainbuilder)
     - [Lambda](#lambda)
