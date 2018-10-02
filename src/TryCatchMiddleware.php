@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-class TryCatchMiddleware extends BaseMiddleware
+class TryCatchMiddleware implements IMiddleware
 {
 
 	/** @var bool */

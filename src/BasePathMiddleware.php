@@ -5,7 +5,7 @@ namespace Contributte\Middlewares;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class BasePathMiddleware extends BaseMiddleware
+class BasePathMiddleware implements IMiddleware
 {
 
 	/** @var string */

@@ -10,9 +10,9 @@ The middlewares / relay conception is a strong pattern with many benefits.
 - [Modes - nette/standalone mode](#modes)
 - [Application - life cycle](#application)
 - [Middlewares](#middlewares)
+    - [IMiddleware](#imiddleware)
     - [AbstractRootMiddleware](#abstractrootmiddleware)
     - [AutoBasePathMiddleware](#autobasepathmiddleware)
-    - [BaseMiddleware](#basemiddleware)
     - [BasePathMiddleware](#basepathmiddleware)
     - [BasicAuthMiddleware](#basicauthmiddleware)
     - [BuilderMiddleware](#buildermiddleware)
@@ -132,6 +132,32 @@ The final middleware list is:
 - `AppMiddleware2`
 - `AppMiddleware3`
 
+### `IMiddleware`
+
+This is just interface for your middlewares.
+
+```php
+namespace App;
+
+use Contributte\Middleares\IMiddleware;
+
+final class MyCustomMiddleware implements IMiddleware
+{
+
+    /**
+     * @param ServerRequestInterface $psr7Request
+     * @param ResponseInterface $psr7Response
+     * @param callable $next
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+    {
+        // Let's play
+    }
+
+}
+```
+
 ### Ready-to-use middlewares
 
 At this time we have prepared a few middlewares:
@@ -150,7 +176,7 @@ use Contributte\Middleares\Utils\ChainBuilder;
 final class MyAppMiddleware extends AbstractRootMiddleware
 {
 
-    public function create()
+    public function create(): callable
     {
         $chain = new ChainBuilder();
         $chain->add(new TracyMiddleware());
@@ -177,33 +203,6 @@ middleware:
     - TrailingSlashMiddleware
     - UuidMiddleware
     - CspMiddleware
-```
-
-#### `BaseMiddleware`
-
-This is just abstract class for your middlewares.
-
-```php
-namespace App;
-
-use Contributte\Middleares\BaseMiddleware;
-
-final class MyCustomMiddleware extends BaseMiddleware
-{
-
-
-    /**
-     * @param ServerRequestInterface $psr7Request
-     * @param ResponseInterface $psr7Response
-     * @param callable $next
-     * @return ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-    {
-        // Let's play
-    }
-
-}
 ```
 
 #### `BasePathMiddleware`

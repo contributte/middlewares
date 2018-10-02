@@ -23,7 +23,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
-class PresenterMiddleware extends BaseMiddleware
+class PresenterMiddleware implements IMiddleware
 {
 
 	/** @var int */

@@ -5,7 +5,7 @@ namespace Contributte\Middlewares;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class MethodOverrideMiddleware extends BaseMiddleware
+class MethodOverrideMiddleware implements IMiddleware
 {
 
 	public const OVERRIDE_HEADER = 'X-HTTP-Method-Override';
