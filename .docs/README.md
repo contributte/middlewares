@@ -16,6 +16,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [BasePathMiddleware](#basepathmiddleware)
     - [BasicAuthMiddleware](#basicauthmiddleware)
     - [BuilderMiddleware](#buildermiddleware)
+    - [EnforceHttpsMiddleware](#enforcehttpsmiddleware)
     - [PresenterMiddleware](#presentermiddleware)
     - [SecurityMiddleware](#securitymiddleware)
     - [TracyMiddleware](#tracymiddleware)
@@ -256,6 +257,17 @@ services:
         - add(TrailingSlashMiddleware())
         - add(UuidMiddleware())
         - add(CspMiddleware())
+```
+
+#### `EnforceHttpsMiddleware`
+
+Throw error if the request did not come from https.
+It is recommended behavior for apis (but not recommended for end-user applications).
+
+```yaml
+middleware:
+    middlewares:
+        - Contributte\Middlewares\EnforceHttpsMiddleware
 ```
 
 #### `PresenterMiddleware`
