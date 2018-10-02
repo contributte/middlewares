@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tracy\Debugger;
 
-class TracyMiddleware extends BaseMiddleware
+class TracyMiddleware implements IMiddleware
 {
 
 	/** @var bool */

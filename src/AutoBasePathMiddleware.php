@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Drop base path from URL by auto-detection
  */
-class AutoBasePathMiddleware extends BaseMiddleware
+class AutoBasePathMiddleware implements IMiddleware
 {
 
 	// Attributes in ServerRequestInterface

@@ -6,7 +6,7 @@ use Contributte\Middlewares\Security\IAuthenticator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class SecurityMiddleware extends BaseMiddleware
+class SecurityMiddleware implements IMiddleware
 {
 
 	// Attributes in ServerRequestInterface

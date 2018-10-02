@@ -6,7 +6,7 @@ use Contributte\Middlewares\Utils\ChainBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class BuilderMiddleware extends BaseMiddleware
+class BuilderMiddleware implements IMiddleware
 {
 
 	/** @var ChainBuilder */

@@ -6,7 +6,7 @@ use Contributte\Middlewares\Utils\Lambda;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class AbstractRootMiddleware extends BaseMiddleware
+abstract class AbstractRootMiddleware implements IMiddleware
 {
 
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
