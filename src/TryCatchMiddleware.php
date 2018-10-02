@@ -20,7 +20,7 @@ class TryCatchMiddleware implements IMiddleware
 				return $response;
 			} catch (Throwable $throwable) {
 				$response = $response->withStatus(500);
-				$response->getBody()->write(sprintf('Application encountered an internal error with status code "500" and with message "%s".', $throwable->getMessage()));
+				$response->getBody()->write('Application encountered an internal error. Please try again later.');
 				return $response;
 			}
 		}
