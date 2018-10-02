@@ -13,10 +13,12 @@ use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-// Catched expception
+// Catched expception, production mode
 test(function (): void {
 	$response = Psr7ResponseFactory::fromGlobal();
 	$middleware = new TryCatchMiddleware();
+	$middleware->setDebugMode(false);
+	$middleware->setCatchExceptions(true);
 	$response = $middleware(
 		Psr7ServerRequestFactory::fromSuperGlobal(),
 		$response,
@@ -33,7 +35,32 @@ test(function (): void {
 	}
 
 	Assert::same(500, $response->getStatusCode());
-	Assert::same('Application encountered an internal error with status code "500" and with message "foo".', ob_get_clean());
+	Assert::same('Application encountered an internal error. Please try again later.', ob_get_clean());
+});
+
+// Catched expception, debug mode with catch exception enabled
+test(function (): void {
+	$response = Psr7ResponseFactory::fromGlobal();
+	$middleware = new TryCatchMiddleware();
+	$middleware->setDebugMode(true);
+	$middleware->setCatchExceptions(true);
+	$response = $middleware(
+		Psr7ServerRequestFactory::fromSuperGlobal(),
+		$response,
+		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): void {
+			throw new RuntimeException('foo');
+		}
+	);
+
+	ob_start();
+	$stream = $response->getBody();
+	$stream->rewind();
+	while (!$stream->eof()) {
+		echo $stream->read(8192);
+	}
+
+	Assert::same(500, $response->getStatusCode());
+	Assert::same('Application encountered an internal error. Please try again later.', ob_get_clean());
 });
 
 // Ok
@@ -64,6 +91,7 @@ test(function (): void {
 test(function (): void {
 	Assert::exception(function (): void {
 		$middleware = new TryCatchMiddleware();
+		$middleware->setDebugMode(true);
 		$middleware->setCatchExceptions(false);
 		$middleware(
 			Psr7ServerRequestFactory::fromSuperGlobal(),

@@ -26,7 +26,8 @@
     "nette/di": "~2.4.12",
     "nette/http": "~2.4.9",
     "nette/utils": "2.5.2",
-    "tracy/tracy": "~2.4.15"
+    "tracy/tracy": "~2.4.15",
+    "psr/log": "^1.0"
   },
   "conflict": {
     "nette/application": "<2.4.12",

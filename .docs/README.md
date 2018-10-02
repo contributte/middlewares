@@ -292,6 +292,8 @@ PresenterMiddleware requires to run middlewares in Nette mode. Take a look at ru
 
 This middleware catch all exceptions and shows tracy dump. It can be instanced normally or via factory `TracyMiddleware::factory($debugMode)`.
 
+TryCatchMiddleware should be preferred by apis.
+
 ```yaml
 middleware:
   middlewares:
@@ -311,7 +313,9 @@ middleware:
 
 #### `TryCatchMiddleware`
 
-This middlewares catches all exceptions thrown in application and outputs their message with status code 500. It should be registered first.
+This middleware catches all exceptions thrown in application and informs user that application encountered an internal error. It should be registered first.
+
+You could also pass PSR-3 compatible logger. Because all exceptions are handled by TryCatchMiddleware so exception handler could not log them itself.
 
 ```yaml
 middleware:
@@ -319,7 +323,9 @@ middleware:
         -
             class: Contributte\Middlewares\TryCatchMiddleware
             setup:
-                - setCatchExceptions(%productionMode%)
+                - setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
+                - setDebugMode(%debugMode%)
+                - setLogger($psr3Logger, Psr\Log\LogLevel::ERROR) # Monolog and Tracy PSR3 adapter are good choice
 ```
 
 #### `MethodOverrideMiddleware`
