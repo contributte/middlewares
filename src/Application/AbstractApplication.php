@@ -48,7 +48,7 @@ abstract class AbstractApplication implements IApplication
 	/**
 	 * Dispatch application in middleware cycle!
 	 *
-	 * @return string|int|null|bool|void|ResponseInterface
+	 * @return string|int|bool|void|ResponseInterface|null
 	 */
 	public function run()
 	{

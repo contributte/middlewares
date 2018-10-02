@@ -33,7 +33,7 @@ final class BasePathMiddlewareTest extends TestCase
 		$middleware(
 			Psr7ServerRequestFactory::fromSuperGlobal(),
 			Psr7ResponseFactory::fromGlobal(),
-			function (ServerRequestInterface $req, ResponseInterface $res) use ($requestUri, $basePath, $coolUrl): ResponseInterface {
+			function (ServerRequestInterface $req, ResponseInterface $res) use ($coolUrl): ResponseInterface {
 				Assert::equal($coolUrl, $req->getUri()->getPath());
 				return $res;
 			}

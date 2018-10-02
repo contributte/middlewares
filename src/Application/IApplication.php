@@ -10,7 +10,7 @@ interface IApplication
 	/**
 	 * Dispatch application!
 	 *
-	 * @return string|int|null|bool|void|ResponseInterface
+	 * @return string|int|bool|void|ResponseInterface|null
 	 */
 	public function run();
 
