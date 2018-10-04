@@ -17,6 +17,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [BasicAuthMiddleware](#basicauthmiddleware)
     - [BuilderMiddleware](#buildermiddleware)
     - [EnforceHttpsMiddleware](#enforcehttpsmiddleware)
+    - [LoggingMiddleware](#loggingmiddleware)
     - [PresenterMiddleware](#presentermiddleware)
     - [SecurityMiddleware](#securitymiddleware)
     - [TracyMiddleware](#tracymiddleware)
@@ -267,6 +268,17 @@ It is recommended behavior for apis (but not recommended for end-user applicatio
 middleware:
     middlewares:
         - Contributte\Middlewares\EnforceHttpsMiddleware
+```
+
+#### `LoggingMiddleware`
+
+Log uri for each request.
+Also removes password from that uri for security reasons.
+
+```yaml
+middleware:
+    middlewares:
+        - Contributte\Middlewares\LoggingMiddleware($psr3Logger)
 ```
 
 #### `PresenterMiddleware`
