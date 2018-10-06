@@ -18,6 +18,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [BuilderMiddleware](#buildermiddleware)
     - [EnforceHttpsMiddleware](#enforcehttpsmiddleware)
     - [LoggingMiddleware](#loggingmiddleware)
+    - [MethodOverrideMiddleware](#methodoverridemiddleware)
     - [PresenterMiddleware](#presentermiddleware)
     - [SecurityMiddleware](#securitymiddleware)
     - [TracyMiddleware](#tracymiddleware)
@@ -281,6 +282,16 @@ middleware:
         - Contributte\Middlewares\LoggingMiddleware($psr3Logger)
 ```
 
+#### `MethodOverrideMiddleware`
+
+This middleware overrides HTTP method using `X-HTTP-Method-Override` header. A typical use case would be when your API is behind some proxy/VPN which only allows some HTTP methods, for example only `GET` and `POST`. Sending header `X-HTTP-Method-Override: PUT` will change the request method to `PUT`.
+
+```yaml
+middleware:
+  middlewares:
+    - Contributte\Middlewares\MethodOverrideMiddleware
+```
+
 #### `PresenterMiddleware`
 
 This middleware simulates original nette application behaviours. It converts Psr7Request to `Nette\Application\Request`
@@ -338,16 +349,6 @@ middleware:
                 - setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
                 - setDebugMode(%debugMode%)
                 - setLogger($psr3Logger, Psr\Log\LogLevel::ERROR) # Monolog and Tracy PSR3 adapter are good choice
-```
-
-#### `MethodOverrideMiddleware`
-
-This middleware overrides HTTP method using `X-HTTP-Method-Override` header. A typical use case would be when your API is behind some proxy/VPN which only allows some HTTP methods, for example only `GET` and `POST`. Sending header `X-HTTP-Method-Override: PUT` will change the request method to `PUT`.
-
-```yaml
-middleware:
-  middlewares:
-    - Contributte\Middlewares\MethodOverrideMiddleware
 ```
 
 ## Utils
