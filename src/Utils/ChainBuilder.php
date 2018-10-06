@@ -44,7 +44,7 @@ class ChainBuilder
 
 		$middlewares = $this->middlewares;
 		while ($middleware = array_pop($middlewares)) {
-			$next = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next) {
+			$next = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next): ResponseInterface {
 				// Middleware should return ALWAYS response!
 				return $middleware($request, $response, $next);
 			};

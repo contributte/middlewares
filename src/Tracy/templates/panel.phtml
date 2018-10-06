@@ -1,0 +1,69 @@
+<?php declare(strict_types = 1);
+
+use Contributte\Middlewares\IMiddleware;
+
+/**
+ * @var int           $usedCount
+ * @var IMiddleware[] $middlewares
+ */
+
+?>
+
+<style>
+	#tracy-debug-panel-Contributte-Middlewares-Tracy-MiddlewaresPanel {
+		min-width: 450px !important;
+		max-width: 100% !important;
+	}
+
+	.tracy-middlewares-panel-row {
+		margin: 8px 0 !important;
+	}
+	.tracy-middlewares-panel-row:not(:last-child) {
+		padding-bottom: 8px !important;
+		border-bottom: 1px solid #dadce0 !important;
+	}
+
+	.tracy-middlewares-panel-status {
+		display: inline-block;
+		vertical-align: top;
+		margin-right: 16px !important;
+		border-radius: 50% !important;
+		color: rgba(255, 255, 255, .87) !important;
+		font-weight: bold !important;
+		padding: 2px !important;
+	}
+
+	.tracy-middlewares-panel-detail {
+		display: inline-block;
+		vertical-align: top;
+		margin-top: 4px !important;
+		width: calc(100% - 50px);
+	}
+
+	.tracy-middlewares-panel-row details summary::-webkit-details-marker {
+		float: right;
+	}
+</style>
+
+<h1>Middlewares</h1>
+
+<div class="tracy-inner">
+	<?php $i = 1; ?>
+	<?php foreach ($middlewares as $middleware): ?>
+		<div class="tracy-middlewares-panel-row">
+			<div class="tracy-middlewares-panel-status"
+				 style="background: <?php echo $usedCount >= $i ? '#388E3C' : '#DD2C00'; ?> !important;">
+				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+					<path fill="#EEE" d="M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z"/>
+				</svg>
+			</div>
+			<details class="tracy-middlewares-panel-detail">
+				<summary>
+					<?php echo get_class($middleware); ?>
+				</summary>
+				<?php dump($middleware); ?>
+			</details>
+		</div>
+		<?php $i++; ?>
+	<?php endforeach; ?>
+</div>

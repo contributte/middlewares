@@ -43,6 +43,9 @@ extensions:
 
     # nette application mode
     middleware: Contributte\Middlewares\DI\NetteMiddlewaresExtension
+
+middleware:
+    debug: %debugMode%
 ```
 
 ## Modes

@@ -3,10 +3,13 @@
 namespace Contributte\Middlewares\DI;
 
 use Contributte\Middlewares\Exception\InvalidStateException;
+use Contributte\Middlewares\Tracy\CountUsedMiddlewaresMiddleware;
+use Contributte\Middlewares\Tracy\MiddlewaresPanel;
 use Contributte\Middlewares\Utils\ChainBuilder;
 use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
+use Nette\PhpGenerator\ClassType;
 use Nette\Utils\Validators;
 
 abstract class AbstractMiddlewaresExtension extends CompilerExtension
@@ -18,6 +21,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	protected $defaults = [
 		'middlewares' => [],
 		'root' => null,
+		'debug' => false,
 	];
 
 	/**
@@ -40,6 +44,16 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('chain'))
 			->setClass(ChainBuilder::class)
 			->setAutowired(false);
+
+		if ($config['debug'] === true) {
+			$countMiddleware = $builder->addDefinition($this->prefix('countMiddleware'))
+				->setFactory(CountUsedMiddlewaresMiddleware::class)
+				->setAutowired(false);
+
+			$builder->addDefinition($this->prefix('middlewaresPanel'))
+				->setFactory(MiddlewaresPanel::class, [$countMiddleware])
+				->setAutowired(false);
+		}
 	}
 
 	/**
@@ -80,6 +94,11 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		// Obtain middleware chain builder
 		$chain = $builder->getDefinition($this->prefix('chain'));
 
+		if ($config['debug'] === true) {
+			$panel = $builder->getDefinition($this->prefix('middlewaresPanel'));
+			$countMiddleware = $builder->getDefinition($this->prefix('countMiddleware'));
+		}
+
 		// Add middleware services to chain
 		$counter = 0;
 		foreach ($config['middlewares'] as $service) {
@@ -96,6 +115,11 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 				$def = $builder->getDefinition(ltrim($service, '@'));
 			}
 
+			if ($config['debug'] === true) {
+				$panel->addSetup('addMiddleware', [$def]);
+				$chain->addSetup('add', [$countMiddleware]);
+			}
+
 			// Append to chain of middlewares
 			$chain->addSetup('add', [$def]);
 		}
@@ -104,6 +128,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	private function compileTaggedMiddlewares(): void
 	{
 		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
 
 		// Find all definitions by tag
 		$definitions = $builder->findByTag(self::MIDDLEWARE_TAG);
@@ -111,6 +136,11 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		// Ensure we have at least 1 service
 		if ($definitions === []) {
 			throw new InvalidStateException(sprintf('No services with tag "%s"', self::MIDDLEWARE_TAG));
+		}
+
+		if ($config['debug'] === true) {
+			$panel = $builder->getDefinition($this->prefix('middlewaresPanel'));
+			$countMiddleware = $builder->getDefinition($this->prefix('countMiddleware'));
 		}
 
 		// Sort by priority
@@ -130,8 +160,26 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 
 		// Add middleware services to chain
 		foreach ($definitions as $name => $tag) {
+			if ($config['debug'] === true) {
+				$panel->addSetup('addMiddleware', [$builder->getDefinition($name)]);
+				$chain->addSetup('add', [$countMiddleware]);
+			}
+
 			// Append to chain of middlewares
 			$chain->addSetup('add', [$builder->getDefinition($name)]);
+		}
+	}
+
+	public function afterCompile(ClassType $class): void
+	{
+		$config = $this->validateConfig($this->defaults);
+
+		if ($config['debug'] === true) {
+			$initialize = $class->getMethod('initialize');
+			$initialize->addBody(
+				'$this->getService(?)->addPanel($this->getService(?));',
+				['tracy.bar', $this->prefix('middlewaresPanel')]
+			);
 		}
 	}
 
