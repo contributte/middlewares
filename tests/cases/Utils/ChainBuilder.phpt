@@ -61,10 +61,6 @@ test(function (): void {
 	$builder = new ChainBuilder();
 
 	Assert::throws(function () use ($builder): void {
-		$builder->add('foobar');
-	}, InvalidStateException::class, 'Middleware is not callable');
-
-	Assert::throws(function () use ($builder): void {
 		$builder->create();
 	}, InvalidStateException::class, 'At least one middleware is needed');
 });

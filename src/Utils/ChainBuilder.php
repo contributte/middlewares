@@ -12,15 +12,8 @@ class ChainBuilder
 	/** @var mixed[] */
 	private $middlewares = [];
 
-	/**
-	 * @param mixed $middleware
-	 */
-	public function add($middleware): void
+	public function add(callable $middleware): void
 	{
-		if (!is_callable($middleware)) {
-			throw new InvalidStateException('Middleware is not callable');
-		}
-
 		$this->middlewares[] = $middleware;
 	}
 
@@ -45,7 +38,6 @@ class ChainBuilder
 		$middlewares = $this->middlewares;
 		while ($middleware = array_pop($middlewares)) {
 			$next = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next): ResponseInterface {
-				// Middleware should return ALWAYS response!
 				return $middleware($request, $response, $next);
 			};
 		}
