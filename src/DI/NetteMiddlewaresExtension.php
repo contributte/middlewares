@@ -19,7 +19,6 @@ class NetteMiddlewaresExtension extends AbstractMiddlewaresExtension
 		parent::loadConfiguration();
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
 
 		if ($builder->getByType(Request::class) === null) {
 			throw new ServiceCreationException(sprintf('Extension needs service %s. Do you have nette/http in composer file?', Request::class));
@@ -30,16 +29,11 @@ class NetteMiddlewaresExtension extends AbstractMiddlewaresExtension
 		}
 
 		$application = $builder->addDefinition($this->prefix('application'))
-			->setClass(NetteMiddlewareApplication::class);
+			->setClass(NetteMiddlewareApplication::class)
+			->setArguments([new Statement('@' . $this->prefix('chain') . '::create')]);
 
 		$application->addSetup('setHttpRequest', [new Statement('@' . $builder->getByType(Request::class))])
 			->addSetup('setHttpResponse', [new Statement('@' . $builder->getByType(Response::class))]);
-
-		if ($config['root'] !== null) {
-			$application->setArguments([new Statement($config['root'])]);
-		} else {
-			$application->setArguments([new Statement('@' . $this->prefix('chain') . '::create')]);
-		}
 	}
 
 }

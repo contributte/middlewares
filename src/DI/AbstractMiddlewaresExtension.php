@@ -20,7 +20,6 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	/** @var mixed[] */
 	protected $defaults = [
 		'middlewares' => [],
-		'root' => null,
 		'debug' => false,
 	];
 
@@ -33,12 +32,6 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 
 		Validators::assertField($config, 'middlewares', 'array');
-		Validators::assertField($config, 'root', 'string|null');
-
-		// Skip next registration, if root middleware is specified
-		if ($config['root'] !== null) {
-			return;
-		}
 
 		// Register middleware chain builder
 		$builder->addDefinition($this->prefix('chain'))
@@ -64,11 +57,6 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		// Skip next registration, if root middleware is specified
-		if ($config['root'] !== null) {
-			return;
-		}
-
 		// Compile defined middlewares
 		if ($config['middlewares'] !== []) {
 			$this->compileDefinedMiddlewares();
@@ -83,7 +71,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 			return;
 		}
 
-		throw new InvalidStateException('There must be at least one middleware registered, tag middleware added or root middleware configured.');
+		throw new InvalidStateException('There must be at least one middleware registered or added by tag.');
 	}
 
 	private function compileDefinedMiddlewares(): void

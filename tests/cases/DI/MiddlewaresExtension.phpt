@@ -4,7 +4,6 @@
  * Test: DI\NetteMiddlewareExtension + DI\MiddlewareExtension
  */
 
-use Contributte\Middlewares\Application\MiddlewareApplication;
 use Contributte\Middlewares\DI\MiddlewaresExtension;
 use Contributte\Middlewares\DI\NetteMiddlewaresExtension;
 use Contributte\Middlewares\IMiddleware;
@@ -17,7 +16,6 @@ use Nette\DI\ContainerLoader;
 use Nette\DI\ServiceCreationException;
 use Nette\Http\Request;
 use Nette\Http\RequestFactory;
-use Psr\Http\Message\ResponseInterface;
 use Tester\Assert;
 use Tester\FileMock;
 use Tests\Fixtures\MutableExtension;
@@ -74,69 +72,6 @@ test(function (): void {
 	Assert::count(3, $container->findByType(IMiddleware::class));
 });
 
-// Root middleware - defined as string
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
-	$class = $loader->load(function (Compiler $compiler): void {
-		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
-		$compiler->loadConfig(FileMock::create('
-			middleware:
-				root: Tests\Fixtures\SimpleRootMiddleware
-		', 'neon'));
-	}, '3a');
-
-	/** @var Container $container */
-	$container = new $class();
-
-	Assert::count(0, $container->findByType(IMiddleware::class));
-});
-
-// Root middleware - defined as string
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
-	$class = $loader->load(function (Compiler $compiler): void {
-		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new MiddlewaresExtension());
-		$compiler->loadConfig(FileMock::create('
-			middleware:
-				root: Tests\Fixtures\SimpleRootMiddleware
-		', 'neon'));
-	}, '3b');
-
-	/** @var Container $container */
-	$container = new $class();
-
-	Assert::count(0, $container->findByType(IMiddleware::class));
-});
-
-// Root middleware - defined as service
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
-	$class = $loader->load(function (Compiler $compiler): void {
-		$compiler->addExtension('http', new HttpExtension());
-		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
-		$compiler->loadConfig(FileMock::create('
-			middleware:
-				root: @root
-				
-			services:
-				root: Tests\Fixtures\SimpleRootMiddleware
-		', 'neon'));
-	}, 4);
-
-	/** @var Container $container */
-	$container = new $class();
-
-	Assert::count(1, $container->findByType(IMiddleware::class));
-
-	/** @var MiddlewareApplication $app */
-	$app = $container->getByType(MiddlewareApplication::class);
-	$res = $app->run();
-
-	Assert::type(ResponseInterface::class, $res);
-});
-
 // Misssing nette/http request
 test(function (): void {
 	Assert::throws(function (): void {
@@ -145,8 +80,8 @@ test(function (): void {
 			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 			$compiler->loadConfig(FileMock::create('
 				middleware:
-					root: Tests\Fixtures\SimpleRootMiddleware
-			', 'neon'));
+					###########################TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+	', 'neon'));
 		}, 5);
 
 		/** @var Container $container */
@@ -169,8 +104,7 @@ test(function (): void {
 			$compiler->addExtension('x', $mutable);
 			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 			$compiler->loadConfig(FileMock::create('
-				middleware:
-					root: Tests\Fixtures\SimpleRootMiddleware
+			###########################TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 			', 'neon'));
 		}, 6);
 
