@@ -11,7 +11,6 @@ The middlewares / relay conception is a strong pattern with many benefits.
 - [Application - life cycle](#application)
 - [Middlewares](#middlewares)
     - [IMiddleware](#imiddleware)
-    - [AbstractRootMiddleware](#abstractrootmiddleware)
     - [AutoBasePathMiddleware](#autobasepathmiddleware)
     - [BasePathMiddleware](#basepathmiddleware)
     - [BasicAuthMiddleware](#basicauthmiddleware)
@@ -64,7 +63,7 @@ That's all. The main purpose of this is to start via our application, not the de
 
 - `startup` - triggered when `$app->run()` is called
 - `request` - triggered before the chain is called
-- `error` - triggered when exceptions is ocurred
+- `error` - triggered when exceptions is occurred
 - `response` - triggered after the chain is called
 
 You attach listener calling the method `$app->addListener(type, callback)`.
@@ -101,15 +100,6 @@ middleware:
 
     # Compatibility with Nette applications
     - Contributte\Middlewares\PresenterMiddleware
-```
-
-### RootMiddleware
-
-Or just register **root** middleware as the very first entrypoint.
-
-```yaml
-middleware:
-  root: App\Model\AppMiddleware
 ```
 
 ### Tags
@@ -167,32 +157,6 @@ final class MyCustomMiddleware implements IMiddleware
 ### Ready-to-use middlewares
 
 At this time we have prepared a few middlewares:
-
-#### `AbstractRootMiddleware`
-
-Use should use this middleware if you prefer PHP scripts before NEON declarations.
-
-```php
-namespace App;
-
-use Contributte\Middleares\AbstractRootMiddleware;
-use Contributte\Middleares\TracyMiddleware;
-use Contributte\Middleares\Utils\ChainBuilder;
-
-final class MyAppMiddleware extends AbstractRootMiddleware
-{
-
-    public function create(): callable
-    {
-        $chain = new ChainBuilder();
-        $chain->add(new TracyMiddleware());
-        $chain->add(new MyCustomMiddleware());
-
-        return $chain->build();
-    }
-
-}
-```
 
 #### `AutoBasePathMiddleware`
 
