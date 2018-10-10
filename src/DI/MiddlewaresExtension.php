@@ -18,7 +18,7 @@ class MiddlewaresExtension extends AbstractMiddlewaresExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition($this->prefix('application'))
-			->setClass(MiddlewareApplication::class)
+			->setFactory(MiddlewareApplication::class)
 			->setArguments([new Statement('@' . $this->prefix('chain') . '::create')]);
 	}
 
