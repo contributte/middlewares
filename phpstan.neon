@@ -7,5 +7,3 @@ parameters:
 	ignoreErrors:
 		- '#Only booleans are allowed in an if condition, mixed given.#'
 		- '#Only booleans are allowed in a negated boolean, mixed given.#'
-		- '#Variable \$panel might not be defined.#'
-		- '#Variable \$countMiddleware might not be defined.#'

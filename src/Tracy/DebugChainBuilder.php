@@ -1,31 +1,18 @@
 <?php declare(strict_types = 1);
 
-namespace Contributte\Middlewares\Utils;
+namespace Contributte\Middlewares\Tracy;
 
 use Contributte\Middlewares\Exception\InvalidStateException;
+use Contributte\Middlewares\Utils\ChainBuilder;
+use Contributte\Middlewares\Utils\Lambda;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class ChainBuilder
+class DebugChainBuilder extends ChainBuilder
 {
 
-	/** @var mixed[] */
-	protected $middlewares = [];
-
-	public function add(callable $middleware): void
-	{
-		$this->middlewares[] = $middleware;
-	}
-
-	/**
-	 * @param mixed[] $middlewares
-	 */
-	public function addAll(array $middlewares): void
-	{
-		foreach ($middlewares as $middleware) {
-			$this->add($middleware);
-		}
-	}
+	/** @var int */
+	private $usedCount = 0;
 
 	public function create(): callable
 	{
@@ -38,6 +25,7 @@ class ChainBuilder
 		$middlewares = $this->middlewares;
 		while ($middleware = array_pop($middlewares)) {
 			$next = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next): ResponseInterface {
+				$this->usedCount++;
 				return $middleware($request, $response, $next);
 			};
 		}
@@ -45,15 +33,17 @@ class ChainBuilder
 		return $next;
 	}
 
-	/**
-	 * @param mixed[] $middlewares
-	 */
-	public static function factory(array $middlewares): callable
+	public function getUsedCount(): int
 	{
-		$chain = new ChainBuilder();
-		$chain->addAll($middlewares);
+		return $this->usedCount;
+	}
 
-		return $chain->create();
+	/**
+	 * @return callable[]
+	 */
+	public function getAll(): array
+	{
+		return $this->middlewares;
 	}
 
 }

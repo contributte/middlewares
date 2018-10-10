@@ -2,26 +2,17 @@
 
 namespace Contributte\Middlewares\Tracy;
 
-use Contributte\Middlewares\IMiddleware;
 use Tracy\IBarPanel;
 
 class MiddlewaresPanel implements IBarPanel
 {
 
-	/** @var CountUsedMiddlewaresMiddleware */
-	private $counter;
+	/** @var DebugChainBuilder */
+	private $chainBuilder;
 
-	/** @var IMiddleware[] */
-	private $middlewares;
-
-	public function __construct(CountUsedMiddlewaresMiddleware $counter)
+	public function __construct(DebugChainBuilder $chainBuilder)
 	{
-		$this->counter = $counter;
-	}
-
-	public function addMiddleware(IMiddleware $middleware): void
-	{
-		$this->middlewares[] = $middleware;
+		$this->chainBuilder = $chainBuilder;
 	}
 
 	public function getTab(): string
@@ -33,8 +24,8 @@ class MiddlewaresPanel implements IBarPanel
 
 	public function getPanel(): string
 	{
-		$usedCount = $this->counter->getCount();
-		$middlewares = $this->middlewares;
+		$usedCount = $this->chainBuilder->getUsedCount();
+		$middlewares = $this->chainBuilder->getAll();
 
 		ob_start();
 		require __DIR__ . '/templates/panel.phtml';
