@@ -24,7 +24,7 @@ class LoggingMiddleware implements IMiddleware
 			[$user] = explode(':', $uri->getUserInfo());
 			$uri = $uri->withUserInfo($user, ''); // Remove password for security reasons
 		}
-		$this->logger->info((string) $uri);
+		$this->logger->info(sprintf('Requested url: %s', (string) $uri));
 
 		return $next($request, $response);
 	}
