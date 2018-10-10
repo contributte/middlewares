@@ -120,7 +120,7 @@ test(function (): void {
 		}
 	);
 
-	Assert::same('https://user@example.com/foo/bar', $logger->get());
+	Assert::same('Requested url: https://user@example.com/foo/bar', $logger->get());
 
 	$response = Psr7ResponseFactory::fromGlobal();
 	$middleware = new LoggingMiddleware($logger);
@@ -132,5 +132,5 @@ test(function (): void {
 		}
 	);
 
-	Assert::same('https://example.com/foo/bar', $logger->get());
+	Assert::same('Requested url: https://example.com/foo/bar', $logger->get());
 });
