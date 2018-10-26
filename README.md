@@ -7,10 +7,10 @@
 [![Build Status](https://img.shields.io/travis/contributte/middlewares.svg?style=flat-square)](https://travis-ci.org/contributte/middlewares)
 [![Code coverage](https://img.shields.io/coveralls/contributte/middlewares.svg?style=flat-square)](https://coveralls.io/r/contributte/middlewares)
 [![Licence](https://img.shields.io/packagist/l/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
-
 [![Downloads this Month](https://img.shields.io/packagist/dm/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 [![Downloads total](https://img.shields.io/packagist/dt/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 [![Latest stable](https://img.shields.io/packagist/v/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
 ## Discussion / Help
 
@@ -68,7 +68,7 @@ We have a many solutions and prepared libraries in PHP world.
       </td>
       <td align="center">
         <a href="https://github.com/mabar">
-            <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/20974277?s=400&v=4">
+            <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/20974277?s=150&v=4">
         </a>
         </br>
         <a href="https://github.com/mabar">Marek Bartoš</a>
