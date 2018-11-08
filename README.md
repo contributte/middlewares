@@ -74,7 +74,7 @@ We have a many solutions and prepared libraries in PHP world.
         <a href="https://github.com/mabar">Marek Bartoš</a>
       </td>
     </tr>
-  <tbody>
+  </tbody>
 </table>
 
 -----
