@@ -19,12 +19,7 @@ class LoggingMiddleware implements IMiddleware
 
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
-		$uri = $request->getUri();
-		if ($uri->getUserInfo() !== '') {
-			[$user] = explode(':', $uri->getUserInfo());
-			$uri = $uri->withUserInfo($user, ''); // Remove password for security reasons
-		}
-		$this->logger->info(sprintf('Requested url: %s', (string) $uri));
+		$this->logger->info(sprintf('Requested url: %s', (string) $request->getUri()->withUserInfo('', '')));
 
 		return $next($request, $response);
 	}

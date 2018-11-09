@@ -241,7 +241,7 @@ middleware:
 #### `LoggingMiddleware`
 
 Log uri for each request.
-Also removes password from that uri for security reasons.
+Also removes login from that uri for security reasons.
 
 ```yaml
 middleware:
