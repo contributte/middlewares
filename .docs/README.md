@@ -25,6 +25,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
 - [Utils](#utils)
     - [ChainBuilder](#chainbuilder)
     - [Lambda](#lambda)
+- [Playground](#playground)
 
 ## Installation
 
@@ -351,3 +352,10 @@ Lambda::blank()
 return function () {
 };
 ```
+
+## Playground
+
+Take a look at real usecases:
+
+- https://github.com/apitte/playground
+- https://github.com/planette/forest-project
