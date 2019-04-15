@@ -54,7 +54,7 @@ class MiddlewareApplication extends AbstractApplication
 		$name = str_replace(' ', '-', $name);
 		foreach ($values as $value) {
 			// never send multiple content-type headers
-			if (preg_match("/content-type/i", $name)) {
+			if (preg_match('/content-type/i', $name)) {
 				header(sprintf('%s: %s', $name, $value));
 			}
 			else {
