@@ -55,10 +55,10 @@ class MiddlewareApplication extends AbstractApplication
 		foreach ($values as $value) {
 			// never send multiple content-type headers
 			if (preg_match("/content-type/i", $name)) {
-				header(sprintf('%s: %s', $name, $value));				
+				header(sprintf('%s: %s', $name, $value));
 			}
 			else {
-				header(sprintf('%s: %s', $name, $value), false);				
+				header(sprintf('%s: %s', $name, $value), false);
 			}
 		}
 	}
