@@ -53,7 +53,13 @@ class MiddlewareApplication extends AbstractApplication
 		$name = ucwords($name);
 		$name = str_replace(' ', '-', $name);
 		foreach ($values as $value) {
-			header(sprintf('%s: %s', $name, $value), false);
+			// never send multiple content-type headers
+			if (preg_match("/content-type/i", $name)) {
+				header(sprintf('%s: %s', $name, $value));				
+			}
+			else {
+				header(sprintf('%s: %s', $name, $value), false);				
+			}
 		}
 	}
 
