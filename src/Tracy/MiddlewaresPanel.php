@@ -17,6 +17,12 @@ class MiddlewaresPanel implements IBarPanel
 
 	public function getTab(): string
 	{
+		$usedCount = $this->chainBuilder->getUsedCount();
+
+		if ($usedCount === 0) {
+			return '';
+		}
+
 		ob_start();
 		require __DIR__ . '/templates/tab.phtml';
 		return (string) ob_get_clean();
@@ -26,6 +32,10 @@ class MiddlewaresPanel implements IBarPanel
 	{
 		$usedCount = $this->chainBuilder->getUsedCount();
 		$middlewares = $this->chainBuilder->getAll();
+
+		if ($usedCount === 0) {
+			return '';
+		}
 
 		ob_start();
 		require __DIR__ . '/templates/panel.phtml';
