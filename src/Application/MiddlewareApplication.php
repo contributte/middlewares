@@ -10,6 +10,10 @@ use Psr\Http\Message\ServerRequestInterface;
 class MiddlewareApplication extends AbstractApplication
 {
 
+	private const UNIQUE_HEADERS = [
+		'content-type',
+	];
+
 	protected function createInitialRequest(): ServerRequestInterface
 	{
 		return Psr7ServerRequestFactory::fromGlobal();
@@ -52,8 +56,9 @@ class MiddlewareApplication extends AbstractApplication
 		$name = str_replace('-', ' ', $name);
 		$name = ucwords($name);
 		$name = str_replace(' ', '-', $name);
+		$replace = in_array(strtolower($name), self::UNIQUE_HEADERS, true) ? true : false;
 		foreach ($values as $value) {
-			header(sprintf('%s: %s', $name, $value), false);
+			header(sprintf('%s: %s', $name, $value), $replace);
 		}
 	}
 
