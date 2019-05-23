@@ -136,7 +136,7 @@ This is just interface for your middlewares.
 ```php
 namespace App;
 
-use Contributte\Middleares\IMiddleware;
+use Contributte\Middlewares\IMiddleware;
 
 final class MyCustomMiddleware implements IMiddleware
 {
