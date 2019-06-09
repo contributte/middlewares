@@ -1,8 +1,6 @@
-# Middlewares
+# Contributte Middlewares
 
-:boom: Middleware / Relay / PSR-7 support to [`Nette Framework`](https://github.com/nette).
-
------
+Middleware / Relay / PSR-7 support to [`Nette Framework`](https://github.com/nette).
 
 [![Build Status](https://img.shields.io/travis/contributte/middlewares.svg?style=flat-square)](https://travis-ci.org/contributte/middlewares)
 [![Code coverage](https://img.shields.io/coveralls/contributte/middlewares.svg?style=flat-square)](https://coveralls.io/r/contributte/middlewares)
@@ -10,25 +8,11 @@
 [![Downloads this Month](https://img.shields.io/packagist/dm/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 [![Downloads total](https://img.shields.io/packagist/dt/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
 [![Latest stable](https://img.shields.io/packagist/v/contributte/middlewares.svg?style=flat-square)](https://packagist.org/packages/contributte/middlewares)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
 ## Discussion / Help
 
 [![Join the chat](https://img.shields.io/gitter/room/contributte/contributte.svg?style=flat-square)](http://bit.ly/ctteg)
-
-## Install
-
-```
-composer require contributte/middlewares
-```
-
-## Versions
-
-| State       | Version   | Branch   | PHP      |
-|-------------|-----------|----------|----------|
-| development | `^0.8.0`  | `master` | `>= 7.1` |
-| stable      | `^0.7.0`  | `master` | `>= 7.1` |
-| stable      | `^0.5.0`  | `master` | `>= 5.6` |
 
 ## Prolog
 
@@ -43,12 +27,22 @@ We have a many solutions and prepared libraries in PHP world.
 - [stackphp](https://github.com/stackphp) - connect middleware pattern and symfony HttpKernel
 - [zendframework/zend-diactoros](https://github.com/zendframework/zend-diactoros/) - Zend PSR-7 middleware
 
-## Overview
+## Documentation
 
-- [Installation - how to register an extension](https://github.com/contributte/middlewares/tree/master/.docs#installation)
-- [Modes - standalone/nette mode](https://github.com/contributte/middlewares/tree/master/.docs#modes)
-- [Middlewares - implementations](https://github.com/contributte/middlewares/tree/master/.docs#middlewares)
-- [Utils - useful classes](https://github.com/contributte/middlewares/tree/master/.docs#utils)
+- [Setup](.docs/README.md#setup)
+- [Modes - nette/standalone mode](.docs/README.md#modes)
+- [Application - life cycle](.docs/README.md#application)
+- [Middlewares](.docs/README.md#middlewares)
+- [Utils](.docs/README.md#utils)
+- [Playground](.docs/README.md#playground)
+
+## Versions
+
+| State       | Version   | Branch   | PHP      |
+|-------------|-----------|----------|----------|
+| development | `^0.8.0`  | `master` | `>= 7.1` |
+| stable      | `^0.7.0`  | `master` | `>= 7.1` |
+| stable      | `^0.5.0`  | `master` | `>= 5.6` |
 
 ## Design
 
@@ -77,10 +71,6 @@ We have a many solutions and prepared libraries in PHP world.
   </tbody>
 </table>
 
------
-
 The development is sponsored by [Tlapnet](http://www.tlapnet.cz). Thank you guys! :+1:
-
------
 
 Thank you for testing, reporting and contributing.

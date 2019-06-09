@@ -1,4 +1,4 @@
-## Middlewares / Relay
+## Contributte Middlewares
 
 The middlewares / relay conception is a strong pattern with many benefits.
 
@@ -6,7 +6,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
 
 ## Content
 
-- [Installation - how to register an extension](#installation)
+- [Setup](#setup)
 - [Modes - nette/standalone mode](#modes)
 - [Application - life cycle](#application)
 - [Middlewares](#middlewares)
@@ -27,9 +27,13 @@ The middlewares / relay conception is a strong pattern with many benefits.
     - [Lambda](#lambda)
 - [Playground](#playground)
 
-## Installation
+## Setup
 
-First of all you have to register one of the given extensions ([CompilerExtensions](https://api.nette.org/2.4/Nette.DI.CompilerExtension.html))) in your config file.
+```bash
+composer require contributte/middlewares
+```
+
+Register one of the given extensions ([CompilerExtensions](https://api.nette.org/2.4/Nette.DI.CompilerExtension.html))) in your config file.
 There are basically 2 single modes.
 
 **Standalone mode** is best suitable for new projects with middleware architecture, works great with [apitte](https://github.com/apitte/core).
@@ -339,7 +343,7 @@ $middleware = $builder->create();
 Lambda utils class creates anonymous functions.
 
 ```php
-Lambda::leaf()
+Lambda::leaf();
 // ===
 return function (RequestInterface $request, ResponseInterface $response) {
     return $response;
@@ -347,7 +351,7 @@ return function (RequestInterface $request, ResponseInterface $response) {
 ```
 
 ```php
-Lambda::blank()
+Lambda::blank();
 // ===
 return function () {
 };
@@ -357,5 +361,5 @@ return function () {
 
 Take a look at real usecases:
 
-- https://github.com/apitte/playground
+- https://github.com/planette/playground/tree/master/apitte-fullstack
 - https://github.com/planette/forest-project

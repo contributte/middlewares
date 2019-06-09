@@ -1,10 +1,5 @@
-includes:
-	- temp/phpstan/vendor/phpstan/phpstan-deprecation-rules/rules.neon
-	- temp/phpstan/vendor/phpstan/phpstan-nette/extension.neon
-	- temp/phpstan/vendor/phpstan/phpstan-nette/rules.neon
-	- temp/phpstan/vendor/phpstan/phpstan-strict-rules/rules.neon
-
 parameters:
 	ignoreErrors:
 		- '#Only booleans are allowed in an if condition, mixed given.#'
 		- '#Only booleans are allowed in a negated boolean, mixed given.#'
+		- '#^Parameter \#2 \$parameters of function call_user_func_array expects array\<int, mixed\>, array\<int\|string, mixed\> given\.$#'
