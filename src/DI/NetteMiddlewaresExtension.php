@@ -3,8 +3,8 @@
 namespace Contributte\Middlewares\DI;
 
 use Contributte\Middlewares\Application\NetteMiddlewareApplication;
+use Nette\DI\Definitions\Statement;
 use Nette\DI\ServiceCreationException;
-use Nette\DI\Statement;
 use Nette\Http\Request;
 use Nette\Http\Response;
 
