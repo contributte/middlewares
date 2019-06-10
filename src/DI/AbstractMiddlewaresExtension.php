@@ -2,42 +2,47 @@
 
 namespace Contributte\Middlewares\DI;
 
+use Contributte\DI\Helper\ExtensionDefinitionsHelper;
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\Tracy\DebugChainBuilder;
 use Contributte\Middlewares\Tracy\MiddlewaresPanel;
 use Contributte\Middlewares\Utils\ChainBuilder;
-use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\ClassType;
-use Nette\Utils\Validators;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
+use stdClass;
 
+/**
+ * @property-read stdClass $config
+ */
 abstract class AbstractMiddlewaresExtension extends CompilerExtension
 {
 
 	public const MIDDLEWARE_TAG = 'middleware';
 
-	/** @var mixed[] */
-	protected $defaults = [
-		'middlewares' => [],
-		'debug' => false,
-	];
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'middlewares' => Expect::arrayOf(
+				Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class))
+			),
+			'debug' => Expect::bool(false),
+		]);
+	}
 
-	/**
-	 * Register services
-	 */
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
-
-		Validators::assertField($config, 'middlewares', 'array');
+		$config = $this->config;
 
 		// Register middleware chain builder
 		$chain = $builder->addDefinition($this->prefix('chain'))
 			->setAutowired(false);
 
-		if ($config['debug'] !== true) {
+		if (!$config->debug) {
 			$chain->setFactory(ChainBuilder::class);
 		} else {
 			$chain->setFactory(DebugChainBuilder::class);
@@ -47,16 +52,13 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		}
 	}
 
-	/**
-	 * Decorate services
-	 */
 	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig();
+		$config = $this->config;
 
 		// Compile defined middlewares
-		if ($config['middlewares'] !== []) {
+		if ($config->middlewares !== []) {
 			$this->compileDefinedMiddlewares();
 
 			return;
@@ -75,26 +77,18 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	private function compileDefinedMiddlewares(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig();
+		$config = $this->config;
+		$definitionsHelper = new ExtensionDefinitionsHelper($this->compiler);
 
 		// Obtain middleware chain builder
 		$chain = $builder->getDefinition($this->prefix('chain'));
+		assert($chain instanceof ServiceDefinition);
 
 		// Add middleware services to chain
 		$counter = 0;
-		foreach ($config['middlewares'] as $service) {
-
+		foreach ($config->middlewares as $service) {
 			// Create middleware as service
-			if (
-				is_array($service)
-				|| $service instanceof Statement
-				|| (is_string($service) && strncmp($service, '@', 1) !== 0)
-			) {
-				$def = $builder->addDefinition($this->prefix('middleware' . ($counter++)));
-				Compiler::loadDefinition($def, $service);
-			} else {
-				$def = $builder->getDefinition(ltrim($service, '@'));
-			}
+			$def = $definitionsHelper->getDefinitionFromConfig($service, $this->prefix('middleware' . ($counter++)));
 
 			// Append to chain of middlewares
 			$chain->addSetup('add', [$def]);
@@ -114,7 +108,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		}
 
 		// Sort by priority
-		uasort($definitions, function ($a, $b) {
+		uasort($definitions, function (array $a, array $b) {
 			$p1 = $a['priority'] ?? 10;
 			$p2 = $b['priority'] ?? 10;
 
@@ -127,6 +121,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 
 		// Obtain middleware chain builder
 		$chain = $builder->getDefinition($this->prefix('chain'));
+		assert($chain instanceof ServiceDefinition);
 
 		// Add middleware services to chain
 		foreach ($definitions as $name => $tag) {
@@ -137,9 +132,9 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 
 	public function afterCompile(ClassType $class): void
 	{
-		$config = $this->validateConfig($this->defaults);
+		$config = $this->config;
 
-		if ($config['debug'] === true) {
+		if ($config->debug) {
 			$initialize = $class->getMethod('initialize');
 			$initialize->addBody(
 				'$this->getService(?)->addPanel($this->getService(?));',

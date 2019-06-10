@@ -16,14 +16,13 @@
     }
   ],
   "require": {
-    "php": ">= 7.1",
-    "contributte/psr7-http-message": "~0.5"
+    "php": "^7.2",
+    "contributte/di": "^0.4.0",
+    "contributte/psr7-http-message": "^0.6.0"
   },
   "require-dev": {
-    "nette/application": "~2.4.12",
-    "nette/di": "~2.4.12",
-    "nette/http": "~2.4.9",
-    "nette/utils": "~2.5.2",
+    "nette/application": "~3.0.0",
+    "nette/http": "~3.0.1",
     "ninjify/nunjuck": "~0.2",
     "ninjify/qa": "~0.8.0",
     "phpstan/extension-installer": "^1.0",
@@ -34,16 +33,8 @@
     "psr/log": "^1.0",
     "tracy/tracy": "~2.6.1"
   },
-  "conflict": {
-    "nette/application": "<2.4.12",
-    "nette/di": "<2.4.12",
-    "nette/http": "<2.4.9",
-    "nette/utils": "<2.5.2",
-    "tracy/tracy": "<2.5.4"
-  },
   "suggest": {
     "tracy/tracy": "to use TracyMiddleware",
-    "nette/di": "to use CompilerExtension(NetteMiddlewareExtension | StandaloneMiddlewareExtension)",
     "nette/http": "to use NetteMiddlewareExtension & NetteMiddlewareApplication",
     "nette/application": "to use PresenterMiddleware"
   },
@@ -64,7 +55,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.8.x-dev"
+      "dev-master": "0.9.x-dev"
     }
   }
 }

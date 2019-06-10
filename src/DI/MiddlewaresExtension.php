@@ -3,7 +3,7 @@
 namespace Contributte\Middlewares\DI;
 
 use Contributte\Middlewares\Application\MiddlewareApplication;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\Statement;
 
 class MiddlewaresExtension extends AbstractMiddlewaresExtension
 {

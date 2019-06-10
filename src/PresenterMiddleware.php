@@ -3,22 +3,19 @@
 namespace Contributte\Middlewares;
 
 use Contributte\Middlewares\Exception\InvalidStateException;
-use Contributte\Psr7\Psr7Request;
 use Contributte\Psr7\Psr7Response;
 use Contributte\Psr7\Psr7ServerRequest;
-use Exception;
 use Nette\Application\AbortException;
 use Nette\Application\ApplicationException;
 use Nette\Application\BadRequestException;
 use Nette\Application\InvalidPresenterException;
 use Nette\Application\IPresenter;
 use Nette\Application\IPresenterFactory;
-use Nette\Application\IResponse;
 use Nette\Application\IResponse as IApplicationResponse;
-use Nette\Application\IRouter;
 use Nette\Application\Request as ApplicationRequest;
 use Nette\Application\Responses\ForwardResponse;
 use Nette\Application\UI\Presenter;
+use Nette\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -32,7 +29,7 @@ class PresenterMiddleware implements IMiddleware
 	/** @var IPresenterFactory */
 	protected $presenterFactory;
 
-	/** @var IRouter */
+	/** @var Router */
 	protected $router;
 
 	/** @var ApplicationRequest[] */
@@ -47,7 +44,7 @@ class PresenterMiddleware implements IMiddleware
 	/** @var bool */
 	protected $catchExceptions = true;
 
-	public function __construct(IPresenterFactory $presenterFactory, IRouter $router)
+	public function __construct(IPresenterFactory $presenterFactory, Router $router)
 	{
 		$this->presenterFactory = $presenterFactory;
 		$this->router = $router;
@@ -97,11 +94,8 @@ class PresenterMiddleware implements IMiddleware
 		try {
 			$applicationResponse = $this->processRequest($this->createInitialRequest($psr7Request));
 		} catch (Throwable $e) {
-			// Handle is followed
-		}
-
-		if (isset($e)) {
-			if (!$this->catchExceptions || $this->errorPresenter === null) {
+			$errorPresenter = $this->errorPresenter;
+			if (!$this->catchExceptions || $errorPresenter === null) {
 				throw $e;
 			}
 
@@ -109,44 +103,36 @@ class PresenterMiddleware implements IMiddleware
 				// Create a new response with given code
 				$psr7Response = $psr7Response->withStatus($e instanceof BadRequestException ? ($e->getCode() ?: 404) : 500);
 				// Try resolve exception via forward or redirect
-				$applicationResponse = $this->processException($e);
+				$applicationResponse = $this->processException($e, $errorPresenter);
 			} catch (Throwable $e) {
 				// No fallback needed
 			}
+			throw $e;
 		}
 
-		// Convert to Psr7Response
-		if ($applicationResponse instanceof Psr7Response) {
-			// If response is Psr7Response type, just use it
-			$psr7Response = $applicationResponse;
-		} elseif ($applicationResponse instanceof IApplicationResponse) {
-			// If response is IApplicationResponse, wrap to Psr7Response
-			$psr7Response = $psr7Response->withApplicationResponse($applicationResponse);
-		} else {
-			throw new InvalidStateException();
-		}
+		$psr7Response = $psr7Response->withApplicationResponse($applicationResponse);
 
-		// Pass to next middleware
-		$psr7Response = $next($psr7Request, $psr7Response);
-
-		// Return response
-		return $psr7Response;
+		return $next($psr7Request, $psr7Response);
 	}
 
-	public function processRequest(?ApplicationRequest $request): IApplicationResponse
+	public function processRequest(ApplicationRequest $request): IApplicationResponse
 	{
-		if ($request === null) {
-			throw new InvalidStateException('This should not happen. Please report issue at https://github.com/contributte/middlewares/issues');
-		}
-
 		process:
 		if (count($this->requests) > self::$maxLoop) {
 			throw new ApplicationException('Too many loops detected in application life cycle.');
 		}
 
 		$this->requests[] = $request;
-		$this->presenter = $this->presenterFactory->createPresenter($request->getPresenterName());
-		/** @var IResponse|null $response */
+
+		if (!$request->isMethod($request::FORWARD) && !strcasecmp($request->getPresenterName(), (string) $this->errorPresenter)) {
+			throw new BadRequestException('Invalid request. Presenter is not achievable.');
+		}
+
+		try {
+			$this->presenter = $this->presenterFactory->createPresenter($request->getPresenterName());
+		} catch (InvalidPresenterException $e) {
+			throw count($this->requests) > 1 ? $e : new BadRequestException($e->getMessage(), 0, $e);
+		}
 		$response = $this->presenter->run(clone $request);
 
 		if ($response instanceof ForwardResponse) {
@@ -154,19 +140,14 @@ class PresenterMiddleware implements IMiddleware
 			goto process;
 		}
 
-		if ($response === null) {
-			throw new BadRequestException('Invalid response. Nullable.');
-		}
-
 		return $response;
 	}
 
 	/**
-	 * @param Exception|Throwable $e
 	 * @throws ApplicationException
 	 * @throws BadRequestException
 	 */
-	public function processException($e): IApplicationResponse
+	public function processException(Throwable $e, string $errorPresenter): IApplicationResponse
 	{
 		$args = [
 			'exception' => $e,
@@ -175,40 +156,47 @@ class PresenterMiddleware implements IMiddleware
 
 		if ($this->presenter instanceof Presenter) {
 			try {
-				$this->presenter->forward(':' . $this->errorPresenter . ':', $args);
+				$this->presenter->forward(':' . $errorPresenter . ':', $args);
 			} catch (AbortException $foo) {
 				return $this->processRequest($this->presenter->getLastCreatedRequest());
 			}
 		}
 
-		return $this->processRequest(new ApplicationRequest($this->errorPresenter, ApplicationRequest::FORWARD, $args));
+		return $this->processRequest(new ApplicationRequest($errorPresenter, ApplicationRequest::FORWARD, $args));
 	}
 
 	/**
-	 * @param Psr7ServerRequest|Psr7Request $psr7Request
 	 * @throws BadRequestException
 	 */
-	protected function createInitialRequest($psr7Request): ApplicationRequest
+	protected function createInitialRequest(Psr7ServerRequest $psr7Request): ApplicationRequest
 	{
-		$request = $this->router->match($psr7Request->getHttpRequest());
+		$netteRequest = $psr7Request->getHttpRequest();
+		$parameters = $this->router->match($netteRequest);
+		$presenter = $parameters[Presenter::PRESENTER_KEY] ?? null;
 
-		if (!$request instanceof ApplicationRequest) {
-			throw new BadRequestException('No route for HTTP request.');
-
+		if ($presenter === null) {
+			throw new InvalidStateException('Missing presenter in route definition.');
 		}
 
-		if (strcasecmp($request->getPresenterName(), (string) $this->errorPresenter) === 0) {
-			throw new BadRequestException('Invalid request. Presenter is not achievable.');
+		if ($parameters === null || !is_string($presenter)) {
+			throw new BadRequestException('No route for HTTP request.');
 		}
 
 		try {
-			$name = $request->getPresenterName();
-			$this->presenterFactory->getPresenterClass($name);
+			$this->presenterFactory->getPresenterClass($presenter);
 		} catch (InvalidPresenterException $e) {
 			throw new BadRequestException($e->getMessage(), 0, $e);
 		}
 
-		return $request;
+		unset($parameters[Presenter::PRESENTER_KEY]);
+		return new ApplicationRequest(
+			$presenter,
+			$netteRequest->getMethod(),
+			$parameters,
+			$netteRequest->getPost(),
+			$netteRequest->getFiles(),
+			[ApplicationRequest::SECURED => $netteRequest->isSecured()]
+		);
 	}
 
 }
