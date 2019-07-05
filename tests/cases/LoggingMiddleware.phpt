@@ -125,6 +125,18 @@ test(function (): void {
 	$response = Psr7ResponseFactory::fromGlobal();
 	$middleware = new LoggingMiddleware($logger);
 	$response = $middleware(
+		Psr7ServerRequestFactory::fromSuperGlobal()->withNewUri('https://user@example.com/foo/bar'),
+		$response,
+		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface {
+			return $psr7Response;
+		}
+	);
+
+	Assert::same('Requested url: https://example.com/foo/bar', $logger->get());
+
+	$response = Psr7ResponseFactory::fromGlobal();
+	$middleware = new LoggingMiddleware($logger);
+	$response = $middleware(
 		Psr7ServerRequestFactory::fromSuperGlobal()->withNewUri('https://example.com/foo/bar'),
 		$response,
 		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface {

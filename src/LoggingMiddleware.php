@@ -19,7 +19,7 @@ class LoggingMiddleware implements IMiddleware
 
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
-		$this->logger->info(sprintf('Requested url: %s', (string) $request->getUri()->withUserInfo('', '')));
+		$this->logger->info(sprintf('Requested url: %s', (string) $request->getUri()->withUserInfo('', null)));
 
 		return $next($request, $response);
 	}
