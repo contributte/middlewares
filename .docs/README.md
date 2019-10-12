@@ -224,7 +224,7 @@ middleware:
     - @builder
 
 services:
-    builders:
+    builder:
       class: Contributte\Middlewares\BuilderMiddleware
       setup:
         - add(TrailingSlashMiddleware())
