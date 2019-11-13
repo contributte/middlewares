@@ -320,7 +320,7 @@ middleware:
             setup:
                 - setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
                 - setDebugMode(%debugMode%)
-                - setLogger($psr3Logger, Psr\Log\LogLevel::ERROR) # Monolog and Tracy PSR3 adapter are good choice
+                - setLogger(@Psr\Log\LoggerInterface, Psr\Log\LogLevel::ERROR)
 ```
 
 ## Utils
