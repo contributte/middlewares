@@ -74,7 +74,7 @@ abstract class AbstractApplication implements IApplication
 			);
 
 			// Response validation check
-			if (!isset($response) || $response === null) {
+			if (!isset($response)) {
 				throw new RuntimeException('Final response cannot be NULL or unset');
 			}
 		} catch (Throwable $e) {

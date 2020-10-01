@@ -67,13 +67,15 @@ test(function (): void {
 
 // Factory
 test(function (): void {
-	$middleware = ChainBuilder::factory([function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
-		Notes::add('A');
-		$res = $next($req, $res);
-		Notes::add('A');
+	$middleware = ChainBuilder::factory([
+		function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
+			Notes::add('A');
+			$res = $next($req, $res);
+			Notes::add('A');
 
-		return $res;
-	}]);
+			return $res;
+		},
+	]);
 
 	$response = $middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal());
 	Assert::equal(['A', 'A'], Notes::fetch());

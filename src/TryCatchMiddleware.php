@@ -58,7 +58,9 @@ class TryCatchMiddleware implements IMiddleware
 
 	private function log(Throwable $throwable): void
 	{
-		if ($this->logger === null) return;
+		if ($this->logger === null) {
+			return;
+		}
 
 		$this->logger->log($throwable->getMessage(), $this->logLevel);
 	}

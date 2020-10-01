@@ -17,7 +17,7 @@ final class Lambda
 
 	public static function leaf(): callable
 	{
-		return function (RequestInterface $request, ResponseInterface $response) {
+		return function (RequestInterface $request, ResponseInterface $response): ResponseInterface {
 			return $response;
 		};
 	}

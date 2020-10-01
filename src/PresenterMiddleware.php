@@ -101,12 +101,13 @@ class PresenterMiddleware implements IMiddleware
 
 			try {
 				// Create a new response with given code
-				$psr7Response = $psr7Response->withStatus($e instanceof BadRequestException ? ($e->getCode() ?: 404) : 500);
+				$psr7Response = $psr7Response->withStatus($e instanceof BadRequestException ? ($e->getCode() !== 0 ? $e->getCode() : 404) : 500);
 				// Try resolve exception via forward or redirect
 				$applicationResponse = $this->processException($e, $errorPresenter);
 			} catch (Throwable $e) {
 				// No fallback needed
 			}
+
 			throw $e;
 		}
 
@@ -133,6 +134,7 @@ class PresenterMiddleware implements IMiddleware
 		} catch (InvalidPresenterException $e) {
 			throw count($this->requests) > 1 ? $e : new BadRequestException($e->getMessage(), 0, $e);
 		}
+
 		$response = $this->presenter->run(clone $request);
 
 		if ($response instanceof ForwardResponse) {
@@ -151,7 +153,7 @@ class PresenterMiddleware implements IMiddleware
 	{
 		$args = [
 			'exception' => $e,
-			'request' => end($this->requests) ?: null,
+			'request' => end($this->requests) !== false ? end($this->requests) : null,
 		];
 
 		if ($this->presenter instanceof Presenter) {
