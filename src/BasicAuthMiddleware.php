@@ -45,17 +45,14 @@ class BasicAuthMiddleware implements IMiddleware
 
 	protected function auth(string $user, string $password): bool
 	{
-		if (!isset($this->users[$user]))
-			return false;
-
-		if (
-			($this->users[$user]['unsecured'] === true && !hash_equals($password, $this->users[$user]['password'])) ||
-			($this->users[$user]['unsecured'] === false && !password_verify($password, $this->users[$user]['password']))
-		) {
+		if (!isset($this->users[$user])) {
 			return false;
 		}
 
-		return true;
+		return !(
+			($this->users[$user]['unsecured'] === true && !hash_equals($password, $this->users[$user]['password'])) ||
+			($this->users[$user]['unsecured'] === false && !password_verify($password, $this->users[$user]['password']))
+		);
 	}
 
 	/**
@@ -66,6 +63,7 @@ class BasicAuthMiddleware implements IMiddleware
 		if (strpos($header, 'Basic') !== 0) {
 			return null;
 		}
+
 		$header = explode(':', (string) base64_decode(substr($header, 6), true), 2);
 		return [
 			'username' => $header[0],

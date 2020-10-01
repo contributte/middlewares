@@ -134,13 +134,15 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	{
 		$config = $this->config;
 
-		if ($config->debug) {
-			$initialize = $class->getMethod('initialize');
-			$initialize->addBody(
-				'$this->getService(?)->addPanel($this->getService(?));',
-				['tracy.bar', $this->prefix('middlewaresPanel')]
-			);
+		if (!$config->debug) {
+			return;
 		}
+
+		$initialize = $class->getMethod('initialize');
+		$initialize->addBody(
+			'$this->getService(?)->addPanel($this->getService(?));',
+			['tracy.bar', $this->prefix('middlewaresPanel')]
+		);
 	}
 
 }

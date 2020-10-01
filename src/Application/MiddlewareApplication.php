@@ -56,7 +56,7 @@ class MiddlewareApplication extends AbstractApplication
 		$name = str_replace('-', ' ', $name);
 		$name = ucwords($name);
 		$name = str_replace(' ', '-', $name);
-		$replace = in_array(strtolower($name), self::UNIQUE_HEADERS, true) ? true : false;
+		$replace = in_array(strtolower($name), self::UNIQUE_HEADERS, true);
 		foreach ($values as $value) {
 			header(sprintf('%s: %s', $name, $value), $replace);
 		}

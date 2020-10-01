@@ -4,7 +4,7 @@ namespace Contributte\Middlewares\UI;
 
 use Contributte\Middlewares\PresenterMiddleware;
 use Nette\Application\IPresenterFactory;
-use Nette\Application\IRouter;
+use Nette\Routing\Router;
 
 class PresenterMiddlewareFactory implements IPresenterMiddlewareFactory
 {
@@ -12,10 +12,10 @@ class PresenterMiddlewareFactory implements IPresenterMiddlewareFactory
 	/** @var IPresenterFactory */
 	protected $presenterFactory;
 
-	/** @var IRouter */
+	/** @var Router */
 	protected $router;
 
-	public function __construct(IPresenterFactory $presenterFactory, IRouter $router)
+	public function __construct(IPresenterFactory $presenterFactory, Router $router)
 	{
 		$this->presenterFactory = $presenterFactory;
 		$this->router = $router;

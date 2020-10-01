@@ -33,6 +33,7 @@ class AutoBasePathMiddleware implements IMiddleware
 			while ($i < $max && $lpath[$i] === $script[$i]) {
 				$i++;
 			}
+
 			// Cut basePath from URL
 			// /foo/bar/test => /test
 			// (empty) -> /
