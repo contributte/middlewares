@@ -2,7 +2,7 @@ language: php
 php:
   - 7.2
   - 7.3
-  - 7.4snapshot
+  - 7.4
   - nightly
 
 before_install:
@@ -27,13 +27,13 @@ jobs:
         - make tests
 
     - stage: Quality Assurance
-      php: 7.3
+      php: 7.4
       script:
         - make qa
 
     - stage: Test Coverage
       if: branch = master AND type = push
-      php: 7.3
+      php: 7.4
       script:
         - make coverage
       after_script:
@@ -42,7 +42,7 @@ jobs:
 
     - stage: Outdated Dependencies
       if: branch = master AND type = cron
-      php: 7.3
+      php: 7.4
       script:
         - composer outdated --direct
 
