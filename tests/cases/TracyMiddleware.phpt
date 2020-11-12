@@ -44,5 +44,6 @@ test(function (): void {
 			return $psr7Response;
 		}
 	);
-	Assert::match('%a%PHP Notice: Undefined variable: a in %a%', file_get_contents(TEMP_DIR . '/error.log'));
+	// Support multiple php and package versions
+	Assert::match('#((PHP Warning: Undefined variable \$a in)|(PHP Notice: Undefined variable: a in ))#', file_get_contents(TEMP_DIR . '/error.log'));
 });
