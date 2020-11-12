@@ -23,7 +23,7 @@
   "require-dev": {
     "nette/application": "~3.0.0",
     "nette/http": "~3.0.1",
-    "ninjify/nunjuck": "~0.2",
+    "ninjify/nunjuck": "~0.4",
     "ninjify/qa": "~0.11.0",
     "phpstan/phpstan": "^0.12",
     "phpstan/extension-installer": "^1.0",
