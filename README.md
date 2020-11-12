@@ -40,7 +40,7 @@ We have a many solutions and prepared libraries in PHP world.
 
 | State  | Version      | Branch   | Nette  | PHP     |
 |--------|--------------|----------|--------|---------|
-| dev    | `^0.10.0`    | `master` | `3.0+` | `^7.2`  |
+| dev    | `^0.10.0`    | `master` | `3.0+` | `>=7.2`  |
 | stable | `^0.9.0`     | `master` | `3.0+` | `^7.2`  |
 | stable | `^0.8.0`     | `master` | `2.4`  | `>=7.1` |
 | stable | `^0.5.0`     | `master` | `2.4`  | `>=5.6` |
