@@ -78,10 +78,6 @@ test(function (): void {
 		$loader = new ContainerLoader(TEMP_DIR, true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
-			$compiler->loadConfig(FileMock::create('
-				middleware:
-					###########################TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-	', 'neon'));
 		}, 5);
 		new $class();
 	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Request. Do you have nette/http in composer file?');
@@ -95,15 +91,11 @@ test(function (): void {
 			$mutable = new MutableExtension();
 			$mutable->onLoad[] = function (CompilerExtension $ext, ContainerBuilder $builder): void {
 				$builder->addDefinition($ext->prefix('request'))
-					->setClass(Request::class)
+					->setType(Request::class)
 					->setFactory(RequestFactory::class . '::createHttpRequest');
 			};
-
 			$compiler->addExtension('x', $mutable);
 			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
-			$compiler->loadConfig(FileMock::create('
-			###########################TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-			', 'neon'));
 		}, 6);
 
 		new $class();
