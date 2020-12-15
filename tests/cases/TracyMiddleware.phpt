@@ -10,9 +10,15 @@ use Contributte\Psr7\Psr7ServerRequestFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
+use Tests\Fixtures\MemoryMailer;
 use Tracy\Debugger;
+use Tracy\Logger;
 
 require_once __DIR__ . '/../bootstrap.php';
+
+/** @var Logger $logger */
+$logger = Debugger::getLogger();
+$logger->mailer = [MemoryMailer::class, 'mail'];
 
 // Disabled
 test(function (): void {
@@ -47,4 +53,5 @@ test(function (): void {
 	);
 	// Support multiple php and package versions
 	Assert::match('#((PHP Warning: Undefined variable \$a in)|(PHP Notice: Undefined variable: a in ))#', file_get_contents(TEMP_DIR . '/error.log'));
+	Assert::count(1, MemoryMailer::$mails);
 });
