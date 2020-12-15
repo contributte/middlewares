@@ -77,6 +77,6 @@ test(function (): void {
 		},
 	]);
 
-	$response = $middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal());
+	$middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal());
 	Assert::equal(['A', 'A'], Notes::fetch());
 });

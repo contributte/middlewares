@@ -53,7 +53,7 @@ test(function (): void {
 		$compiler->loadConfig(FileMock::create('
 			middleware:
 				middlewares:
-					a: 
+					a:
 						class: Tests\Fixtures\PassMiddleware
 					b: @middleware
 					c: Tests\Fixtures\CompositeMiddleware([
@@ -83,9 +83,7 @@ test(function (): void {
 					###########################TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 	', 'neon'));
 		}, 5);
-
-		/** @var Container $container */
-		$container = new $class();
+		new $class();
 	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Request. Do you have nette/http in composer file?');
 });
 
@@ -108,8 +106,7 @@ test(function (): void {
 			', 'neon'));
 		}, 6);
 
-		/** @var Container $container */
-		$container = new $class();
+		new $class();
 	}, ServiceCreationException::class, 'Extension needs service Nette\Http\Response. Do you have nette/http in composer file?');
 });
 

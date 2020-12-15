@@ -39,6 +39,7 @@ test(function (): void {
 		Psr7ServerRequestFactory::fromSuperGlobal(),
 		Psr7ResponseFactory::fromGlobal(),
 		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface {
+			// phpcs:ignore
 			$a++;
 
 			return $psr7Response;

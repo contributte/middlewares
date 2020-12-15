@@ -31,6 +31,7 @@ class MiddlewaresPanel implements IBarPanel
 	public function getPanel(): string
 	{
 		$usedCount = $this->chainBuilder->getUsedCount();
+		// phpcs:ignore
 		$middlewares = $this->chainBuilder->getAll();
 
 		if ($usedCount === 0) {

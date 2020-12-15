@@ -88,7 +88,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		$counter = 0;
 		foreach ($config->middlewares as $service) {
 			// Create middleware as service
-			$def = $definitionsHelper->getDefinitionFromConfig($service, $this->prefix('middleware' . ($counter++)));
+			$def = $definitionsHelper->getDefinitionFromConfig($service, $this->prefix('middleware' . $counter++));
 
 			// Append to chain of middlewares
 			$chain->addSetup('add', [$def]);

@@ -138,6 +138,7 @@ class PresenterMiddleware implements IMiddleware
 		$response = $this->presenter->run(clone $request);
 
 		if ($response instanceof ForwardResponse) {
+			// phpcs:ignore
 			$request = $response->getRequest();
 			goto process;
 		}
