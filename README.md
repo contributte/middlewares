@@ -18,7 +18,9 @@
 Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact 👨🏻‍💻 <a href="https://f3l1x.io">f3l1x.io</a> | Twitter 🐦 <a href="https://twitter.com/contributte">@contributte</a>
 </p>
 
-[Cycle](https://raw.githubusercontent.com/contributte/middlewares/master/.docs/assets/cycle.png)
+<p align=center>
+  <img src="https://raw.githubusercontent.com/contributte/middlewares/master/.docs/assets/cycle.png">
+</p>
 
 ## Usage
 
