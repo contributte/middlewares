@@ -10,21 +10,21 @@ The middlewares / relay conception is a strong pattern with many benefits.
 - [Modes - nette/standalone mode](#modes)
 - [Application - life cycle](#application)
 - [Middlewares](#middlewares)
-    - [IMiddleware](#imiddleware)
-    - [AutoBasePathMiddleware](#autobasepathmiddleware)
-    - [BasePathMiddleware](#basepathmiddleware)
-    - [BasicAuthMiddleware](#basicauthmiddleware)
-    - [BuilderMiddleware](#buildermiddleware)
-    - [EnforceHttpsMiddleware](#enforcehttpsmiddleware)
-    - [LoggingMiddleware](#loggingmiddleware)
-    - [MethodOverrideMiddleware](#methodoverridemiddleware)
-    - [PresenterMiddleware](#presentermiddleware)
-    - [SecurityMiddleware](#securitymiddleware)
-    - [TracyMiddleware](#tracymiddleware)
-    - [TryCatchMiddleware](#trycatchmiddleware)
+	- [IMiddleware](#imiddleware)
+	- [AutoBasePathMiddleware](#autobasepathmiddleware)
+	- [BasePathMiddleware](#basepathmiddleware)
+	- [BasicAuthMiddleware](#basicauthmiddleware)
+	- [BuilderMiddleware](#buildermiddleware)
+	- [EnforceHttpsMiddleware](#enforcehttpsmiddleware)
+	- [LoggingMiddleware](#loggingmiddleware)
+	- [MethodOverrideMiddleware](#methodoverridemiddleware)
+	- [PresenterMiddleware](#presentermiddleware)
+	- [SecurityMiddleware](#securitymiddleware)
+	- [TracyMiddleware](#tracymiddleware)
+	- [TryCatchMiddleware](#trycatchmiddleware)
 - [Utils](#utils)
-    - [ChainBuilder](#chainbuilder)
-    - [Lambda](#lambda)
+	- [ChainBuilder](#chainbuilder)
+	- [Lambda](#lambda)
 - [Playground](#playground)
 
 ## Setup
@@ -40,16 +40,16 @@ There are basically 2 single modes.
 
 **Nette mode** is for integration to already running Nette projects, it overrides `Nette\Application\Application`.
 
-```yaml
+```neon
 extensions:
-    # standalone mode
-    middleware: Contributte\Middlewares\DI\MiddlewaresExtension
+	# standalone mode
+	middleware: Contributte\Middlewares\DI\MiddlewaresExtension
 
-    # nette application mode
-    middleware: Contributte\Middlewares\DI\NetteMiddlewaresExtension
+	# nette application mode
+	middleware: Contributte\Middlewares\DI\NetteMiddlewaresExtension
 
 middleware:
-    debug: %debugMode%
+	debug: %debugMode%
 ```
 
 ## Modes
@@ -73,14 +73,14 @@ That's all. The main purpose of this is to start via our application, not the de
 
 You attach listener calling the method `$app->addListener(type, callback)`.
 
-```yaml
+```neon
 services:
-    middleware.application:
-      setup:
-        - addListener(startup, [@logger, 'logStartup'])
-        - addListener(request, [@logger, 'logRequest'])
-        - addListener(error, [@logger, 'logError'])
-        - addListener(response, [@logger, 'logResponse'])
+	middleware.application:
+		setup:
+			- addListener(startup, [@logger, 'logStartup'])
+			- addListener(request, [@logger, 'logRequest'])
+			- addListener(error, [@logger, 'logError'])
+			- addListener(response, [@logger, 'logResponse'])
 ```
 
 ## Middlewares
@@ -92,39 +92,39 @@ It is pretty same as register new service in `NEON` file.
 
 You can register list of middlewares like this:
 
-```yaml
+```neon
 middleware:
-  middlewares:
-    # Catch all exceptions
-    - Contributte\Middlewares\TracyMiddleware
+	middlewares:
+		# Catch all exceptions
+		- Contributte\Middlewares\TracyMiddleware
 
-    # Your custom middlewares
-    - TrailingSlashMiddleware
-    - UuidMiddleware
-    - CspMiddleware
+		# Your custom middlewares
+		- TrailingSlashMiddleware
+		- UuidMiddleware
+		- CspMiddleware
 
-    # Compatibility with Nette applications
-    - Contributte\Middlewares\PresenterMiddleware
+		# Compatibility with Nette applications
+		- Contributte\Middlewares\PresenterMiddleware
 ```
 
 ### Tags
 
 Or you can use tags at services.
 
-```yaml
+```neon
 services:
-  m1:
-    factory: App\Model\AppMiddleware1
-    tags: [middleware: [priority: 5]]
+	m1:
+		factory: App\Model\AppMiddleware1
+		tags: [middleware: [priority: 5]]
 
-  m2:
-    factory: App\Model\AppMiddleware2
-    tags: [middleware]
-    # default priority = 10
+	m2:
+		factory: App\Model\AppMiddleware2
+		tags: [middleware]
+		# default priority = 10
 
-  m3:
-    factory: App\Model\AppMiddleware3
-    tags: [middleware: [priority: 15]]
+	m3:
+		factory: App\Model\AppMiddleware3
+		tags: [middleware: [priority: 15]]
 ```
 
 The final middleware list is:
@@ -145,16 +145,16 @@ use Contributte\Middlewares\IMiddleware;
 final class MyCustomMiddleware implements IMiddleware
 {
 
-    /**
-     * @param ServerRequestInterface $psr7Request
-     * @param ResponseInterface $psr7Response
-     * @param callable $next
-     * @return ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
-    {
-        // Let's play
-    }
+	/**
+	 * @param ServerRequestInterface $psr7Request
+	 * @param ResponseInterface $psr7Response
+	 * @param callable $next
+	 * @return ResponseInterface
+	 */
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+	{
+		// Let's play
+	}
 
 }
 ```
@@ -167,69 +167,69 @@ At this time we have prepared a few middlewares:
 
 It strips basePath from URL address and pass new URL (without basePath) to next middleware.
 
-```yaml
+```neon
 middleware:
-  middlewares:
-    # Catch all exceptions
-    - Contributte\Middlewares\TracyMiddleware
-    - Contributte\Middlewares\AutoBasePathMiddleware
+	middlewares:
+		# Catch all exceptions
+		- Contributte\Middlewares\TracyMiddleware
+		- Contributte\Middlewares\AutoBasePathMiddleware
 
-    # Your custom middlewares
-    - TrailingSlashMiddleware
-    - UuidMiddleware
-    - CspMiddleware
+		# Your custom middlewares
+		- TrailingSlashMiddleware
+		- UuidMiddleware
+		- CspMiddleware
 ```
 
 #### `BasePathMiddleware`
 
 It's quite similar with `AutoBasePathMiddleware`, but you could define the basePath.
 
-```yaml
+```neon
 middleware:
-  middlewares:
-    # Catch all exceptions
-    - Contributte\Middlewares\TracyMiddleware
-    - Contributte\Middlewares\BasePathMiddleware(project/www)
+	middlewares:
+		# Catch all exceptions
+		- Contributte\Middlewares\TracyMiddleware
+		- Contributte\Middlewares\BasePathMiddleware(project/www)
 
-    # Your custom middlewares
-    - TrailingSlashMiddleware
-    - UuidMiddleware
-    - CspMiddleware
+		# Your custom middlewares
+		- TrailingSlashMiddleware
+		- UuidMiddleware
+		- CspMiddleware
 ```
 
 #### `BasicAuthMiddleware`
 
 Basic HTTP Authentication.
 
-```yaml
+```neon
 middleware:
-    middlewares:
-        -
-            class: Contributte\Middlewares\BasicAuthMiddleware
-            setup:
-                - addUser('user1', 'password1', true) // third parameter sets that password is not hashed
-                - addUser('user2', '$2y$10$p.U5q.BuQp02srggig.VDOqj5m7pE1rCwKavVQ3S2TrqWlkqu3qlC')
-                - addUser('user3', '$2y$10$bgievYVQMzsRn5Ysup.NKOVUk66aitAniAmts2EJAa91eqkAhohvC')
+	middlewares:
+		-
+			class: Contributte\Middlewares\BasicAuthMiddleware
+			setup:
+				- addUser('user1', 'password1', true) // third parameter sets that password is not hashed
+				- addUser('user2', '$2y$10$p.U5q.BuQp02srggig.VDOqj5m7pE1rCwKavVQ3S2TrqWlkqu3qlC')
+				- addUser('user3', '$2y$10$bgievYVQMzsRn5Ysup.NKOVUk66aitAniAmts2EJAa91eqkAhohvC')
 ```
 
 #### `BuilderMiddleware`
 
 Over this middleware you can build your own chain of middlewares.
 
-```yaml
+```neon
 middleware:
-  middlewares:
-    # Catch all exceptions
-    - Contributte\Middlewares\TracyMiddleware
-    - @builder
+	middlewares:
+		# Catch all exceptions
+		- Contributte\Middlewares\TracyMiddleware
+		- @builder
 
 services:
-    builder:
-      class: Contributte\Middlewares\BuilderMiddleware
-      setup:
-        - add(TrailingSlashMiddleware())
-        - add(UuidMiddleware())
-        - add(CspMiddleware())
+	builder:
+		class: Contributte\Middlewares\BuilderMiddleware
+		setup:
+			- add(TrailingSlashMiddleware())
+			- add(UuidMiddleware())
+			- add(CspMiddleware())
 ```
 
 #### `EnforceHttpsMiddleware`
@@ -237,10 +237,10 @@ services:
 Throw error if the request did not come from https.
 It is recommended behavior for apis (but not recommended for end-user applications).
 
-```yaml
+```neon
 middleware:
-    middlewares:
-        - Contributte\Middlewares\EnforceHttpsMiddleware
+	middlewares:
+		- Contributte\Middlewares\EnforceHttpsMiddleware
 ```
 
 #### `LoggingMiddleware`
@@ -248,20 +248,20 @@ middleware:
 Log uri for each request.
 Also removes login from that uri for security reasons.
 
-```yaml
+```neon
 middleware:
-    middlewares:
-        - Contributte\Middlewares\LoggingMiddleware($psr3Logger)
+	middlewares:
+		- Contributte\Middlewares\LoggingMiddleware($psr3Logger)
 ```
 
 #### `MethodOverrideMiddleware`
 
 This middleware overrides HTTP method using `X-HTTP-Method-Override` header. A typical use case would be when your API is behind some proxy/VPN which only allows some HTTP methods, for example only `GET` and `POST`. Sending header `X-HTTP-Method-Override: PUT` will change the request method to `PUT`.
 
-```yaml
+```neon
 middleware:
-  middlewares:
-    - Contributte\Middlewares\MethodOverrideMiddleware
+	middlewares:
+		- Contributte\Middlewares\MethodOverrideMiddleware
 ```
 
 #### `PresenterMiddleware`
@@ -269,16 +269,16 @@ middleware:
 This middleware simulates original nette application behaviours. It converts Psr7Request to `Nette\Application\Request`
 and process returned `Nette\Application\Response`.
 
-```yaml
+```neon
 middleware:
-  middlewares:
-    # Catch all exceptions
-    - Contributte\Middlewares\TracyMiddleware
-    -
-        class: Contributte\Middlewares\PresenterMiddleware
-        setup:
-            - setErrorPresenter(Nette:Error)
-            - setCatchExceptions(%productionMode%)
+	middlewares:
+		# Catch all exceptions
+		- Contributte\Middlewares\TracyMiddleware
+		-
+			class: Contributte\Middlewares\PresenterMiddleware
+			setup:
+				- setErrorPresenter(Nette:Error)
+				- setCatchExceptions(%productionMode%)
 ```
 
 PresenterMiddleware requires to run middlewares in Nette mode. Take a look at running [modes#application].
@@ -289,21 +289,21 @@ This middleware catch all exceptions and shows tracy dump. It can be instanced n
 
 TryCatchMiddleware should be preferred by apis.
 
-```yaml
+```neon
 middleware:
-  middlewares:
-    tracy1:
-      class: Contributte\Middlewares\TracyMiddleware
-      setup:
-        - enable()
-        - setMode(Tracy\Debugger::PRODUCTION)
-        - setEmail(cool@contributte.org)
+	middlewares:
+		tracy1:
+			class: Contributte\Middlewares\TracyMiddleware
+			setup:
+				- enable()
+				- setMode(Tracy\Debugger::PRODUCTION)
+				- setEmail(cool@contributte.org)
 
-    tracy2:
-      class: Contributte\Middlewares\TracyMiddleware::factory(%debugMode%)
-      setup:
-        - setMode(Tracy\Debugger::PRODUCTION)
-        - setEmail(cool@contributte.org)
+		tracy2:
+			class: Contributte\Middlewares\TracyMiddleware::factory(%debugMode%)
+			setup:
+				- setMode(Tracy\Debugger::PRODUCTION)
+				- setEmail(cool@contributte.org)
 ```
 
 #### `TryCatchMiddleware`
@@ -312,15 +312,15 @@ This middleware catches all exceptions thrown in application and informs user th
 
 You could also pass PSR-3 compatible logger. Because all exceptions are handled by TryCatchMiddleware so exception handler could not log them itself.
 
-```yaml
+```neon
 middleware:
-    middlewares:
-        -
-            class: Contributte\Middlewares\TryCatchMiddleware
-            setup:
-                - setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
-                - setDebugMode(%debugMode%)
-                - setLogger(@Psr\Log\LoggerInterface, Psr\Log\LogLevel::ERROR)
+	middlewares:
+		-
+			class: Contributte\Middlewares\TryCatchMiddleware
+			setup:
+				- setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
+				- setDebugMode(%debugMode%)
+				- setLogger(@Psr\Log\LoggerInterface, Psr\Log\LogLevel::ERROR)
 ```
 
 ## Utils
@@ -330,10 +330,10 @@ middleware:
 ```php
 $builder = new ChainBuilder();
 $builder->add(function ($req, $res, callable $next) {
-    return $next($req, $res);
+	return $next($req, $res);
 });
 $builder->add(function ($req, $res, callable $next) {
-    return $next($req, $res);
+	return $next($req, $res);
 });
 $middleware = $builder->create();
 ```
@@ -346,7 +346,7 @@ Lambda utils class creates anonymous functions.
 Lambda::leaf();
 // ===
 return function (RequestInterface $request, ResponseInterface $response) {
-    return $response;
+	return $response;
 };
 ```
 
