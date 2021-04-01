@@ -62,7 +62,7 @@ class TryCatchMiddleware implements IMiddleware
 			return;
 		}
 
-		$this->logger->log($throwable->getMessage(), $this->logLevel);
+		$this->logger->log($this->logLevel, $throwable->getMessage());
 	}
 
 }
