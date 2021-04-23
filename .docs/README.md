@@ -213,7 +213,7 @@ middleware:
 ```
 
 #### `BuilderMiddleware`
-configure
+
 Over this middleware you can build your own chain of middlewares.
 
 ```yaml
@@ -325,7 +325,6 @@ middleware:
 
 Note that exceptions thrown elsewhere are generally caught in the ApiMiddleware and you can create your own errorHandler by implementing the IErrorHandler interface.
 This can also be used for the TryCatchMiddle if you wish for all your exceptions to be handled the same way.
-
 
 ## Utils
 
