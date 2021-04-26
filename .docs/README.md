@@ -308,7 +308,7 @@ middleware:
 
 #### `TryCatchMiddleware`
 
-This middleware catches all exceptions thrown in application and informs user that application encountered an internal error. It should be registered first.
+This middleware catches all exceptions thrown in other middlewares and informs user that application encountered an internal error. It should be registered first.
 
 You could also pass PSR-3 compatible logger. Because all exceptions are handled by TryCatchMiddleware so exception handler could not log them itself.
 
@@ -322,6 +322,9 @@ middleware:
 				- setDebugMode(%debugMode%)
 				- setLogger(@Psr\Log\LoggerInterface, Psr\Log\LogLevel::ERROR)
 ```
+
+Note that exceptions thrown elsewhere are generally caught in the ApiMiddleware and you can create your own errorHandler by implementing the IErrorHandler interface.
+This can also be used for the TryCatchMiddle if you wish for all your exceptions to be handled the same way.
 
 ## Utils
 
