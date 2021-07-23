@@ -25,7 +25,7 @@ The middlewares / relay conception is a strong pattern with many benefits.
 - [Utils](#utils)
 	- [ChainBuilder](#chainbuilder)
 	- [Lambda](#lambda)
-- [Playground](#playground)
+- [Examples](#examples)
 
 ## Setup
 
@@ -360,9 +360,9 @@ return function () {
 };
 ```
 
-## Playground
+## Examples
 
-Take a look at real usecases:
-
-- https://github.com/planette/playground/tree/master/apitte-fullstack
-- https://github.com/planette/forest-project
+- https://github.com/contributte/playground/tree/master/apitte-fullstack (example project)
+- https://github.com/contributte/apitte-skeleton (example skeleton)
+- https://github.com/contributte/playground (playground)
+- https://contributte.org/examples.html (more examples)
