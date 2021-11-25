@@ -36,7 +36,7 @@ composer require contributte/middlewares
 Register one of the given extensions ([CompilerExtensions](https://api.nette.org/2.4/Nette.DI.CompilerExtension.html))) in your config file.
 There are basically 2 single modes.
 
-**Standalone mode** is best suitable for new projects with middleware architecture, works great with [apitte](https://github.com/apitte/core).
+**Standalone mode** is best suitable for new projects with middleware architecture, works great with [apitte](https://github.com/contributte/apitte).
 
 **Nette mode** is for integration to already running Nette projects, it overrides `Nette\Application\Application`.
 
