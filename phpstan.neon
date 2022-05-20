@@ -9,6 +9,5 @@ parameters:
 		- '#Only booleans are allowed in an if condition, mixed given.#'
 		- '#Only booleans are allowed in a negated boolean, mixed given.#'
 		- '#^Only booleans are allowed in a negated boolean, int given\.$#'
-		- '#Parameter \#1 \$code of method GuzzleHttp\\Psr7\\Response::withStatus\(\) expects int, int<min, -1>|int<1, max>|string given#'
 		# Cannot happen
 		- '#^Parameter \#1 \$request of method Contributte\\Middlewares\\PresenterMiddleware\:\:processRequest\(\) expects Nette\\Application\\Request, Nette\\Application\\Request\|null given\.$#'

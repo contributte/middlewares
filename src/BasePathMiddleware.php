@@ -26,7 +26,7 @@ class BasePathMiddleware implements IMiddleware
 		// Does URL path start with given base path?
 		// Otherwise skip to next middleware
 		if (strncmp($uri->getPath(), $this->basePath, strlen($this->basePath)) === 0) {
-			$newPath = substr($uri->getPath(), strlen($this->basePath));
+			$newPath = '/' . substr($uri->getPath(), strlen($this->basePath));
 			$psr7Request = $psr7Request->withUri($uri->withPath($newPath));
 		}
 
