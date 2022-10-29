@@ -11,8 +11,8 @@ use Nette\Application\BadRequestException;
 use Nette\Application\InvalidPresenterException;
 use Nette\Application\IPresenter;
 use Nette\Application\IPresenterFactory;
-use Nette\Application\IResponse as IApplicationResponse;
 use Nette\Application\Request as ApplicationRequest;
+use Nette\Application\Response as ApplicationResponse;
 use Nette\Application\Responses\ForwardResponse;
 use Nette\Application\UI\Presenter;
 use Nette\Routing\Router;
@@ -116,7 +116,7 @@ class PresenterMiddleware implements IMiddleware
 		return $next($psr7Request, $psr7Response);
 	}
 
-	public function processRequest(ApplicationRequest $request): IApplicationResponse
+	public function processRequest(ApplicationRequest $request): ApplicationResponse
 	{
 		process:
 		if (count($this->requests) > self::$maxLoop) {
@@ -125,7 +125,7 @@ class PresenterMiddleware implements IMiddleware
 
 		$this->requests[] = $request;
 
-		if (!$request->isMethod($request::FORWARD) && !strcasecmp($request->getPresenterName(), (string) $this->errorPresenter)) {
+		if (!$request->isMethod($request::FORWARD) && strcasecmp($request->getPresenterName(), (string) $this->errorPresenter) !== 0) {
 			throw new BadRequestException('Invalid request. Presenter is not achievable.');
 		}
 
@@ -150,7 +150,7 @@ class PresenterMiddleware implements IMiddleware
 	 * @throws ApplicationException
 	 * @throws BadRequestException
 	 */
-	public function processException(Throwable $e, string $errorPresenter): IApplicationResponse
+	public function processException(Throwable $e, string $errorPresenter): ApplicationResponse
 	{
 		$args = [
 			'exception' => $e,
