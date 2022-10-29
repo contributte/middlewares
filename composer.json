@@ -18,11 +18,11 @@
   "require": {
     "php": ">=7.2",
     "contributte/di": "^0.5.1",
-    "contributte/psr7-http-message": "^0.8.0"
+    "contributte/psr7-http-message": "^0.9.0"
   },
   "require-dev": {
-    "nette/application": "^3.0.0",
-    "nette/http": "^3.0.1",
+    "nette/application": "^3.1.0",
+    "nette/http": "^3.1.0",
     "ninjify/nunjuck": "^0.4",
     "ninjify/qa": "^0.13",
     "phpstan/phpstan": "^1.6.8",
