@@ -5,9 +5,11 @@ includes:
 	- vendor/phpstan/phpstan-strict-rules/rules.neon
 
 parameters:
+	level: 8
+	paths:
+		- src
 	ignoreErrors:
 		- '#Only booleans are allowed in an if condition, mixed given.#'
 		- '#Only booleans are allowed in a negated boolean, mixed given.#'
-		- '#^Only booleans are allowed in a negated boolean, int given\.$#'
 		# Cannot happen
 		- '#^Parameter \#1 \$request of method Contributte\\Middlewares\\PresenterMiddleware\:\:processRequest\(\) expects Nette\\Application\\Request, Nette\\Application\\Request\|null given\.$#'
