@@ -6,6 +6,7 @@ final class Regex
 {
 
 	/**
+	 * @param 0|PREG_OFFSET_CAPTURE|PREG_UNMATCHED_AS_NULL $flags
 	 * @return mixed
 	 */
 	public static function match(string $subject, string $pattern, int $flags = 0)
@@ -16,6 +17,7 @@ final class Regex
 	}
 
 	/**
+	 * @param 0|PREG_OFFSET_CAPTURE|PREG_UNMATCHED_AS_NULL $flags
 	 * @return mixed
 	 */
 	public static function matchAll(string $subject, string $pattern, int $flags = 0)
