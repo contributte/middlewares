@@ -52,11 +52,23 @@ abstract class AbstractApplication implements IApplication
 	 */
 	public function run()
 	{
+		// Create initial request (PSR7!)
+		$request = $this->createInitialRequest();
+
+		return $this->runWith($request);
+	}
+
+	/**
+	 * Dispatch application in middleware cycle!
+	 *
+	 * @return string|int|bool|void|ResponseInterface|null
+	 */
+	public function runWith(ServerRequestInterface $request)
+	{
 		// Trigger event!
 		$this->dispatch($this->listeners[self::LISTENER_STARTUP], [$this]);
 
-		// Create initial request & response (PSR7!)
-		$request = $this->createInitialRequest();
+		// Create initial response (PSR7!)
 		$response = $this->createInitialResponse();
 
 		try {
