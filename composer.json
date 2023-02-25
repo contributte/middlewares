@@ -30,7 +30,7 @@
     "phpstan/phpstan-nette": "^1.0",
     "phpstan/phpstan-strict-rules": "^1.2.3",
     "psr/log": "^1.0|^2.0|^3.0",
-    "tracy/tracy": "^2.7.0"
+    "tracy/tracy": "^2.9.0"
   },
   "suggest": {
     "tracy/tracy": "to use TracyMiddleware",
