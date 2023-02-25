@@ -13,14 +13,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
 use Tests\Fixtures\PresenterFactory;
-use Throwable;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-test(
-/**
- * @throws Throwable
- */ function (): void {
+test(function (): void {
 	$presenterFactory = new PresenterFactory([
 		'Tests/Fixtures/Exception' => function () {
 			Notes::add('CALLED');
