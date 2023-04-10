@@ -69,7 +69,7 @@ class MiddlewareApplication extends AbstractApplication
 	{
 		$url = new UrlScript($swooleRequest->server['request_uri']);
 
-		$httpRequest = new NetteRequest($url, $swooleRequest->post, $swooleRequest->files, $swooleRequest->cookie, $swooleRequest->header, $swooleRequest->getMethod(),$swooleRequest->server['remote_addr'],$swooleRequest->server['remote_host']);
+		$httpRequest = new NetteRequest($url, $swooleRequest->post, $swooleRequest->files, $swooleRequest->cookie, $swooleRequest->header, $swooleRequest->getMethod(),$swooleRequest->server['remote_addr'],null,[$swooleRequest,"rawContent"]);
 		
 		return $httpRequest;
 	}
@@ -164,7 +164,6 @@ class MiddlewareApplication extends AbstractApplication
 		{
 			while (!$stream->eof()) {
 				$this->swooleResponse->write($stream->read(8192));
-				echo $stream->read(8192);
 			}
 		}
 		else
