@@ -2,7 +2,6 @@
 
 namespace Contributte\Middlewares\DI;
 
-use Contributte\DI\Helper\ExtensionDefinitionsHelper;
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\Tracy\DebugChainBuilder;
 use Contributte\Middlewares\Tracy\MiddlewaresPanel;
@@ -16,7 +15,7 @@ use Nette\Schema\Schema;
 use stdClass;
 
 /**
- * @property-read stdClass $config
+ * @method stdClass getConfig()
  */
 abstract class AbstractMiddlewaresExtension extends CompilerExtension
 {
@@ -27,7 +26,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	{
 		return Expect::structure([
 			'middlewares' => Expect::arrayOf(
-				Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class))
+				Expect::anyOf(Expect::string(), Expect::type(Statement::class))
 			),
 			'debug' => Expect::bool(false),
 		]);
@@ -36,7 +35,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->config;
+		$config = $this->getConfig();
 
 		// Register middleware chain builder
 		$chain = $builder->addDefinition($this->prefix('chain'))
@@ -55,7 +54,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->config;
+		$config = $this->getConfig();
 
 		// Compile defined middlewares
 		if ($config->middlewares !== []) {
@@ -76,7 +75,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 
 	public function afterCompile(ClassType $class): void
 	{
-		$config = $this->config;
+		$config = $this->getConfig();
 
 		if (!$config->debug) {
 			return;
@@ -92,8 +91,7 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 	private function compileDefinedMiddlewares(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->config;
-		$definitionsHelper = new ExtensionDefinitionsHelper($this->compiler);
+		$config = $this->getConfig();
 
 		// Obtain middleware chain builder
 		$chain = $builder->getDefinition($this->prefix('chain'));
@@ -102,11 +100,19 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		// Add middleware services to chain
 		$counter = 0;
 		foreach ($config->middlewares as $service) {
-			// Create middleware as service
-			$def = $definitionsHelper->getDefinitionFromConfig($service, $this->prefix('middleware' . $counter++));
+			if (is_string($service) && str_starts_with($service, '@')) {
+				// Re-use existing service
+				$middlewareDef = $builder->getDefinition(substr($service, 1));
+			} elseif ($service instanceof Statement || is_string($service)) {
+				// Create middleware as service
+				$middlewareDef = $builder->addDefinition($this->prefix('middleware' . $counter++))
+					->setFactory($service);
+			} else {
+				throw new InvalidStateException('Unsupported middleware definition');
+			}
 
 			// Append to chain of middlewares
-			$chain->addSetup('add', [$def]);
+			$chain->addSetup('add', [$middlewareDef]);
 		}
 	}
 

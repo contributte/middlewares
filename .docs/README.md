@@ -204,7 +204,10 @@ Basic HTTP Authentication.
 ```neon
 middleware:
 	middlewares:
-		-
+		- @basicAuth
+
+services:
+		basicAuth:
 			class: Contributte\Middlewares\BasicAuthMiddleware
 			setup:
 				- addUser('user1', 'password1', true) // third parameter sets that password is not hashed
@@ -274,11 +277,14 @@ middleware:
 	middlewares:
 		# Catch all exceptions
 		- Contributte\Middlewares\TracyMiddleware
-		-
-			class: Contributte\Middlewares\PresenterMiddleware
-			setup:
-				- setErrorPresenter(Nette:Error)
-				- setCatchExceptions(%productionMode%)
+		- @presenterMiddleware
+
+services:
+	presenterMiddleware:
+		class: Contributte\Middlewares\PresenterMiddleware
+		setup:
+			- setErrorPresenter(Nette:Error)
+			- setCatchExceptions(%productionMode%)
 ```
 
 PresenterMiddleware requires to run middlewares in Nette mode. Take a look at running [modes#application].
@@ -292,18 +298,22 @@ TryCatchMiddleware should be preferred by apis.
 ```neon
 middleware:
 	middlewares:
-		tracy1:
-			class: Contributte\Middlewares\TracyMiddleware
-			setup:
-				- enable()
-				- setMode(Tracy\Debugger::PRODUCTION)
-				- setEmail(cool@contributte.org)
+		- @tracy1
+		- @tracy2
 
-		tracy2:
-			class: Contributte\Middlewares\TracyMiddleware::factory(%debugMode%)
-			setup:
-				- setMode(Tracy\Debugger::PRODUCTION)
-				- setEmail(cool@contributte.org)
+services:
+	tracy1:
+		class: Contributte\Middlewares\TracyMiddleware
+		setup:
+			- enable()
+			- setMode(Tracy\Debugger::PRODUCTION)
+			- setEmail(cool@contributte.org)
+
+	tracy2:
+		class: Contributte\Middlewares\TracyMiddleware::factory(%debugMode%)
+		setup:
+			- setMode(Tracy\Debugger::PRODUCTION)
+			- setEmail(cool@contributte.org)
 ```
 
 #### `TryCatchMiddleware`
@@ -315,12 +325,15 @@ You could also pass PSR-3 compatible logger. Because all exceptions are handled 
 ```neon
 middleware:
 	middlewares:
-		-
-			class: Contributte\Middlewares\TryCatchMiddleware
-			setup:
-				- setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
-				- setDebugMode(%debugMode%)
-				- setLogger(@Psr\Log\LoggerInterface, Psr\Log\LogLevel::ERROR)
+		- @tryCatchMiddleware
+
+services:
+	tryCatchMiddleware:
+		class: Contributte\Middlewares\TryCatchMiddleware
+		setup:
+			- setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
+			- setDebugMode(%debugMode%)
+			- setLogger(@Psr\Log\LoggerInterface, Psr\Log\LogLevel::ERROR)
 ```
 
 Note that exceptions thrown elsewhere are generally caught in the ApiMiddleware and you can create your own errorHandler by implementing the IErrorHandler interface.
