@@ -1,15 +1,18 @@
 includes:
-	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
-	- vendor/phpstan/phpstan-nette/extension.neon
-	- vendor/phpstan/phpstan-nette/rules.neon
-	- vendor/phpstan/phpstan-strict-rules/rules.neon
+	- vendor/contributte/phpstan/phpstan.neon
 
 parameters:
-	level: 8
+	level: 9
+	phpVersion: 80100
+
+	scanDirectories:
+		- src
+
+	fileExtensions:
+		- php
+
 	paths:
 		- src
+		- .docs
+
 	ignoreErrors:
-		- '#Only booleans are allowed in an if condition, mixed given.#'
-		- '#Only booleans are allowed in a negated boolean, mixed given.#'
-		# Cannot happen
-		- '#^Parameter \#1 \$request of method Contributte\\Middlewares\\PresenterMiddleware\:\:processRequest\(\) expects Nette\\Application\\Request, Nette\\Application\\Request\|null given\.$#'
