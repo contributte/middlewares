@@ -7,8 +7,7 @@ use Tracy\IBarPanel;
 class MiddlewaresPanel implements IBarPanel
 {
 
-	/** @var DebugChainBuilder */
-	private $chainBuilder;
+	private DebugChainBuilder $chainBuilder;
 
 	public function __construct(DebugChainBuilder $chainBuilder)
 	{
@@ -25,6 +24,7 @@ class MiddlewaresPanel implements IBarPanel
 
 		ob_start();
 		require __DIR__ . '/templates/tab.phtml';
+
 		return (string) ob_get_clean();
 	}
 
@@ -40,6 +40,7 @@ class MiddlewaresPanel implements IBarPanel
 
 		ob_start();
 		require __DIR__ . '/templates/panel.phtml';
+
 		return (string) ob_get_clean();
 	}
 

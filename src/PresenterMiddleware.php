@@ -23,26 +23,20 @@ use Throwable;
 class PresenterMiddleware implements IMiddleware
 {
 
-	/** @var int */
-	public static $maxLoop = 20;
+	public static int $maxLoop = 20;
 
-	/** @var IPresenterFactory */
-	protected $presenterFactory;
+	protected IPresenterFactory $presenterFactory;
 
-	/** @var Router */
-	protected $router;
+	protected Router $router;
 
 	/** @var ApplicationRequest[] */
-	protected $requests = [];
+	protected array $requests = [];
 
-	/** @var IPresenter */
-	protected $presenter;
+	protected IPresenter $presenter;
 
-	/** @var string|null */
-	protected $errorPresenter;
+	protected ?string $errorPresenter = null;
 
-	/** @var bool */
-	protected $catchExceptions = true;
+	protected bool $catchExceptions = true;
 
 	public function __construct(IPresenterFactory $presenterFactory, Router $router)
 	{
@@ -73,13 +67,100 @@ class PresenterMiddleware implements IMiddleware
 		return $this->requests;
 	}
 
+	public function processRequest(ApplicationRequest $request): ApplicationResponse
+	{
+		process:
+		if (count($this->requests) > self::$maxLoop) {
+			throw new ApplicationException('Too many loops detected in application life cycle.');
+		}
+
+		$this->requests[] = $request;
+
+		if (!$request->isMethod($request::FORWARD) && strcasecmp($request->getPresenterName(), (string) $this->errorPresenter) !== 0) {
+			throw new BadRequestException('Invalid request. Presenter is not achievable.');
+		}
+
+		try {
+			$this->presenter = $this->presenterFactory->createPresenter($request->getPresenterName());
+		} catch (InvalidPresenterException $e) {
+			throw count($this->requests) > 1 ? $e : new BadRequestException($e->getMessage(), 0, $e);
+		}
+
+		$response = $this->presenter->run(clone $request);
+
+		if ($response instanceof ForwardResponse) {
+            // phpcs:ignore
+            $request = $response->getRequest();
+			goto process;
+		}
+
+		return $response;
+	}
+
+	/**
+	 * @throws ApplicationException
+	 * @throws BadRequestException
+	 */
+	public function processException(Throwable $e, string $errorPresenter): ApplicationResponse
+	{
+		$args = [
+			'exception' => $e,
+			'request' => end($this->requests) !== false ? end($this->requests) : null,
+		];
+
+		if ($this->presenter instanceof Presenter) {
+			try {
+				$this->presenter->forward(':' . $errorPresenter . ':', $args);
+			} catch (AbortException $foo) {
+				$lastRequest = $this->presenter->getLastCreatedRequest();
+				assert($lastRequest instanceof ApplicationRequest);
+
+				return $this->processRequest($lastRequest);
+			}
+		}
+
+		return $this->processRequest(new ApplicationRequest($errorPresenter, ApplicationRequest::FORWARD, $args));
+	}
+
+	/**
+	 * @throws BadRequestException
+	 */
+	protected function createInitialRequest(Psr7ServerRequest $psr7Request): ApplicationRequest
+	{
+		$netteRequest = $psr7Request->getHttpRequest();
+		$parameters = $this->router->match($netteRequest);
+		$presenter = $parameters[Presenter::PRESENTER_KEY] ?? null;
+
+		if ($presenter === null) {
+			throw new InvalidStateException('Missing presenter in route definition.');
+		}
+
+		if ($parameters === null || !is_string($presenter)) {
+			throw new BadRequestException('No route for HTTP request.');
+		}
+
+		try {
+			$this->presenterFactory->getPresenterClass($presenter);
+		} catch (InvalidPresenterException $e) {
+			throw new BadRequestException($e->getMessage(), 0, $e);
+		}
+
+		unset($parameters[Presenter::PRESENTER_KEY]);
+
+		return new ApplicationRequest(
+			$presenter,
+			$netteRequest->getMethod(),
+			$parameters,
+			$netteRequest->getPost(), // @phpstan-ignore-line
+			$netteRequest->getFiles(),
+			[ApplicationRequest::SECURED => $netteRequest->isSecured()]
+		);
+	}
+
 	/**
 	 * Dispatch a HTTP request to a front controller.
-	 *
-	 * @param Psr7ServerRequest|ServerRequestInterface $psr7Request
-	 * @param Psr7Response|ResponseInterface           $psr7Response
 	 */
-	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
+	public function __invoke(Psr7ServerRequest|ServerRequestInterface $psr7Request, Psr7Response|ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
 		if (!($psr7Request instanceof Psr7ServerRequest)) {
 			throw new InvalidStateException(sprintf('Invalid request object given. Required %s type.', Psr7ServerRequest::class));
@@ -112,92 +193,6 @@ class PresenterMiddleware implements IMiddleware
 		}
 
 		return $next($psr7Request, $psr7Response);
-	}
-
-	public function processRequest(ApplicationRequest $request): ApplicationResponse
-	{
-		process:
-		if (count($this->requests) > self::$maxLoop) {
-			throw new ApplicationException('Too many loops detected in application life cycle.');
-		}
-
-		$this->requests[] = $request;
-
-		if (!$request->isMethod($request::FORWARD) && strcasecmp($request->getPresenterName(), (string) $this->errorPresenter) !== 0) {
-			throw new BadRequestException('Invalid request. Presenter is not achievable.');
-		}
-
-		try {
-			$this->presenter = $this->presenterFactory->createPresenter($request->getPresenterName());
-		} catch (InvalidPresenterException $e) {
-			throw count($this->requests) > 1 ? $e : new BadRequestException($e->getMessage(), 0, $e);
-		}
-
-		$response = $this->presenter->run(clone $request);
-
-		if ($response instanceof ForwardResponse) {
-			// phpcs:ignore
-			$request = $response->getRequest();
-			goto process;
-		}
-
-		return $response;
-	}
-
-	/**
-	 * @throws ApplicationException
-	 * @throws BadRequestException
-	 */
-	public function processException(Throwable $e, string $errorPresenter): ApplicationResponse
-	{
-		$args = [
-			'exception' => $e,
-			'request' => end($this->requests) !== false ? end($this->requests) : null,
-		];
-
-		if ($this->presenter instanceof Presenter) {
-			try {
-				$this->presenter->forward(':' . $errorPresenter . ':', $args);
-			} catch (AbortException $foo) {
-				return $this->processRequest($this->presenter->getLastCreatedRequest());
-			}
-		}
-
-		return $this->processRequest(new ApplicationRequest($errorPresenter, ApplicationRequest::FORWARD, $args));
-	}
-
-	/**
-	 * @throws BadRequestException
-	 */
-	protected function createInitialRequest(Psr7ServerRequest $psr7Request): ApplicationRequest
-	{
-		$netteRequest = $psr7Request->getHttpRequest();
-		$parameters = $this->router->match($netteRequest);
-		$presenter = $parameters[Presenter::PRESENTER_KEY] ?? null;
-
-		if ($presenter === null) {
-			throw new InvalidStateException('Missing presenter in route definition.');
-		}
-
-		if ($parameters === null || !is_string($presenter)) {
-			throw new BadRequestException('No route for HTTP request.');
-		}
-
-		try {
-			$this->presenterFactory->getPresenterClass($presenter);
-		} catch (InvalidPresenterException $e) {
-			throw new BadRequestException($e->getMessage(), 0, $e);
-		}
-
-		unset($parameters[Presenter::PRESENTER_KEY]);
-		return new ApplicationRequest(
-			$presenter,
-			$netteRequest->getMethod(),
-			$parameters,
-			$netteRequest->getPost(),
-			$netteRequest->getFiles(),
-			[ApplicationRequest::SECURED => $netteRequest->isSecured()]
-		);
 	}
 
 }

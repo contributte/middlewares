@@ -9,8 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class BuilderMiddleware implements IMiddleware
 {
 
-	/** @var ChainBuilder */
-	private $builder;
+	private ChainBuilder $builder;
 
 	/**
 	 * Creates middleware
@@ -20,10 +19,7 @@ class BuilderMiddleware implements IMiddleware
 		$this->builder = new ChainBuilder();
 	}
 
-	/**
-	 * @param mixed $middleware
-	 */
-	public function add($middleware): void
+	public function add(callable $middleware): void
 	{
 		$this->builder->add($middleware);
 	}

@@ -13,6 +13,7 @@ class EnforceHttpsMiddleware implements IMiddleware
 		if (strtolower($request->getUri()->getScheme()) !== 'https') {
 			$response = $response->withStatus(400);
 			$response->getBody()->write('Encrypted connection is required. Please use https connection.');
+
 			return $response;
 		}
 

@@ -7,9 +7,6 @@ use Psr\Http\Message\ServerRequestInterface;
 interface IAuthenticator
 {
 
-	/**
-	 * @return mixed
-	 */
-	public function authenticate(ServerRequestInterface $request);
+	public function authenticate(ServerRequestInterface $request): mixed;
 
 }

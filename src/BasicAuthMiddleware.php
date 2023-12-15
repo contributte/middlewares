@@ -8,30 +8,14 @@ use Psr\Http\Message\ServerRequestInterface;
 class BasicAuthMiddleware implements IMiddleware
 {
 
-	/** @var string */
-	private $title;
+	private string $title;
 
-	/** @var mixed[] */
-	private $users = [];
+	/** @var array<string, array{unsecured: bool, password: string}> */
+	private array $users = [];
 
 	public function __construct(string $title = 'Restrict zone')
 	{
 		$this->title = $title;
-	}
-
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
-	{
-		$authorization = $this->parseAuthorizationHeader($request->getHeaderLine('Authorization'));
-		if ($authorization !== null && $this->auth($authorization['username'], $authorization['password'])) {
-			return $next(
-				$request->withAttribute('username', $authorization['username']),
-				$response
-			);
-		}
-
-		return $response
-			->withStatus(401)
-			->withHeader('WWW-Authenticate', 'Basic realm="' . $this->title . '"');
 	}
 
 	public function addUser(string $user, string $password, bool $unsecured = false): self
@@ -40,6 +24,7 @@ class BasicAuthMiddleware implements IMiddleware
 			'password' => $password,
 			'unsecured' => $unsecured,
 		];
+
 		return $this;
 	}
 
@@ -56,7 +41,7 @@ class BasicAuthMiddleware implements IMiddleware
 	}
 
 	/**
-	 * @return mixed[]|null
+	 * @return array{username: string, password: string}|null
 	 */
 	protected function parseAuthorizationHeader(string $header): ?array
 	{
@@ -65,10 +50,31 @@ class BasicAuthMiddleware implements IMiddleware
 		}
 
 		$header = explode(':', (string) base64_decode(substr($header, 6), true), 2);
+
+		// Invalid basic auth
+		if (count($header) !== 2) {
+			return null;
+		}
+
 		return [
 			'username' => $header[0],
-			'password' => $header[1] ?? null,
+			'password' => $header[1],
 		];
+	}
+
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+	{
+		$authorization = $this->parseAuthorizationHeader($request->getHeaderLine('Authorization'));
+		if ($authorization !== null && $this->auth($authorization['username'], $authorization['password'])) {
+			return $next(
+				$request->withAttribute('username', $authorization['username']),
+				$response
+			);
+		}
+
+		return $response
+			->withStatus(401)
+			->withHeader('WWW-Authenticate', 'Basic realm="' . $this->title . '"');
 	}
 
 }

@@ -8,8 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class BasePathMiddleware implements IMiddleware
 {
 
-	/** @var string */
-	private $basePath;
+	private string $basePath;
 
 	public function __construct(string $basePath)
 	{

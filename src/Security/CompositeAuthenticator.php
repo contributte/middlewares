@@ -8,21 +8,18 @@ class CompositeAuthenticator implements IAuthenticator
 {
 
 	/** @var IAuthenticator[] */
-	private $authenticators = [];
+	private array $authenticators = [];
 
 	public function addAuthenticator(IAuthenticator $authenticator): void
 	{
 		$this->authenticators[] = $authenticator;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function authenticate(ServerRequestInterface $request)
+	public function authenticate(ServerRequestInterface $request): mixed
 	{
 		foreach ($this->authenticators as $authenticator) {
 			$identity = $authenticator->authenticate($request);
-			if ($identity) {
+			if ($identity !== null) {
 				return $identity;
 			}
 		}

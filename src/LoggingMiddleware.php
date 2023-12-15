@@ -9,8 +9,7 @@ use Psr\Log\LoggerInterface;
 class LoggingMiddleware implements IMiddleware
 {
 
-	/** @var LoggerInterface */
-	private $logger;
+	private LoggerInterface $logger;
 
 	public function __construct(LoggerInterface $logger)
 	{

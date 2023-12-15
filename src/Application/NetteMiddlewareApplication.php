@@ -13,11 +13,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class NetteMiddlewareApplication extends MiddlewareApplication
 {
 
-	/** @var IRequest|null */
-	private $httpRequest;
+	private ?IRequest $httpRequest = null;
 
-	/** @var IResponse|null */
-	private $httpResponse;
+	private ?IResponse $httpResponse = null;
 
 	public function setHttpRequest(IRequest $httpRequest): void
 	{

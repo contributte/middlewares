@@ -11,8 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 class DebugChainBuilder extends ChainBuilder
 {
 
-	/** @var int */
-	private $usedCount = 0;
+	private int $usedCount = 0;
 
 	public function create(): callable
 	{
@@ -26,6 +25,7 @@ class DebugChainBuilder extends ChainBuilder
 		while ($middleware = array_pop($middlewares)) {
 			$next = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next): ResponseInterface {
 				$this->usedCount++;
+
 				return $middleware($request, $response, $next);
 			};
 		}

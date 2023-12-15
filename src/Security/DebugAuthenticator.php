@@ -7,21 +7,14 @@ use Psr\Http\Message\ServerRequestInterface;
 class DebugAuthenticator implements IAuthenticator
 {
 
-	/** @var mixed */
-	private $identity;
+	private mixed $identity;
 
-	/**
-	 * @param mixed $identity
-	 */
-	public function __construct($identity)
+	public function __construct(mixed $identity)
 	{
 		$this->identity = $identity;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function authenticate(ServerRequestInterface $request)
+	public function authenticate(ServerRequestInterface $request): mixed
 	{
 		return $this->identity;
 	}

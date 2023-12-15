@@ -12,32 +12,11 @@ class SecurityMiddleware implements IMiddleware
 	// Attributes in ServerRequestInterface
 	public const ATTR_IDENTITY = 'contributte.identity';
 
-	/** @var IAuthenticator */
-	private $authenticator;
+	private IAuthenticator $authenticator;
 
 	public function __construct(IAuthenticator $authenticator)
 	{
 		$this->authenticator = $authenticator;
-	}
-
-	/**
-	 * Authenticate user from given request
-	 */
-	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
-	{
-		$identity = $this->authenticator->authenticate($psr7Request);
-
-		// If we have a identity, then go to next middlewares,
-		// otherwise stop and return current response
-		if (!$identity) {
-			return $this->denied($psr7Request, $psr7Response);
-		}
-
-		// Add info about current identity
-		$psr7Request = $psr7Request->withAttribute(self::ATTR_IDENTITY, $identity);
-
-		// Pass to next middleware
-		return $next($psr7Request, $psr7Response);
 	}
 
 	protected function denied(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface
@@ -51,6 +30,26 @@ class SecurityMiddleware implements IMiddleware
 		return $psr7Response
 			->withHeader('Content-Type', 'application/json')
 			->withStatus(401);
+	}
+
+	/**
+	 * Authenticate user from given request
+	 */
+	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
+	{
+		$identity = $this->authenticator->authenticate($psr7Request);
+
+		// If we have a identity, then go to next middlewares,
+		// otherwise stop and return current response
+		if ($identity === null || $identity === false) {
+			return $this->denied($psr7Request, $psr7Response);
+		}
+
+		// Add info about current identity
+		$psr7Request = $psr7Request->withAttribute(self::ATTR_IDENTITY, $identity);
+
+		// Pass to next middleware
+		return $next($psr7Request, $psr7Response);
 	}
 
 }

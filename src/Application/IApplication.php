@@ -10,16 +10,12 @@ interface IApplication
 
 	/**
 	 * Dispatch application!
-	 *
-	 * @return string|int|bool|void|ResponseInterface|null
 	 */
-	public function run();
+	public function run(): ResponseInterface;
 
 	/**
 	 * Dispatch application!
-	 *
-	 * @return string|int|bool|void|ResponseInterface|null
 	 */
-	public function runWith(ServerRequestInterface $request);
+	public function runWith(ServerRequestInterface $request): ResponseInterface;
 
 }

@@ -11,34 +11,13 @@ use Throwable;
 class TryCatchMiddleware implements IMiddleware
 {
 
-	/** @var bool */
-	private $catch = true;
+	private bool $catch = true;
 
-	/** @var bool */
-	private $debug = false;
+	private bool $debug = false;
 
-	/** @var LoggerInterface|null */
-	private $logger;
+	private ?LoggerInterface $logger = null;
 
-	/** @var string */
-	private $logLevel;
-
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
-	{
-		if (!$this->debug || $this->catch) { // Always catch if not debug and catch optionally if is debug
-			try {
-				$response = $next($request, $response);
-				return $response;
-			} catch (Throwable $throwable) {
-				$this->log($throwable);
-				$response = $response->withStatus(500);
-				$response->getBody()->write('Application encountered an internal error. Please try again later.');
-				return $response;
-			}
-		}
-
-		return $next($request, $response);
-	}
+	private string $logLevel;
 
 	public function setCatchExceptions(bool $catch): void
 	{
@@ -63,6 +42,25 @@ class TryCatchMiddleware implements IMiddleware
 		}
 
 		$this->logger->log($this->logLevel, $throwable->getMessage());
+	}
+
+	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+	{
+		if (!$this->debug || $this->catch) { // Always catch if not debug and catch optionally if is debug
+			try {
+				$response = $next($request, $response);
+
+				return $response;
+			} catch (Throwable $throwable) {
+				$this->log($throwable);
+				$response = $response->withStatus(500);
+				$response->getBody()->write('Application encountered an internal error. Please try again later.');
+
+				return $response;
+			}
+		}
+
+		return $next($request, $response);
 	}
 
 }

@@ -9,8 +9,19 @@ use Psr\Http\Message\ResponseInterface;
 class ChainBuilder
 {
 
-	/** @var mixed[] */
-	protected $middlewares = [];
+	/** @var array<callable> */
+	protected array $middlewares = [];
+
+	/**
+	 * @param array<callable> $middlewares
+	 */
+	public static function factory(array $middlewares): callable
+	{
+		$chain = new ChainBuilder();
+		$chain->addAll($middlewares);
+
+		return $chain->create();
+	}
 
 	public function add(callable $middleware): void
 	{
@@ -18,7 +29,7 @@ class ChainBuilder
 	}
 
 	/**
-	 * @param mixed[] $middlewares
+	 * @param array<callable> $middlewares
 	 */
 	public function addAll(array $middlewares): void
 	{
@@ -37,23 +48,10 @@ class ChainBuilder
 
 		$middlewares = $this->middlewares;
 		while ($middleware = array_pop($middlewares)) {
-			$next = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next): ResponseInterface {
-				return $middleware($request, $response, $next);
-			};
+			$next = fn (RequestInterface $request, ResponseInterface $response): ResponseInterface => $middleware($request, $response, $next);
 		}
 
 		return $next;
-	}
-
-	/**
-	 * @param mixed[] $middlewares
-	 */
-	public static function factory(array $middlewares): callable
-	{
-		$chain = new ChainBuilder();
-		$chain->addAll($middlewares);
-
-		return $chain->create();
 	}
 
 }

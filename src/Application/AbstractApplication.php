@@ -12,30 +12,25 @@ use Throwable;
 abstract class AbstractApplication implements IApplication
 {
 
-	public const
-		LISTENER_STARTUP = 'startup',
-		LISTENER_REQUEST = 'request',
-		LISTENER_ERROR = 'error',
-		LISTENER_RESPONSE = 'response';
+	public const LISTENER_STARTUP = 'startup';
+	public const LISTENER_REQUEST = 'request';
+	public const LISTENER_ERROR = 'error';
+	public const LISTENER_RESPONSE = 'response';
 
 	/** @var callable|IMiddleware */
 	private $chain;
 
-	/** @var bool */
-	private $catchExceptions = false;
+	private bool $catchExceptions = false;
 
 	/** @var callable[][] */
-	private $listeners = [
+	private array $listeners = [
 		self::LISTENER_STARTUP => [],
 		self::LISTENER_REQUEST => [],
 		self::LISTENER_ERROR => [],
 		self::LISTENER_RESPONSE => [],
 	];
 
-	/**
-	 * @param callable|IMiddleware $chain
-	 */
-	public function __construct($chain)
+	public function __construct(callable|IMiddleware $chain)
 	{
 		$this->chain = $chain;
 	}
@@ -47,10 +42,8 @@ abstract class AbstractApplication implements IApplication
 
 	/**
 	 * Dispatch application in middleware cycle!
-	 *
-	 * @return string|int|bool|void|ResponseInterface|null
 	 */
-	public function run()
+	public function run(): ResponseInterface
 	{
 		// Create initial request (PSR7!)
 		$request = $this->createInitialRequest();
@@ -60,10 +53,8 @@ abstract class AbstractApplication implements IApplication
 
 	/**
 	 * Dispatch application in middleware cycle!
-	 *
-	 * @return string|int|bool|void|ResponseInterface|null
 	 */
-	public function runWith(ServerRequestInterface $request)
+	public function runWith(ServerRequestInterface $request): ResponseInterface
 	{
 		// Trigger event!
 		$this->dispatch($this->listeners[self::LISTENER_STARTUP], [$this]);
@@ -80,9 +71,7 @@ abstract class AbstractApplication implements IApplication
 				$this->chain,
 				$request,
 				$response,
-				function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
-					return $response;
-				}
+				fn (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface => $response
 			);
 
 			// Response validation check
@@ -92,7 +81,7 @@ abstract class AbstractApplication implements IApplication
 		} catch (Throwable $e) {
 			// Trigger event! In case of manual handling error, returned object is passed.
 			$res = $this->dispatch($this->listeners[self::LISTENER_ERROR], [$this, $e, $request, $response]);
-			if ($res !== null && $res !== false) {
+			if ($res instanceof ResponseInterface) {
 				return $res;
 			}
 
@@ -104,7 +93,7 @@ abstract class AbstractApplication implements IApplication
 
 		// Trigger event! In case of manual finalizing, returned object is passed.
 		$res = $this->dispatch($this->listeners[self::LISTENER_RESPONSE], [$this, $request, $response]);
-		if ($res !== null && $res !== false) {
+		if ($res instanceof ResponseInterface) {
 			return $res;
 		}
 
@@ -114,12 +103,7 @@ abstract class AbstractApplication implements IApplication
 
 	public function addListener(string $type, callable $listener): void
 	{
-		if (!in_array($type, [
-			self::LISTENER_STARTUP,
-			self::LISTENER_REQUEST,
-			self::LISTENER_ERROR,
-			self::LISTENER_RESPONSE,
-		], true)) {
+		if (!in_array($type, [self::LISTENER_STARTUP, self::LISTENER_REQUEST, self::LISTENER_ERROR, self::LISTENER_RESPONSE], true)) {
 			throw new InvalidStateException(sprintf('Given type "%s" is not supported', $type));
 		}
 
@@ -134,10 +118,9 @@ abstract class AbstractApplication implements IApplication
 
 	/**
 	 * @param callable[] $handlers
-	 * @param mixed[]    $arguments
-	 * @return mixed
+	 * @param mixed[] $arguments
 	 */
-	protected function dispatch(array $handlers, array $arguments)
+	protected function dispatch(array $handlers, array $arguments): mixed
 	{
 		// Default return value
 		$ret = null;

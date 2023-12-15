@@ -9,22 +9,15 @@ use Tracy\Debugger;
 class TracyMiddleware implements IMiddleware
 {
 
-	/** @var bool */
-	protected $enable = false;
+	protected bool $enable = false;
 
-	/** @var mixed */
-	protected $mode = Debugger::DEVELOPMENT;
+	protected bool|string $mode = Debugger::Development;
 
-	/** @var string|null */
-	protected $logDir;
+	protected ?string $logDir = null;
 
-	/** @var string|null */
-	protected $email;
+	protected ?string $email = null;
 
-	/**
-	 * @param mixed $mode
-	 */
-	public function __construct($mode = Debugger::DEVELOPMENT, ?string $logDir = null, ?string $email = null)
+	public function __construct(bool|string $mode = Debugger::Development, ?string $logDir = null, ?string $email = null)
 	{
 		$this->mode = $mode;
 		$this->logDir = $logDir;
@@ -51,10 +44,7 @@ class TracyMiddleware implements IMiddleware
 		$this->enable = false;
 	}
 
-	/**
-	 * @param mixed $mode
-	 */
-	public function setMode($mode): void
+	public function setMode(bool|string $mode): void
 	{
 		$this->mode = $mode;
 	}

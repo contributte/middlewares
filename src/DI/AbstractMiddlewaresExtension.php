@@ -74,6 +74,21 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		throw new InvalidStateException('There must be at least one middleware registered or added by tag.');
 	}
 
+	public function afterCompile(ClassType $class): void
+	{
+		$config = $this->config;
+
+		if (!$config->debug) {
+			return;
+		}
+
+		$initialize = $class->getMethod('initialize');
+		$initialize->addBody(
+			'$this->getService(?)->addPanel($this->getService(?));',
+			['tracy.bar', $this->prefix('middlewaresPanel')]
+		);
+	}
+
 	private function compileDefinedMiddlewares(): void
 	{
 		$builder = $this->getContainerBuilder();
@@ -128,21 +143,6 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 			// Append to chain of middlewares
 			$chain->addSetup('add', [$builder->getDefinition($name)]);
 		}
-	}
-
-	public function afterCompile(ClassType $class): void
-	{
-		$config = $this->config;
-
-		if (!$config->debug) {
-			return;
-		}
-
-		$initialize = $class->getMethod('initialize');
-		$initialize->addBody(
-			'$this->getService(?)->addPanel($this->getService(?));',
-			['tracy.bar', $this->prefix('middlewaresPanel')]
-		);
 	}
 
 }

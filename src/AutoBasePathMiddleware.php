@@ -12,10 +12,9 @@ class AutoBasePathMiddleware implements IMiddleware
 {
 
 	// Attributes in ServerRequestInterface
-	public const
-		ATTR_ORIGINAL_PATH = 'contributte.original.path',
-		ATTR_BASE_PATH = 'contributte.base.path',
-		ATTR_PATH = 'contributte.path';
+	public const ATTR_ORIGINAL_PATH = 'contributte.original.path';
+	public const ATTR_BASE_PATH = 'contributte.base.path';
+	public const ATTR_PATH = 'contributte.path';
 
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
