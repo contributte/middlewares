@@ -1,13 +1,10 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: BuilderMiddleware
- */
-
 use Contributte\Middlewares\BuilderMiddleware;
 use Contributte\Psr7\Psr7ResponseFactory;
 use Contributte\Psr7\Psr7ServerRequestFactory;
-use Ninjify\Nunjuck\Notes;
+use Contributte\Tester\Toolkit;
+use Contributte\Tester\Utils\Notes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
@@ -15,7 +12,7 @@ use Tester\Assert;
 require_once __DIR__ . '/../bootstrap.php';
 
 // Build chain of middlewares
-test(function (): void {
+Toolkit::test(function (): void {
 	$middleware = new BuilderMiddleware();
 	$middleware->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 		Notes::add('A');
@@ -41,6 +38,7 @@ test(function (): void {
 
 	$middleware(Psr7ServerRequestFactory::fromSuperGlobal(), Psr7ResponseFactory::fromGlobal(), function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 		Notes::add('END');
+
 		return $res;
 	});
 

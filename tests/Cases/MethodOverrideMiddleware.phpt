@@ -5,13 +5,14 @@ namespace Tests;
 use Contributte\Middlewares\MethodOverrideMiddleware;
 use Contributte\Psr7\Psr7ResponseFactory;
 use Contributte\Psr7\Psr7ServerRequestFactory;
+use Contributte\Tester\Toolkit;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-test(function (): void {
+Toolkit::test(function (): void {
 	$middleware = new MethodOverrideMiddleware();
 
 	$request = Psr7ServerRequestFactory::fromGlobal()
@@ -23,12 +24,13 @@ test(function (): void {
 		Psr7ResponseFactory::fromGlobal(),
 		function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 			Assert::equal('PUT', $req->getMethod());
+
 			return $res;
 		}
 	);
 });
 
-test(function (): void {
+Toolkit::test(function (): void {
 	$middleware = new MethodOverrideMiddleware();
 
 	$request = Psr7ServerRequestFactory::fromGlobal()
@@ -40,12 +42,13 @@ test(function (): void {
 		Psr7ResponseFactory::fromGlobal(),
 		function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 			Assert::equal('POST', $req->getMethod());
+
 			return $res;
 		}
 	);
 });
 
-test(function (): void {
+Toolkit::test(function (): void {
 	$middleware = new MethodOverrideMiddleware();
 
 	$request = Psr7ServerRequestFactory::fromGlobal()
@@ -56,6 +59,7 @@ test(function (): void {
 		Psr7ResponseFactory::fromGlobal(),
 		function (ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 			Assert::equal('DELETE', $req->getMethod());
+
 			return $res;
 		}
 	);

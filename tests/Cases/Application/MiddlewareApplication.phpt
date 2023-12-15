@@ -1,11 +1,8 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: Application\MiddlewareApplication
- */
-
 use Contributte\Middlewares\Application\MiddlewareApplication;
-use Ninjify\Nunjuck\Notes;
+use Contributte\Tester\Toolkit;
+use Contributte\Tester\Utils\Notes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
@@ -13,7 +10,7 @@ use Tester\Assert;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Test invoking of callback
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
 		Notes::add('touched');
 
@@ -27,7 +24,7 @@ test(function (): void {
 });
 
 // Response text
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
 		$response->getBody()->write('OK');
 
@@ -41,11 +38,9 @@ test(function (): void {
 });
 
 // Return invalid response
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::throws(function (): void {
-		$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
-			return null;
-		};
+		$callback = fn (ServerRequestInterface $request, ResponseInterface $response) => null;
 
 		$app = new MiddlewareApplication($callback);
 		$app->run();
@@ -53,10 +48,8 @@ test(function (): void {
 });
 
 // Finalize
-test(function (): void {
-	$callback = function (ServerRequestInterface $request, ResponseInterface $response) {
-		return $response->withStatus(300);
-	};
+Toolkit::test(function (): void {
+	$callback = fn (ServerRequestInterface $request, ResponseInterface $response) => $response->withStatus(300);
 
 	$app = new MiddlewareApplication($callback);
 	$response = $app->run();
@@ -66,7 +59,7 @@ test(function (): void {
 });
 
 // Send headers
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
 		$response = $next($request, $response);
 
@@ -80,7 +73,7 @@ test(function (): void {
 });
 
 // Throws exception
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response): void {
 		throw new RuntimeException('Oh mama');
 	};
@@ -97,7 +90,7 @@ test(function (): void {
 });
 
 // Throws exception and catch
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response): void {
 		throw new RuntimeException('Oh mama');
 	};
@@ -113,24 +106,29 @@ test(function (): void {
 });
 
 // Throws exception and handle in onError
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response): void {
 		throw new RuntimeException('Oh mama');
 	};
 
 	$app = new MiddlewareApplication($callback);
-	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Throwable $e, ServerRequestInterface $req, ResponseInterface $res): string {
+	$app->addListener($app::LISTENER_ERROR, function (MiddlewareApplication $app, Throwable $e, ServerRequestInterface $req, ResponseInterface $res): ResponseInterface {
 		Notes::add('CALLED');
 
-		return 'OK';
+		$res->getBody()->write('OK');
+
+		return $res;
 	});
 
-	Assert::equal('OK', $app->run());
+	$res = $app->run();
+	$res->getBody()->rewind();
+
+	Assert::equal('OK', $res->getBody()->getContents());
 	Assert::equal(['CALLED'], Notes::fetch());
 });
 
 // Dispatching events
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
 		$response->getBody()->write('OK');
 
@@ -153,7 +151,7 @@ test(function (): void {
 });
 
 // Dispatching events with return value as parameter
-test(function (): void {
+Toolkit::test(function (): void {
 	$callback = function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {
 		$response->getBody()->write('OK');
 

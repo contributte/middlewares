@@ -11,14 +11,18 @@ use Nette\Application\Response;
 class PresenterFactory implements IPresenterFactory
 {
 
-	private $presenters = [];
+	/** @var array<IPresenter> */
+	private array $presenters = [];
 
-	public function __construct($closures)
+	/**
+	 * @param array<string, Closure> $closures
+	 */
+	public function __construct(array $closures)
 	{
 		foreach ($closures as $name => $closure) {
 			$this->presenters[$name] = new class($closure) implements IPresenter {
 
-				private $closure;
+				private Closure $closure;
 
 				public function __construct(Closure $closure)
 				{
@@ -28,6 +32,7 @@ class PresenterFactory implements IPresenterFactory
 				public function run(Request $request): Response
 				{
 					$c = $this->closure;
+
 					return $c($request);
 				}
 
@@ -35,6 +40,9 @@ class PresenterFactory implements IPresenterFactory
 		}
 	}
 
+	/**
+	 * @phpcs:disable SlevomatCodingStandard.PHP.DisallowReference.DisallowedPassingByReference
+	 */
 	public function getPresenterClass(string &$name): string
 	{
 		return '';

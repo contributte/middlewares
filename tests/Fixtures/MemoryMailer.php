@@ -6,9 +6,9 @@ final class MemoryMailer
 {
 
 	/** @var string[] */
-	public static $mails = [];
+	public static array $mails = [];
 
-	public static function mail($message, string $email): void
+	public static function mail(string $message, string $email): void
 	{
 		self::$mails[] = $message;
 	}

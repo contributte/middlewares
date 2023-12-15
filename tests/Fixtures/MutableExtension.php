@@ -12,13 +12,13 @@ final class MutableExtension extends CompilerExtension
 	use SmartObject;
 
 	/** @var callable[] */
-	public $onLoad = [];
+	public array $onLoad = [];
 
 	/** @var callable[] */
-	public $onBefore = [];
+	public array $onBefore = [];
 
 	/** @var callable[] */
-	public $onAfter = [];
+	public array $onAfter = [];
 
 	/**
 	 * Register services

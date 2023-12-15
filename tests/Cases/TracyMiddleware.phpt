@@ -1,12 +1,10 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: TracyMiddleware
- */
-
 use Contributte\Middlewares\TracyMiddleware;
 use Contributte\Psr7\Psr7ResponseFactory;
 use Contributte\Psr7\Psr7ServerRequestFactory;
+use Contributte\Tester\Environment;
+use Contributte\Tester\Toolkit;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
@@ -21,7 +19,7 @@ $logger = Debugger::getLogger();
 $logger->mailer = [MemoryMailer::class, 'mail'];
 
 // Disabled
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::exception(function (): void {
 		$middleware = TracyMiddleware::factory(true);
 		$middleware->disable();
@@ -36,10 +34,10 @@ test(function (): void {
 });
 
 // Warnings
-test(function (): void {
+Toolkit::test(function (): void {
 	$middleware = TracyMiddleware::factory(true);
-	$middleware->setMode(Debugger::PRODUCTION);
-	$middleware->setLogDir(TEMP_DIR);
+	$middleware->setMode(Debugger::Production);
+	$middleware->setLogDir(Environment::getTestDir());
 	$middleware->setEmail('dev@contributte.org');
 	$middleware(
 		Psr7ServerRequestFactory::fromSuperGlobal(),
@@ -52,6 +50,6 @@ test(function (): void {
 		}
 	);
 	// Support multiple php and package versions
-	Assert::match('#((PHP Warning: Undefined variable \$a in)|(PHP Notice: Undefined variable: a in ))#', file_get_contents(TEMP_DIR . '/error.log'));
+	Assert::match('#((PHP Warning: Undefined variable \$a in)|(PHP Notice: Undefined variable: a in ))#', file_get_contents(Environment::getTestDir() . '/error.log'));
 	Assert::count(1, MemoryMailer::$mails);
 });

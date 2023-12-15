@@ -13,10 +13,10 @@ final class PassMiddleware implements IMiddleware
 	use SmartObject;
 
 	/** @var callable[] */
-	public $onBefore = [];
+	public array $onBefore = [];
 
 	/** @var callable[] */
-	public $onAfter = [];
+	public array $onAfter = [];
 
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{

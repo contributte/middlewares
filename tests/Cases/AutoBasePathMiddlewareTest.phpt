@@ -1,10 +1,6 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: AutoBasePathMiddleware
- */
-
-namespace Tests;
+namespace Tests\Cases;
 
 use Contributte\Middlewares\AutoBasePathMiddleware;
 use Contributte\Psr7\Psr7ResponseFactory;
@@ -16,21 +12,17 @@ use Tester\TestCase;
 
 require_once __DIR__ . '/../bootstrap.php';
 
-/**
- * @testCase
- */
 final class AutoBasePathMiddlewareTest extends TestCase
 {
 
 	/**
-	 * @dataProvider  pathsData
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.UselessDocComment
+	 * @dataProvider pathsData
 	 */
 	public function testPaths(string $requestUri, string $scriptName, string $basePath, string $coolUrl): void
 	{
 		$middleware = new AutoBasePathMiddleware();
-		$_SERVER['REQUEST_URI'] = $requestUri;
-		$_SERVER['SCRIPT_NAME'] = $scriptName;
+		$_SERVER['REQUEST_URI'] = $requestUri; // @phpcs:ignore
+		$_SERVER['SCRIPT_NAME'] = $scriptName; // @phpcs:ignore
 		$middleware(
 			Psr7ServerRequestFactory::fromSuperGlobal(),
 			Psr7ResponseFactory::fromGlobal(),
@@ -39,6 +31,7 @@ final class AutoBasePathMiddlewareTest extends TestCase
 				Assert::equal($basePath, $req->getAttribute(AutoBasePathMiddleware::ATTR_BASE_PATH));
 				Assert::equal($coolUrl, $req->getAttribute(AutoBasePathMiddleware::ATTR_PATH));
 				Assert::equal($coolUrl, $req->getUri()->getPath());
+
 				return $res;
 			}
 		);

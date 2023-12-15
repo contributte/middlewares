@@ -1,18 +1,15 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: Security\Authenticator
- */
-
 use Contributte\Middlewares\Security\CompositeAuthenticator;
 use Contributte\Middlewares\Security\DebugAuthenticator;
 use Contributte\Psr7\Psr7ServerRequest;
+use Contributte\Tester\Toolkit;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Possitive identity
-test(function (): void {
+Toolkit::test(function (): void {
 	$composite = new CompositeAuthenticator();
 	$composite->addAuthenticator(new DebugAuthenticator('FOOBAR'));
 
@@ -20,7 +17,7 @@ test(function (): void {
 });
 
 // Negative identity
-test(function (): void {
+Toolkit::test(function (): void {
 	$composite = new CompositeAuthenticator();
 
 	Assert::false($composite->authenticate(Psr7ServerRequest::fromGlobals()));

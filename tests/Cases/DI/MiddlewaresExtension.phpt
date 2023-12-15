@@ -1,12 +1,10 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: DI\NetteMiddlewareExtension + DI\MiddlewareExtension
- */
-
 use Contributte\Middlewares\DI\MiddlewaresExtension;
 use Contributte\Middlewares\DI\NetteMiddlewaresExtension;
 use Contributte\Middlewares\IMiddleware;
+use Contributte\Tester\Environment;
+use Contributte\Tester\Toolkit;
 use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
@@ -23,8 +21,8 @@ use Tests\Fixtures\MutableExtension;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Definition of middlewares
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
@@ -45,8 +43,8 @@ test(function (): void {
 });
 
 // Definition of middlewares
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new MiddlewaresExtension());
@@ -73,9 +71,9 @@ test(function (): void {
 });
 
 // Misssing nette/http request
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::throws(function (): void {
-		$loader = new ContainerLoader(TEMP_DIR, true);
+		$loader = new ContainerLoader(Environment::getTestDir(), true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('middleware', new NetteMiddlewaresExtension());
 		}, 5);
@@ -84,9 +82,9 @@ test(function (): void {
 });
 
 // Misssing nette/http response
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::throws(function (): void {
-		$loader = new ContainerLoader(TEMP_DIR, true);
+		$loader = new ContainerLoader(Environment::getTestDir(), true);
 		$class = $loader->load(function (Compiler $compiler): void {
 			$mutable = new MutableExtension();
 			$mutable->onLoad[] = function (CompilerExtension $ext, ContainerBuilder $builder): void {
@@ -103,8 +101,8 @@ test(function (): void {
 });
 
 // Priority middlewares
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('http', new HttpExtension());
 		$compiler->addExtension('middleware', new MiddlewaresExtension());

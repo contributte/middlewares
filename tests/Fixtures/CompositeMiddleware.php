@@ -11,7 +11,7 @@ final class CompositeMiddleware implements IMiddleware
 {
 
 	/** @var IMiddleware[] */
-	private $inner = [];
+	private array $inner = [];
 
 	/**
 	 * @param IMiddleware[] $inner

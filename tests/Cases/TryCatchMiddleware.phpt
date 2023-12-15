@@ -1,12 +1,9 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: TryCatchMiddleware
- */
-
 use Contributte\Middlewares\TryCatchMiddleware;
 use Contributte\Psr7\Psr7ResponseFactory;
 use Contributte\Psr7\Psr7ServerRequestFactory;
+use Contributte\Tester\Toolkit;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
@@ -14,7 +11,7 @@ use Tester\Assert;
 require_once __DIR__ . '/../bootstrap.php';
 
 // Catched expception, production mode
-test(function (): void {
+Toolkit::test(function (): void {
 	$response = Psr7ResponseFactory::fromGlobal();
 	$middleware = new TryCatchMiddleware();
 	$middleware->setDebugMode(false);
@@ -39,7 +36,7 @@ test(function (): void {
 });
 
 // Catched expception, debug mode with catch exception enabled
-test(function (): void {
+Toolkit::test(function (): void {
 	$response = Psr7ResponseFactory::fromGlobal();
 	$middleware = new TryCatchMiddleware();
 	$middleware->setDebugMode(true);
@@ -64,7 +61,7 @@ test(function (): void {
 });
 
 // Ok
-test(function (): void {
+Toolkit::test(function (): void {
 	$response = Psr7ResponseFactory::fromGlobal();
 	$middleware = new TryCatchMiddleware();
 	$middleware->setCatchExceptions(false);
@@ -73,6 +70,7 @@ test(function (): void {
 		$response,
 		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface {
 			$psr7Response->getBody()->write('foo');
+
 			return $psr7Response;
 		}
 	);
@@ -88,7 +86,7 @@ test(function (): void {
 });
 
 // Disabled
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::exception(function (): void {
 		$middleware = new TryCatchMiddleware();
 		$middleware->setDebugMode(true);

@@ -1,14 +1,11 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: Utils\ChainBuilder
- */
-
 use Contributte\Middlewares\Exception\InvalidStateException;
 use Contributte\Middlewares\Utils\ChainBuilder;
 use Contributte\Psr7\Psr7ResponseFactory;
 use Contributte\Psr7\Psr7ServerRequestFactory;
-use Ninjify\Nunjuck\Notes;
+use Contributte\Tester\Toolkit;
+use Contributte\Tester\Utils\Notes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Tester\Assert;
@@ -16,7 +13,7 @@ use Tester\Assert;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Chain calling
-test(function (): void {
+Toolkit::test(function (): void {
 	$builder = new ChainBuilder();
 
 	$builder->add(function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
@@ -57,7 +54,7 @@ test(function (): void {
 });
 
 // Chain exceptions
-test(function (): void {
+Toolkit::test(function (): void {
 	$builder = new ChainBuilder();
 
 	Assert::throws(function () use ($builder): void {
@@ -66,7 +63,7 @@ test(function (): void {
 });
 
 // Factory
-test(function (): void {
+Toolkit::test(function (): void {
 	$middleware = ChainBuilder::factory([
 		function (ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface {
 			Notes::add('A');
