@@ -41,8 +41,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\": "tests/cases",
-      "Tests\\Fixtures\\": "tests/fixtures"
+      "Tests\\": "tests"
     }
   },
   "minimum-stability": "dev",
