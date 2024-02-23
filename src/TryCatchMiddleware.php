@@ -35,13 +35,13 @@ class TryCatchMiddleware implements IMiddleware
 		$this->logLevel = $logLevel;
 	}
 
-	private function log(Throwable $throwable): void
+	protected function log(Throwable $throwable): void
 	{
 		if ($this->logger === null) {
 			return;
 		}
 
-		$this->logger->log($this->logLevel, $throwable->getMessage());
+		$this->logger->log($this->logLevel, $throwable->getMessage(), ['exception' => $throwable]);
 	}
 
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
