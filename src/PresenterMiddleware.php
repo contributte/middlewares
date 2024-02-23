@@ -129,7 +129,7 @@ class PresenterMiddleware implements IMiddleware
 	{
 		$netteRequest = $psr7Request->getHttpRequest();
 		$parameters = $this->router->match($netteRequest);
-		$presenter = $parameters[Presenter::PRESENTER_KEY] ?? null;
+		$presenter = $parameters[Presenter::PresenterKey] ?? null;
 
 		if ($presenter === null) {
 			throw new InvalidStateException('Missing presenter in route definition.');
@@ -145,15 +145,14 @@ class PresenterMiddleware implements IMiddleware
 			throw new BadRequestException($e->getMessage(), 0, $e);
 		}
 
-		unset($parameters[Presenter::PRESENTER_KEY]);
+		unset($parameters[Presenter::PresenterKey]);
 
 		return new ApplicationRequest(
 			$presenter,
 			$netteRequest->getMethod(),
 			$parameters,
 			$netteRequest->getPost(), // @phpstan-ignore-line
-			$netteRequest->getFiles(),
-			[ApplicationRequest::SECURED => $netteRequest->isSecured()]
+			$netteRequest->getFiles()
 		);
 	}
 
