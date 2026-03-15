@@ -9,14 +9,11 @@ use Nette\Routing\Router;
 class PresenterMiddlewareFactory implements IPresenterMiddlewareFactory
 {
 
-	protected IPresenterFactory $presenterFactory;
-
-	protected Router $router;
-
-	public function __construct(IPresenterFactory $presenterFactory, Router $router)
+	public function __construct(
+		protected IPresenterFactory $presenterFactory,
+		protected Router $router,
+	)
 	{
-		$this->presenterFactory = $presenterFactory;
-		$this->router = $router;
 	}
 
 	public function create(): PresenterMiddleware

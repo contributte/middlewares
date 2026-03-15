@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class BasePathMiddleware implements IMiddleware
 {
 
-	private string $basePath;
+	private readonly string $basePath;
 
 	public function __construct(string $basePath)
 	{
@@ -17,6 +17,8 @@ class BasePathMiddleware implements IMiddleware
 
 	/**
 	 * Drop base path from URL
+	 *
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
 	 */
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
@@ -24,7 +26,7 @@ class BasePathMiddleware implements IMiddleware
 
 		// Does URL path start with given base path?
 		// Otherwise skip to next middleware
-		if (strncmp($uri->getPath(), $this->basePath, strlen($this->basePath)) === 0) {
+		if (str_starts_with($uri->getPath(), $this->basePath)) {
 			$newPath = '/' . substr($uri->getPath(), strlen($this->basePath));
 			$psr7Request = $psr7Request->withUri($uri->withPath($newPath));
 		}

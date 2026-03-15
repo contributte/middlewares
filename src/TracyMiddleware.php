@@ -11,17 +11,12 @@ class TracyMiddleware implements IMiddleware
 
 	protected bool $enable = false;
 
-	protected bool|string $mode = Debugger::Development;
-
-	protected ?string $logDir = null;
-
-	protected ?string $email = null;
-
-	public function __construct(bool|string $mode = Debugger::Development, ?string $logDir = null, ?string $email = null)
+	public function __construct(
+		protected bool|string $mode = Debugger::Development,
+		protected ?string $logDir = null,
+		protected ?string $email = null,
+	)
 	{
-		$this->mode = $mode;
-		$this->logDir = $logDir;
-		$this->email = $email;
 	}
 
 	public static function factory(bool $debugMode = false): TracyMiddleware
@@ -61,6 +56,8 @@ class TracyMiddleware implements IMiddleware
 
 	/**
 	 * Catch all exceptions
+	 *
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
 	 */
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{

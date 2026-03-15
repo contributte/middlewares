@@ -16,6 +16,9 @@ class AutoBasePathMiddleware implements IMiddleware
 	public const ATTR_BASE_PATH = 'contributte.base.path';
 	public const ATTR_PATH = 'contributte.path';
 
+	/**
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
+	 */
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
 		$uri = $psr7Request->getUri();

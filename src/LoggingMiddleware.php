@@ -9,16 +9,18 @@ use Psr\Log\LoggerInterface;
 class LoggingMiddleware implements IMiddleware
 {
 
-	private LoggerInterface $logger;
-
-	public function __construct(LoggerInterface $logger)
+	public function __construct(
+		private readonly LoggerInterface $logger,
+	)
 	{
-		$this->logger = $logger;
 	}
 
+	/**
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
+	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
-		$this->logger->info(sprintf('Requested url: %s', (string) $request->getUri()->withUserInfo('', null)));
+		$this->logger->info(sprintf('Requested url: %s', $request->getUri()->withUserInfo('', null)));
 
 		return $next($request, $response);
 	}

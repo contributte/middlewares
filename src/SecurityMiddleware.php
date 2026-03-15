@@ -12,11 +12,10 @@ class SecurityMiddleware implements IMiddleware
 	// Attributes in ServerRequestInterface
 	public const ATTR_IDENTITY = 'contributte.identity';
 
-	private IAuthenticator $authenticator;
-
-	public function __construct(IAuthenticator $authenticator)
+	public function __construct(
+		private readonly IAuthenticator $authenticator,
+	)
 	{
-		$this->authenticator = $authenticator;
 	}
 
 	protected function denied(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface
@@ -34,6 +33,8 @@ class SecurityMiddleware implements IMiddleware
 
 	/**
 	 * Authenticate user from given request
+	 *
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
 	 */
 	public function __invoke(ServerRequestInterface $psr7Request, ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
