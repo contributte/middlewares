@@ -1,8 +1,8 @@
 ![](https://heatbadger.now.sh/github/readme/contributte/middlewares/)
 
 <p align=center>
-  <a href="https://github.com/contributte/middlewares/actions"><img src="https://badgen.net/github/checks/contributte/middlewares/master?middlewares=300"></a>
-  <a href="https://coveralls.io/r/contributte/middlewares"><img src="https://badgen.net/coveralls/c/github/contributte/middlewares?middlewares=300"></a>
+  <a href="https://github.com/contributte/middlewares/actions"><img src="https://badgen.net/github/checks/contributte/middlewares/master?cache=300"></a>
+  <a href="https://coveralls.io/r/contributte/middlewares"><img src="https://badgen.net/coveralls/c/github/contributte/middlewares?cache=300"></a>
   <a href="https://packagist.org/packages/contributte/middlewares"><img src="https://badgen.net/packagist/dm/contributte/middlewares"></a>
   <a href="https://packagist.org/packages/contributte/middlewares"><img src="https://badgen.net/packagist/v/contributte/middlewares"></a>
 </p>
@@ -16,10 +16,6 @@
 
 <p align=center>
 Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact 👨🏻‍💻 <a href="https://f3l1x.io">f3l1x.io</a> | Twitter 🐦 <a href="https://twitter.com/contributte">@contributte</a>
-</p>
-
-<p align=center>
-  <img src=".docs/assets/cycle.png">
 </p>
 
 Middleware / Relay / PSR-7 support to Nette Framework.
@@ -363,7 +359,7 @@ services:
 	tryCatchMiddleware:
 		class: Contributte\Middlewares\TryCatchMiddleware
 		setup:
-			- setCatchExceptions(true) # affect if exceptions are catched in debug mode (they are always catched in production mode)
+			- setCatchExceptions(true) # affect if exceptions are caught in debug mode (they are always caught in production mode)
 			- setDebugMode(%debugMode%)
 			- setLogger(@Psr\Log\LoggerInterface, Psr\Log\LogLevel::ERROR)
 ```
