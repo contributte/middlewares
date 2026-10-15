@@ -129,15 +129,11 @@ abstract class AbstractMiddlewaresExtension extends CompilerExtension
 		}
 
 		// Sort by priority
-		uasort($definitions, function (array $a, array $b) {
-			$p1 = $a['priority'] ?? 10;
-			$p2 = $b['priority'] ?? 10;
+		uasort($definitions, function (mixed $a, mixed $b): int {
+			$p1 = is_array($a) ? ($a['priority'] ?? 10) : 10;
+			$p2 = is_array($b) ? ($b['priority'] ?? 10) : 10;
 
-			if ($p1 === $p2) {
-				return 0;
-			}
-
-			return ($p1 < $p2) ? -1 : 1;
+			return $p1 <=> $p2;
 		});
 
 		// Obtain middleware chain builder

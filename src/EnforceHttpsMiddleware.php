@@ -8,6 +8,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class EnforceHttpsMiddleware implements IMiddleware
 {
 
+	/**
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
+	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		if (strtolower($request->getUri()->getScheme()) !== 'https') {

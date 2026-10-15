@@ -22,11 +22,10 @@ class PresenterFactory implements IPresenterFactory
 		foreach ($closures as $name => $closure) {
 			$this->presenters[$name] = new class($closure) implements IPresenter {
 
-				private Closure $closure;
-
-				public function __construct(Closure $closure)
+				public function __construct(
+					private readonly Closure $closure,
+				)
 				{
-					$this->closure = $closure;
 				}
 
 				public function run(Request $request): Response

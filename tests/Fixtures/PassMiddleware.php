@@ -18,6 +18,9 @@ final class PassMiddleware implements IMiddleware
 	/** @var callable[] */
 	public array $onAfter = [];
 
+	/**
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
+	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		$this->onBefore($request, $response);

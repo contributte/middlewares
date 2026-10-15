@@ -8,14 +8,13 @@ use Psr\Http\Message\ServerRequestInterface;
 class BasicAuthMiddleware implements IMiddleware
 {
 
-	private string $title;
-
 	/** @var array<string, array{unsecured: bool, password: string}> */
 	private array $users = [];
 
-	public function __construct(string $title = 'Restrict zone')
+	public function __construct(
+		private readonly string $title = 'Restrict zone',
+	)
 	{
-		$this->title = $title;
 	}
 
 	public function addUser(string $user, string $password, bool $unsecured = false): self
@@ -45,7 +44,7 @@ class BasicAuthMiddleware implements IMiddleware
 	 */
 	protected function parseAuthorizationHeader(string $header): ?array
 	{
-		if (strpos($header, 'Basic') !== 0) {
+		if (!str_starts_with($header, 'Basic')) {
 			return null;
 		}
 
@@ -62,6 +61,9 @@ class BasicAuthMiddleware implements IMiddleware
 		];
 	}
 
+	/**
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
+	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		$authorization = $this->parseAuthorizationHeader($request->getHeaderLine('Authorization'));

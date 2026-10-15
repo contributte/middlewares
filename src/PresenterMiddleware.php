@@ -25,10 +25,6 @@ class PresenterMiddleware implements IMiddleware
 
 	public static int $maxLoop = 20;
 
-	protected IPresenterFactory $presenterFactory;
-
-	protected Router $router;
-
 	/** @var ApplicationRequest[] */
 	protected array $requests = [];
 
@@ -38,10 +34,11 @@ class PresenterMiddleware implements IMiddleware
 
 	protected bool $catchExceptions = true;
 
-	public function __construct(IPresenterFactory $presenterFactory, Router $router)
+	public function __construct(
+		protected IPresenterFactory $presenterFactory,
+		protected Router $router,
+	)
 	{
-		$this->presenterFactory = $presenterFactory;
-		$this->router = $router;
 	}
 
 	public function setErrorPresenter(string $errorPresenter): void
@@ -111,7 +108,7 @@ class PresenterMiddleware implements IMiddleware
 		if ($this->presenter instanceof Presenter) {
 			try {
 				$this->presenter->forward(':' . $errorPresenter . ':', $args);
-			} catch (AbortException $foo) {
+			} catch (AbortException) {
 				$lastRequest = $this->presenter->getLastCreatedRequest();
 				assert($lastRequest instanceof ApplicationRequest);
 
@@ -158,6 +155,8 @@ class PresenterMiddleware implements IMiddleware
 
 	/**
 	 * Dispatch a HTTP request to a front controller.
+	 *
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
 	 */
 	public function __invoke(Psr7ServerRequest|ServerRequestInterface $psr7Request, Psr7Response|ResponseInterface $psr7Response, callable $next): ResponseInterface
 	{
@@ -186,7 +185,7 @@ class PresenterMiddleware implements IMiddleware
 				// Try resolve exception via forward or redirect
 				$applicationResponse = $this->processException($e, $errorPresenter);
 				$psr7Response = $psr7Response->withApplicationResponse($applicationResponse);
-			} catch (Throwable $e) {
+			} catch (Throwable) {
 				// No fallback needed
 			}
 		}

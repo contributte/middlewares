@@ -44,13 +44,14 @@ class TryCatchMiddleware implements IMiddleware
 		$this->logger->log($this->logLevel, $throwable->getMessage(), ['exception' => $throwable]);
 	}
 
+	/**
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
+	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		if (!$this->debug || $this->catch) { // Always catch if not debug and catch optionally if is debug
 			try {
-				$response = $next($request, $response);
-
-				return $response;
+				return $next($request, $response);
 			} catch (Throwable $throwable) {
 				$this->log($throwable);
 				$response = $response->withStatus(500);

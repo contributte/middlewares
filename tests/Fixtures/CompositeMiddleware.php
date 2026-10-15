@@ -10,17 +10,18 @@ use Psr\Http\Message\ServerRequestInterface;
 final class CompositeMiddleware implements IMiddleware
 {
 
-	/** @var IMiddleware[] */
-	private array $inner = [];
-
 	/**
 	 * @param IMiddleware[] $inner
 	 */
-	public function __construct(array $inner)
+	public function __construct(
+		private readonly array $inner,
+	)
 	{
-		$this->inner = $inner;
 	}
 
+	/**
+	 * @param callable(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface $next
+	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
 	{
 		foreach ($this->inner as $middleware) {

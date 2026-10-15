@@ -7,11 +7,10 @@ use Tracy\IBarPanel;
 class MiddlewaresPanel implements IBarPanel
 {
 
-	private DebugChainBuilder $chainBuilder;
-
-	public function __construct(DebugChainBuilder $chainBuilder)
+	public function __construct(
+		private readonly DebugChainBuilder $chainBuilder,
+	)
 	{
-		$this->chainBuilder = $chainBuilder;
 	}
 
 	public function getTab(): string
