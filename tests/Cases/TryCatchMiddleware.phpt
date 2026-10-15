@@ -6,7 +6,9 @@ use Contributte\Psr7\Psr7ServerRequestFactory;
 use Contributte\Tester\Toolkit;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LogLevel;
 use Tester\Assert;
+use Tests\Fixtures\MemoryLogger;
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -99,4 +101,78 @@ Toolkit::test(function (): void {
 			}
 		);
 	}, RuntimeException::class, 'foo');
+});
+
+// Logging, caught exception is logged with default level
+Toolkit::test(function (): void {
+	$logger = new MemoryLogger();
+	$exception = new RuntimeException('foo');
+	$middleware = new TryCatchMiddleware();
+	$middleware->setLogger($logger);
+	$response = $middleware(
+		Psr7ServerRequestFactory::fromSuperGlobal(),
+		Psr7ResponseFactory::fromGlobal(),
+		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response) use ($exception): void {
+			throw $exception;
+		}
+	);
+
+	Assert::same(500, $response->getStatusCode());
+	Assert::count(1, $logger->logs);
+	Assert::same(LogLevel::ERROR, $logger->logs[0]['level']);
+	Assert::same('foo', $logger->logs[0]['message']);
+	Assert::same(['exception' => $exception], $logger->logs[0]['context']);
+});
+
+// Logging, custom log level
+Toolkit::test(function (): void {
+	$logger = new MemoryLogger();
+	$middleware = new TryCatchMiddleware();
+	$middleware->setLogger($logger, LogLevel::CRITICAL);
+	$middleware(
+		Psr7ServerRequestFactory::fromSuperGlobal(),
+		Psr7ResponseFactory::fromGlobal(),
+		function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): void {
+			throw new RuntimeException('foo');
+		}
+	);
+
+	Assert::count(1, $logger->logs);
+	Assert::same(LogLevel::CRITICAL, $logger->logs[0]['level']);
+});
+
+// Logging, nothing is logged without exception
+Toolkit::test(function (): void {
+	$logger = new MemoryLogger();
+	$middleware = new TryCatchMiddleware();
+	$middleware->setLogger($logger);
+	$response = $middleware(
+		Psr7ServerRequestFactory::fromSuperGlobal(),
+		Psr7ResponseFactory::fromGlobal(),
+		fn (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): ResponseInterface => $psr7Response
+	);
+
+	Assert::same(200, $response->getStatusCode());
+	Assert::same([], $logger->logs);
+});
+
+// Logging, uncaught exception in debug mode is not logged
+Toolkit::test(function (): void {
+	$logger = new MemoryLogger();
+	$middleware = new TryCatchMiddleware();
+	$middleware->setLogger($logger);
+	$middleware->setDebugMode(true);
+	$middleware->setCatchExceptions(false);
+
+	Assert::exception(function () use ($middleware): void {
+		$middleware(
+			Psr7ServerRequestFactory::fromSuperGlobal(),
+			Psr7ResponseFactory::fromGlobal(),
+			function (ServerRequestInterface $psr7Request, ResponseInterface $psr7Response): void {
+				throw new RuntimeException('foo');
+			}
+		);
+	}, RuntimeException::class, 'foo');
+
+	Assert::same([], $logger->logs);
 });
